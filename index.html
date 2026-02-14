@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusEats - Food Delivery</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+
+    <!-- MAP MODAL -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-card">
+            <div class="map-header">
+                <h3 id="mapModalTitle" style="font-family:var(--font-heading); margin:0;">Select Delivery Location</h3>
+                <button id="closeMapBtn"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <div id="leafletMap" class="map-container"></div>
+            <div class="map-footer">
+                <button id="useGpsBtn" class="btn-secondary"
+                    style="margin-right:auto; padding:8px 16px; font-size:0.9rem;">
+                    📍 Use My Location
+                </button>
+                <div style="flex:1; text-align:right;">
+                    <span id="locationStatus" style="font-size:0.9rem; color:#666; margin-right:12px;">Click map to
+                        pin</span>
+                    <button id="confirmLocationBtn" class="btn-checkout" style="width:auto; padding:10px 24px;">Confirm
+                        Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="font-family:var(--font-heading); margin:0;">Account Settings</h2>
+                <button id="closeSettingsBtn"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="settingsForm">
+                <div class="settings-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="setPhone" class="settings-input" placeholder="+1...">
+                </div>
+                <div class="settings-group">
+                    <label>Email Address</label>
+                    <input type="email" id="setEmail" class="settings-input" placeholder="you@campus.edu">
+                </div>
+
+                <!-- STUDENT ID VALIDATION SECTION -->
+                <div class="settings-group" style="margin-top:24px; padding-top:24px; border-top:1px solid #eee;">
+                    <label id="verifyTitle" style="font-weight:700; font-size:1rem;">Verify Student Status</label>
+                    <p id="verifyDesc" style="font-size:0.85rem; color:#666; margin-bottom:12px;">Upload your ID card to
+                        unlock student
+                        bonuses and free delivery.</p>
+
+                    <div class="upload-card" onclick="document.getElementById('fileInput').click()">
+                        <div style="font-size:2rem;">🆔</div>
+                        <div id="uploadCta" style="font-weight:600; margin-top:8px;">Click to Upload ID</div>
+                        <div style="font-size:0.8rem; color:#999;">Supports JPG, PNG, PDF</div>
+                        <input type="file" id="fileInput" hidden accept="image/*,.pdf">
+                    </div>
+
+                    <div id="uploadStatus" class="upload-status status-pending hidden">
+                        Processing Verification... (Admin Review)
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-checkout" style="margin-top:10px;">Save & Update</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" style="display: none;"> <!-- Hidden initially -->
+        <div class="nav-left">
+            <div class="nav-location" id="locationTrigger">
+                <span style="font-size:1.2rem; color:var(--primary);">📍</span>
+                <span id="navLocationText">Select Location</span>
+            </div>
+        </div>
+        <a href="#" onclick="showSection('home')" class="logo">
+            <img src="./img/logo_campuseats.png" alt="Campus Eats">
+            CampusEats
+        </a>
+        <div class="nav-right">
+            <!-- LANGUAGE SELECTOR -->
+            <select onchange="setLanguage(this.value)"
+                style="padding:6px; border-radius:8px; border:1px solid #ddd; font-weight:600; cursor:pointer;">
+                <option value="en">EN</option>
+                <option value="uz">UZ</option>
+                <option value="ru">RU</option>
+            </select>
+
+            <div class="pill-badge" style="cursor:pointer;" onclick="showSection('stats')" id="navOrdersDB">
+                Example Orders DB
+            </div>
+            <div class="pill-badge" style="background:var(--primary); color:white; font-size:0.9rem;">
+                $<span id="navBalance">0.00</span>
+            </div>
+            <button class="profile-btn" id="profileBtn" title="Account Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+            <button id="logoutBtn"
+                style="border:none; background:none; color:#f00; cursor:pointer; font-size:0.9rem;">Log Out</button>
+        </div>
+    </nav>
+
+    <!-- AUTH PAGE (New Split Layout) -->
+    <div id="authPage" class="auth-container fade-in">
+        <!-- Decoration Left -->
+        <div class="auth-visual">
+            <h1 id="heroTitle">Back to Campus Sale!</h1>
+            <p id="heroSub">Get 20% cashback on all orders this week.</p>
+            <div style="margin-top:40px; font-size:4rem;">🍔 🍕 🍣</div>
+        </div>
+
+        <!-- Forms Right -->
+        <div class="auth-form-wrapper">
+            <div class="logo" style="margin-bottom:32px;">
+                <img src="./img/logo_campuseats.png" alt="Logo">
+                <span style="color:var(--text-main);">CampusEats</span>
+            </div>
+
+            <!-- Role Switcher -->
+            <div class="role-selector">
+                <div class="role-pill active" id="roleUser" onclick="switchRole('user')">Student / User</div>
+                <div class="role-pill" id="roleRest" onclick="switchRole('restaurant')">Restaurant Partner</div>
+            </div>
+
+            <!-- Login/Signup Toggle -->
+            <div class="auth-toggle">
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">Log In</div>
+                <div class="auth-tab" id="tabSignup" onclick="switchAuthMode('signup')">Sign Up</div>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Phone Number</label>
+                <input type="tel" id="loginPhone" class="settings-input" placeholder="+1 555 000 0000" required>
+
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Password</label>
+                <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
+
+                <button type="submit" id="loginBtnText" class="btn-checkout">Log In</button>
+                <p id="demoHint" style="color:#888; text-align:center; font-size:0.85rem; margin-top:16px;">Demo: Use
+                    any phone/pass
+                </p>
+            </form>
+
+            <!-- SIGNUP FORM (Hidden) -->
+            <form id="signupForm" class="hidden">
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Full Name</label>
+                <input type="text" id="regName" class="settings-input" placeholder="John Doe">
+
+                <div id="restFields" class="hidden">
+                    <label style="font-weight:500; display:block; margin-bottom:8px;">Restaurant Name</label>
+                    <input type="text" id="regRestName" class="settings-input" placeholder="Tasty Burger Place">
+                </div>
+
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Phone Number</label>
+                <input type="tel" id="regPhone" class="settings-input" placeholder="+1 555 ...">
+
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Create Password</label>
+                <input type="password" id="regPass" class="settings-input" placeholder="••••••••">
+
+                <button type="submit" id="signupBtnText" class="btn-checkout">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTENT (Hidden until login) -->
+    <main id="appContent" class="hidden" style="flex:1; display:flex; flex-direction:column;">
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="fade-in app-container">
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h1 id="homeHeroTitle">Back to Campus Sale!</h1>
+                    <p id="homeHeroSub">Get 20% cashback on all orders this week.</p>
+                </div>
+            </div>
+
+            <div class="app-grid">
+                <!-- Main Content -->
+                <div class="main-column">
+                    <div class="section-title"><span id="menuTitle">Lunch Menu</span></div>
+                    <div class="category-scroll" id="categoryScroll"></div>
+                    <div class="food-grid" id="menuGrid"></div>
+                </div>
+
+                <!-- Cart Sidebar -->
+                <aside class="cart-panel">
+                    <div class="section-title" style="font-size:1.2rem;" id="basketTitle">Your Basket</div>
+                    <div id="cartItems" style="max-height:300px; overflow-y:auto; margin-bottom:20px;">
+                        <div id="cartEmptyText" style="text-align:center; padding:20px; color:#aaa;">Empty</div>
+                    </div>
+                    <div class="cart-total"
+                        style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; border-top:1px solid #eee; padding-top:16px;">
+                        <span id="cartTotalLabel">Total</span>
+                        <span>$<span id="cartTotal">0.00</span></span>
+                    </div>
+                    <button id="checkoutBtn" class="btn-checkout" disabled>Checkout</button>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Orders Database / Stats Section -->
+        <section id="statsSection" class="hidden fade-in app-container">
+            <h1 class="section-title" style="font-size:2rem; margin-bottom:32px;" id="dbTitle">My Order Metadata</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotalSpent">$0.00</div>
+                    <div class="stat-label" id="lblTotalSpent">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotalOrders">0</div>
+                    <div class="stat-label" id="lblTotalOrders">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statLastOrder">N/A</div>
+                    <div class="stat-label" id="lblLastAct">Last Activity</div>
+                </div>
+            </div>
+            <div class="section-title" id="dbRecordsTitle">Database Records</div>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date & Time</th>
+                            <th>Items</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dbTableBody"></tbody>
+                </table>
+            </div>
+            <button id="backToMenuBtn" class="btn-secondary" onclick="showSection('home')"
+                style="margin-top:24px;">&larr; Back to
+                Menu</button>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="color:white; margin-bottom:16px; font-size:1.5rem;">CampusEats</div>
+                    <div style="color:#777; font-size:0.9rem;">
+                        Platform for students.<br>Trusted by 50+ Universities.
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Company</h3>
+                    <nav class="footer-links">
+                        <a href="#">About</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Partners</a>
+                    </nav>
+                </div>
+                <div class="footer-col">
+                    <h3>Support</h3>
+                    <nav class="footer-links">
+                        <a href="#">Help Center</a>
+                        <a href="#">Safety</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 CampusEats</span>
+            </div>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
