@@ -36,6 +36,13 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* AUTH PAGE DESIGN */
@@ -912,9 +919,12 @@ select:focus {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        padding: 10px 20px;
+        align-items: center;
+        padding: 10px 16px;
         height: auto;
         gap: 12px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .nav-left {
@@ -924,17 +934,19 @@ select:focus {
 
     .logo {
         order: 1;
+        flex: 1;
+        font-size: 1.2rem;
     }
 
     .nav-right {
         order: 1;
         width: auto;
         gap: 8px;
+        flex-shrink: 0;
     }
 
     #navOrdersDB {
         display: none;
-        /* Hide long pill on mobile */
     }
 
     .nav-location {
@@ -1006,12 +1018,35 @@ select:focus {
     #restaurantMenuView {
         padding-bottom: 24px;
     }
+
+    .food-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .food-img {
+        height: 120px;
+        font-size: 3rem;
+    }
+
+    .food-info {
+        padding: 12px;
+    }
+
+    .food-name {
+        font-size: 1rem;
+    }
+
+    .btn-add {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+    }
 }
 
 @media (max-width: 600px) {
 
-    .restaurant-grid,
-    .food-grid {
+    .restaurant-grid {
         grid-template-columns: 1fr;
     }
 
@@ -1020,13 +1055,9 @@ select:focus {
     }
 
     .app-container {
-        padding: 20px 16px;
+        padding: 16px;
         width: 100%;
         box-sizing: border-box;
-    }
-
-    .navbar {
-        padding: 10px 16px;
     }
 
     .hero-banner {
@@ -1036,6 +1067,12 @@ select:focus {
 
     .section-title {
         font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .food-grid {
+        grid-template-columns: 1fr;
     }
 }
 
