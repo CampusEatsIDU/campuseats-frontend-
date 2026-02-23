@@ -1,139 +1,139 @@
 // --- LOCALIZATION DATA ---
 const TRANSLATIONS = {
   en: {
-      welcome_hero: "Back to Campus Sale!",
-      welcome_sub: "Get 20% cashback on all orders this week.",
-      menu_title: "Lunch Menu",
-      basket_title: "Your Basket",
-      basket_empty: "Basket is empty",
-      checkout: "Checkout",
-      processing: "Processing...",
-      browse: "Browse Menu",
-      total: "Total",
-      confirm_loc: "Confirm Location",
-      select_loc_title: "Select Delivery Location",
-      my_orders_db: "My Orders DB",
-      total_spent: "Total Spent",
-      total_orders: "Total Orders",
-      last_activity: "Last Activity",
-      db_records: "Database Records",
-      back_menu: "Back to Menu",
-      logout: "Log Out",
-      login_btn: "Log In",
-      signup_btn: "Sign Up",
-      verify_student: "Verify Student Status",
-      verify_desc: "Upload your ID card for bonuses.",
-      click_upload: "Click to Upload ID",
-      upload_status_pending: "Processing Verification...",
-      upload_status_verified: "Verified! Student Bonuses Active.",
-      role_user: "Student / User",
-      role_rest: "Restaurant Partner",
-      ph_phone: "Phone Number",
-      ph_pass: "Password",
-      ph_name: "Full Name",
-      ph_rest_name: "Restaurant Name",
-      create_acc: "Create Account",
-      demo_text: "Demo: Use any phone/pass",
-      loc_select: "Select Location",
-      loc_pin: "Pin",
-      loc_using_gps: "Finding your location...",
-      loc_denied: "GPS access denied",
-      btn_use_gps: "📍 Use My Location",
-      delivery_status: "Delivery Status",
-      order_placed: "Order Placed",
-      preparing: "Preparing",
-      on_the_way: "On the Way",
-      delivered: "Delivered"
+    welcome_hero: "Back to Campus Sale!",
+    welcome_sub: "Get 20% cashback on all orders this week.",
+    menu_title: "Lunch Menu",
+    basket_title: "Your Basket",
+    basket_empty: "Basket is empty",
+    checkout: "Checkout",
+    processing: "Processing...",
+    browse: "Browse Menu",
+    total: "Total",
+    confirm_loc: "Confirm Location",
+    select_loc_title: "Select Delivery Location",
+    my_orders_db: "My Orders DB",
+    total_spent: "Total Spent",
+    total_orders: "Total Orders",
+    last_activity: "Last Activity",
+    db_records: "Database Records",
+    back_menu: "Back to Menu",
+    logout: "Log Out",
+    login_btn: "Log In",
+    signup_btn: "Sign Up",
+    verify_student: "Verify Student Status",
+    verify_desc: "Upload your ID card for bonuses.",
+    click_upload: "Click to Upload ID",
+    upload_status_pending: "Processing Verification...",
+    upload_status_verified: "Verified! Student Bonuses Active.",
+    role_user: "Student / User",
+    role_rest: "Restaurant Partner",
+    ph_phone: "Phone Number",
+    ph_pass: "Password",
+    ph_name: "Full Name",
+    ph_rest_name: "Restaurant Name",
+    create_acc: "Create Account",
+    demo_text: "Demo: Use any phone/pass",
+    loc_select: "Select Location",
+    loc_pin: "Pin",
+    loc_using_gps: "Finding your location...",
+    loc_denied: "GPS access denied",
+    btn_use_gps: "📍 Use My Location",
+    delivery_status: "Delivery Status",
+    order_placed: "Order Placed",
+    preparing: "Preparing",
+    on_the_way: "On the Way",
+    delivered: "Delivered"
   },
   ru: {
-      welcome_hero: "Скидки к началу учебы!",
-      welcome_sub: "Кэшбек 20% на все заказы.",
-      menu_title: "Обеденное Меню",
-      basket_title: "Корзина",
-      basket_empty: "Корзина пуста",
-      checkout: "Оформить",
-      processing: "Обработка...",
-      browse: "К Меню",
-      total: "Итого",
-      confirm_loc: "Подтвердить",
-      select_loc_title: "Место доставки",
-      my_orders_db: "База Заказов",
-      total_spent: "Потрачено",
-      total_orders: "Заказы",
-      last_activity: "Активность",
-      db_records: "Записи",
-      back_menu: "В Меню",
-      logout: "Выйти",
-      login_btn: "Войти",
-      signup_btn: "Регистрация",
-      verify_student: "Статус студента",
-      verify_desc: "Загрузите карту.",
-      click_upload: "Загрузить",
-      upload_status_pending: "Проверка...",
-      upload_status_verified: "Подтверждено!",
-      role_user: "Студент",
-      role_rest: "Ресторан",
-      ph_phone: "Телефон",
-      ph_pass: "Пароль",
-      ph_name: "Имя",
-      ph_rest_name: "Название",
-      create_acc: "Создать",
-      demo_text: "Демо режим",
-      loc_select: "Адрес",
-      loc_pin: "Точка",
-      loc_using_gps: "Поиск GPS...",
-      loc_denied: "GPS недоступен",
-      btn_use_gps: "📍 Моя геолокация",
-      delivery_status: "Статус доставки",
-      order_placed: "Заказ принят",
-      preparing: "Готовится",
-      on_the_way: "В пути",
-      delivered: "Доставлен",
+    welcome_hero: "Скидки к началу учебы!",
+    welcome_sub: "Кэшбек 20% на все заказы.",
+    menu_title: "Обеденное Меню",
+    basket_title: "Корзина",
+    basket_empty: "Корзина пуста",
+    checkout: "Оформить",
+    processing: "Обработка...",
+    browse: "К Меню",
+    total: "Итого",
+    confirm_loc: "Подтвердить",
+    select_loc_title: "Место доставки",
+    my_orders_db: "База Заказов",
+    total_spent: "Потрачено",
+    total_orders: "Заказы",
+    last_activity: "Активность",
+    db_records: "Записи",
+    back_menu: "В Меню",
+    logout: "Выйти",
+    login_btn: "Войти",
+    signup_btn: "Регистрация",
+    verify_student: "Статус студента",
+    verify_desc: "Загрузите карту.",
+    click_upload: "Загрузить",
+    upload_status_pending: "Проверка...",
+    upload_status_verified: "Подтверждено!",
+    role_user: "Студент",
+    role_rest: "Ресторан",
+    ph_phone: "Телефон",
+    ph_pass: "Пароль",
+    ph_name: "Имя",
+    ph_rest_name: "Название",
+    create_acc: "Создать",
+    demo_text: "Демо режим",
+    loc_select: "Адрес",
+    loc_pin: "Точка",
+    loc_using_gps: "Поиск GPS...",
+    loc_denied: "GPS недоступен",
+    btn_use_gps: "📍 Моя геолокация",
+    delivery_status: "Статус доставки",
+    order_placed: "Заказ принят",
+    preparing: "Готовится",
+    on_the_way: "В пути",
+    delivered: "Доставлен",
   },
   uz: {
-      welcome_hero: "O'qish chegirmalari!",
-      welcome_sub: "20% keshbek.",
-      menu_title: "Tushlik",
-      basket_title: "Savat",
-      basket_empty: "Bo'sh",
-      checkout: "Rasmiylashtirish",
-      processing: "Jarayonda...",
-      browse: "Menyuga",
-      total: "Jami",
-      confirm_loc: "Tasdiqlash",
-      select_loc_title: "Manzil",
-      my_orders_db: "Buyurtmalar",
-      total_spent: "Sarlandi",
-      total_orders: "Buyurtmalar",
-      last_activity: "Faoliyat",
-      db_records: "Yozuvlar",
-      back_menu: "Menyuga",
-      logout: "Chiqish",
-      login_btn: "Kirish",
-      signup_btn: "Ro'yxatdan",
-      verify_student: "Talaba statusi",
-      verify_desc: "Kartangizni yuklang.",
-      click_upload: "Yuklash",
-      upload_status_pending: "Tekshirilmoqda...",
-      upload_status_verified: "Tasdiqlandi!",
-      role_user: "Talaba",
-      role_rest: "Restoran",
-      ph_phone: "Telefon",
-      ph_pass: "Parol",
-      ph_name: "Ism",
-      ph_rest_name: "Nom",
-      create_acc: "Yaratish",
-      demo_text: "Demo",
-      loc_select: "Manzil",
-      loc_pin: "Manzil",
-      loc_using_gps: "GPS...",
-      loc_denied: "GPS o'chiq",
-      btn_use_gps: "📍 Mening joylashuvim",
-      delivery_status: "Yetkazish holati",
-      order_placed: "Buyurtma qabul qilindi",
-      preparing: "Tayyorlanmoqda",
-      on_the_way: "Yo'lda",
-      delivered: "Yetkazildi"
+    welcome_hero: "O'qish chegirmalari!",
+    welcome_sub: "20% keshbek.",
+    menu_title: "Tushlik",
+    basket_title: "Savat",
+    basket_empty: "Bo'sh",
+    checkout: "Rasmiylashtirish",
+    processing: "Jarayonda...",
+    browse: "Menyuga",
+    total: "Jami",
+    confirm_loc: "Tasdiqlash",
+    select_loc_title: "Manzil",
+    my_orders_db: "Buyurtmalar",
+    total_spent: "Sarlandi",
+    total_orders: "Buyurtmalar",
+    last_activity: "Faoliyat",
+    db_records: "Yozuvlar",
+    back_menu: "Menyuga",
+    logout: "Chiqish",
+    login_btn: "Kirish",
+    signup_btn: "Ro'yxatdan",
+    verify_student: "Talaba statusi",
+    verify_desc: "Kartangizni yuklang.",
+    click_upload: "Yuklash",
+    upload_status_pending: "Tekshirilmoqda...",
+    upload_status_verified: "Tasdiqlandi!",
+    role_user: "Talaba",
+    role_rest: "Restoran",
+    ph_phone: "Telefon",
+    ph_pass: "Parol",
+    ph_name: "Ism",
+    ph_rest_name: "Nom",
+    create_acc: "Yaratish",
+    demo_text: "Demo",
+    loc_select: "Manzil",
+    loc_pin: "Manzil",
+    loc_using_gps: "GPS...",
+    loc_denied: "GPS o'chiq",
+    btn_use_gps: "📍 Mening joylashuvim",
+    delivery_status: "Yetkazish holati",
+    order_placed: "Buyurtma qabul qilindi",
+    preparing: "Tayyorlanmoqda",
+    on_the_way: "Yo'lda",
+    delivered: "Yetkazildi"
   }
 };
 
@@ -212,6 +212,15 @@ const MENU_ITEMS = [
   { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: '🥤', desc: 'Cold brew with oat milk.' },
   { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: '🍵', desc: 'Authentic Japanese sencha.' },
 ];
+const RESTAURANTS = [
+  { id: 1, name: 'Burger Embassy', rating: 4.4, time: '20-30 min', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80', badges: [{ text: '-40% on burgers', type: 'discount' }], categories: ['burgers', 'all'], tags: 'Burgers • Fast food' },
+  { id: 2, name: 'Mazzali Ready Meals', rating: 4.9, time: '15-25 min', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80', badges: [{ text: 'Free delivery', type: 'green' }], categories: ['healthy', 'asian', 'all'], tags: 'Healthy • Bowls' },
+  { id: 3, name: 'Pizza Hut', rating: 4.6, time: '30-40 min', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80', badges: [{ text: 'Free delivery', type: 'green' }], categories: ['pizza', 'all'], tags: 'Pizza • Italian' },
+  { id: 4, name: 'Sushi Master', rating: 4.8, time: '40-50 min', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80', badges: [], categories: ['asian', 'sushi', 'all'], tags: 'Sushi • Asian' },
+  { id: 5, name: 'Coffee House', rating: 4.9, time: '15-20 min', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80', badges: [{ text: '-20% on back', type: 'discount' }], categories: ['drinks', 'all'], tags: 'Coffee • Bakery' },
+  { id: 6, name: 'Central Asian Cuisine', rating: 4.3, time: '35-45 min', image: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&q=80', badges: [{ text: 'Free delivery', type: 'green' }], categories: ['asian', 'all'], tags: 'Plov • Meat' }
+];
+
 const CATEGORIES = [
   { id: 'all', name: 'All' },
   { id: 'burgers', name: 'Burgers' },
@@ -244,17 +253,17 @@ const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
 
 function init() {
-const savedLang = localStorage.getItem('campuseats_lang');
-if (savedLang) setLanguage(savedLang);
-else setLanguage('en');
+  const savedLang = localStorage.getItem('campuseats_lang');
+  if (savedLang) setLanguage(savedLang);
+  else setLanguage('en');
 
-const savedUser = localStorage.getItem('campuseats_user');
-const savedToken = localStorage.getItem('campuseats_token');
+  const savedUser = localStorage.getItem('campuseats_user');
+  const savedToken = localStorage.getItem('campuseats_token');
 
-if (savedUser && savedToken) {
+  if (savedUser && savedToken) {
     currentUser = JSON.parse(savedUser);
     handleLoginSuccess();
-}
+  }
 }
 
 // --- AUTH HANDLERS ---
@@ -267,7 +276,7 @@ function handleLoginSuccess() {
   checkVerification();
   updateUserDisplay();
   renderCategories();
-  renderMenu('all');
+  renderRestaurants('all');
   loadLocalOrders();
   updateCartUI();
 }
@@ -275,24 +284,24 @@ function handleLoginSuccess() {
 window.switchRole = function (role) {
   document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
   if (role === 'user') {
-      document.getElementById('roleUser').classList.add('active');
-      document.getElementById('restFields').classList.add('hidden');
+    document.getElementById('roleUser').classList.add('active');
+    document.getElementById('restFields').classList.add('hidden');
   } else {
-      document.getElementById('roleRest').classList.add('active');
-      document.getElementById('restFields').classList.remove('hidden');
+    document.getElementById('roleRest').classList.add('active');
+    document.getElementById('restFields').classList.remove('hidden');
   }
 };
 
 window.switchAuthMode = function (mode) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
   if (mode === 'login') {
-      document.getElementById('tabLogin').classList.add('active');
-      loginForm.classList.remove('hidden');
-      signupForm.classList.add('hidden');
+    document.getElementById('tabLogin').classList.add('active');
+    loginForm.classList.remove('hidden');
+    signupForm.classList.add('hidden');
   } else {
-      document.getElementById('tabSignup').classList.add('active');
-      signupForm.classList.remove('hidden');
-      loginForm.classList.add('hidden');
+    document.getElementById('tabSignup').classList.add('active');
+    signupForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
   }
 };
 
@@ -301,30 +310,30 @@ window.switchAuthMode = function (mode) {
 // ===============================
 
 loginForm.addEventListener('submit', async (e) => {
-e.preventDefault();
+  e.preventDefault();
 
-const phone = document.getElementById('loginPhone').value.trim();
-const password = document.getElementById('loginPass').value.trim();
+  const phone = document.getElementById('loginPhone').value.trim();
+  const password = document.getElementById('loginPass').value.trim();
 
-if (!phone || !password) {
+  if (!phone || !password) {
     alert("Phone and password required");
     return;
-}
+  }
 
-try {
+  try {
     const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ phone, password })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ phone, password })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
+      alert(data.message || "Login failed");
+      return;
     }
 
     currentUser = data.user;
@@ -334,38 +343,38 @@ try {
 
     handleLoginSuccess();
 
-} catch (err) {
+  } catch (err) {
     console.error("Login error:", err);
     alert("Server connection failed");
-}
+  }
 });
 
 
 signupForm.addEventListener('submit', async (e) => {
-e.preventDefault();
+  e.preventDefault();
 
-const phone = document.getElementById('regPhone').value.trim();
-const password = document.getElementById('regPass').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPass').value.trim();
 
-if (!phone || !password) {
+  if (!phone || !password) {
     alert("Phone and password required");
     return;
-}
+  }
 
-try {
+  try {
     const res = await fetch(`${API_BASE}/auth/signup`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ phone, password })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ phone, password })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.message || "Signup failed");
-        return;
+      alert(data.message || "Signup failed");
+      return;
     }
 
     currentUser = data.user;
@@ -375,10 +384,10 @@ try {
 
     handleLoginSuccess();
 
-} catch (err) {
+  } catch (err) {
     console.error("Signup error:", err);
     alert("Server connection failed");
-}
+  }
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -393,27 +402,27 @@ function saveUser() {
 // --- VERIFICATION ---
 document.getElementById('fileInput').addEventListener('change', (e) => {
   if (e.target.files.length > 0) {
-      const statusDiv = document.getElementById('uploadStatus');
-      statusDiv.classList.remove('hidden');
-      statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_pending;
+    const statusDiv = document.getElementById('uploadStatus');
+    statusDiv.classList.remove('hidden');
+    statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_pending;
 
-      setTimeout(() => {
-          statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_verified;
-          statusDiv.className = "upload-status status-verified";
-          currentUser.verified = true;
-          saveUser();
-      }, 2000);
+    setTimeout(() => {
+      statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_verified;
+      statusDiv.className = "upload-status status-verified";
+      currentUser.verified = true;
+      saveUser();
+    }, 2000);
   }
 });
 
 function checkVerification() {
   if (currentUser.verified) {
-      const statusDiv = document.getElementById('uploadStatus');
-      if (statusDiv) {
-          statusDiv.classList.remove('hidden');
-          statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_verified;
-          statusDiv.className = "upload-status status-verified";
-      }
+    const statusDiv = document.getElementById('uploadStatus');
+    if (statusDiv) {
+      statusDiv.classList.remove('hidden');
+      statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_verified;
+      statusDiv.className = "upload-status status-verified";
+    }
   }
 }
 
@@ -427,10 +436,10 @@ function openMap() {
   const modal = document.getElementById('mapModal');
   modal.classList.add('open');
   if (!mapInstance) {
-      mapInstance = L.map('leafletMap').setView([selectedLocation.lat, selectedLocation.lng], 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
-      mapInstance.on('click', function (e) { placeMarker(e.latlng); });
-      placeMarker({ lat: selectedLocation.lat, lng: selectedLocation.lng });
+    mapInstance = L.map('leafletMap').setView([selectedLocation.lat, selectedLocation.lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
+    mapInstance.on('click', function (e) { placeMarker(e.latlng); });
+    placeMarker({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   }
   setTimeout(() => { mapInstance.invalidateSize(); }, 300);
 }
@@ -446,41 +455,41 @@ async function placeMarker(latlng) {
 
   // Reverse geocoding - get street address
   try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`);
-      const data = await response.json();
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`);
+    const data = await response.json();
 
-      if (data && data.address) {
-          const addr = data.address;
-          const houseNumber = addr.house_number || '';
-          const road = addr.road || addr.street || addr.pedestrian || '';
-          const neighbourhood = addr.neighbourhood || addr.suburb || '';
-          const city = addr.city || addr.town || addr.village || '';
+    if (data && data.address) {
+      const addr = data.address;
+      const houseNumber = addr.house_number || '';
+      const road = addr.road || addr.street || addr.pedestrian || '';
+      const neighbourhood = addr.neighbourhood || addr.suburb || '';
+      const city = addr.city || addr.town || addr.village || '';
 
-          let addressParts = [];
-          if (road) {
-              if (houseNumber) addressParts.push(`${road}, ${houseNumber}`);
-              else addressParts.push(road);
-          }
-          if (neighbourhood && neighbourhood !== road) addressParts.push(neighbourhood);
-          if (city) addressParts.push(city);
-
-          const fullAddress = addressParts.join(', ') || `${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
-
-          selectedLocation.address = fullAddress;
-          selectedLocation.street = road;
-          selectedLocation.houseNumber = houseNumber;
-          selectedLocation.city = city;
-
-          status.innerHTML = `<strong>📍 ${fullAddress}</strong><br><small>Lat: ${latlng.lat.toFixed(5)}, Lng: ${latlng.lng.toFixed(5)}</small>`;
-
-      } else {
-          selectedLocation.address = `${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
-          status.textContent = `Pin: ${selectedLocation.address}`;
+      let addressParts = [];
+      if (road) {
+        if (houseNumber) addressParts.push(`${road}, ${houseNumber}`);
+        else addressParts.push(road);
       }
-  } catch (error) {
-      console.error('Geocoding error:', error);
+      if (neighbourhood && neighbourhood !== road) addressParts.push(neighbourhood);
+      if (city) addressParts.push(city);
+
+      const fullAddress = addressParts.join(', ') || `${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
+
+      selectedLocation.address = fullAddress;
+      selectedLocation.street = road;
+      selectedLocation.houseNumber = houseNumber;
+      selectedLocation.city = city;
+
+      status.innerHTML = `<strong>📍 ${fullAddress}</strong><br><small>Lat: ${latlng.lat.toFixed(5)}, Lng: ${latlng.lng.toFixed(5)}</small>`;
+
+    } else {
       selectedLocation.address = `${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
       status.textContent = `Pin: ${selectedLocation.address}`;
+    }
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    selectedLocation.address = `${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
+    status.textContent = `Pin: ${selectedLocation.address}`;
   }
 }
 
@@ -489,16 +498,16 @@ function useGPS() {
   status.textContent = TRANSLATIONS[currentLang].loc_using_gps;
 
   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          mapInstance.setView([lat, lng], 16);
-          placeMarker({ lat, lng });
-      }, (err) => {
-          status.textContent = TRANSLATIONS[currentLang].loc_denied;
-      });
+    navigator.geolocation.getCurrentPosition((position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      mapInstance.setView([lat, lng], 16);
+      placeMarker({ lat, lng });
+    }, (err) => {
+      status.textContent = TRANSLATIONS[currentLang].loc_denied;
+    });
   } else {
-      status.textContent = "GPS Not Supported";
+    status.textContent = "GPS Not Supported";
   }
 }
 
@@ -510,11 +519,11 @@ function confirmLocation() {
 
 function updateUserDisplay() {
   if (document.getElementById('navBalance') && currentUser) {
-      document.getElementById('navBalance').textContent = currentUser.balance.toFixed(2);
+    document.getElementById('navBalance').textContent = currentUser.balance.toFixed(2);
   }
   if (document.getElementById('navLocationText')) {
-      const displayName = selectedLocation.address || selectedLocation.name;
-      document.getElementById('navLocationText').textContent = displayName.length > 30 ? displayName.substring(0, 30) + '...' : displayName;
+    const displayName = selectedLocation.address || selectedLocation.name;
+    document.getElementById('navLocationText').textContent = displayName.length > 30 ? displayName.substring(0, 30) + '...' : displayName;
   }
 }
 
@@ -522,25 +531,91 @@ function updateUserDisplay() {
 function renderCategories() {
   categoryScroll.innerHTML = '';
   CATEGORIES.forEach(cat => {
-      const btn = document.createElement('div');
-      btn.className = `cat-pill ${cat.id === 'all' ? 'active' : ''}`;
-      btn.textContent = cat.name;
-      btn.onclick = () => {
-          document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          renderMenu(cat.id);
-      };
-      categoryScroll.appendChild(btn);
+    const btn = document.createElement('div');
+    btn.className = `cat-pill ${cat.id === 'all' ? 'active' : ''}`;
+    btn.textContent = cat.name;
+    btn.onclick = () => {
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRestaurants(cat.id);
+    };
+    categoryScroll.appendChild(btn);
+  });
+}
+
+function renderRestaurants(category) {
+  document.getElementById('mainHomeView').classList.remove('hidden');
+  document.getElementById('restaurantMenuView').classList.add('hidden');
+
+  const restGrid = document.getElementById('restaurantGrid');
+  const specGrid = document.getElementById('specialGrid');
+  restGrid.innerHTML = '';
+
+  // For demo, we just populate specials with top 4 restaurants
+  if (category === 'all' && specGrid.innerHTML === '') {
+    const special = [...RESTAURANTS].sort((a, b) => b.rating - a.rating).slice(0, 4);
+    specGrid.innerHTML = special.map(r => createRestCardHTML(r, true)).join('');
+  }
+
+  const items = category === 'all' ? RESTAURANTS : RESTAURANTS.filter(i => i.categories.includes(category));
+
+  restGrid.innerHTML = items.map(r => createRestCardHTML(r, false)).join('');
+}
+
+function createRestCardHTML(r, isSpecial) {
+  const badgesHtml = r.badges.map(b => `<div class="badge-${b.type}">${b.text}</div>`).join('');
+  return `
+    <div class="rest-card" style="${isSpecial ? 'min-width: 320px;' : 'width:100%;'}" onclick="openRestaurant(${r.id})">
+        <div class="rest-img" style="background-image: url('${r.image}');">
+            <div class="rest-like">♡</div>
+        </div>
+        <div class="rest-info">
+            <div class="rest-title-row">
+                <div class="rest-name">${r.name}</div>
+                <div class="rest-rating">★ ${r.rating}</div>
+            </div>
+            <div class="rest-details">
+                <span>🚗 ${r.time}</span>
+                <span>•</span>
+                <span>${r.tags}</span>
+            </div>
+            <div class="rest-badges">${badgesHtml}</div>
+        </div>
+    </div>`;
+}
+
+window.openRestaurant = function (id) {
+  const rest = RESTAURANTS.find(r => r.id === id);
+  if (!rest) return;
+
+  document.getElementById('mainHomeView').classList.add('hidden');
+  document.getElementById('restaurantMenuView').classList.remove('hidden');
+
+  document.getElementById('currentRestHeader').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('${rest.image}')`;
+  document.getElementById('currentRestHeader').innerHTML = `
+        <h1>${rest.name}</h1>
+        <div style="font-size:1.1rem; opacity:0.9;">★ ${rest.rating} • ${rest.tags} • 🚗 ${rest.time}</div>
+    `;
+
+  renderMenu('all');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+if (document.getElementById('backToRestaurantsBtn')) {
+  document.getElementById('backToRestaurantsBtn').addEventListener('click', () => {
+    document.getElementById('mainHomeView').classList.remove('hidden');
+    document.getElementById('restaurantMenuView').classList.add('hidden');
   });
 }
 
 function renderMenu(category) {
   menuGrid.innerHTML = '';
-  const items = category === 'all' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === category);
+  // Since we only have one menu dataset, we show it for all restaurants in this demo
+  const items = MENU_ITEMS;
   items.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'food-card fade-in';
-      card.innerHTML = `
+    const card = document.createElement('div');
+    card.className = 'food-card fade-in';
+    card.innerHTML = `
           <div class="food-img">${item.image}</div>
           <div class="food-info">
               <div class="food-name">${item.name}</div>
@@ -550,7 +625,7 @@ function renderMenu(category) {
                   <button class="btn-add" onclick="addToCart(${item.id})">+</button>
               </div>
           </div>`;
-      menuGrid.appendChild(card);
+    menuGrid.appendChild(card);
   });
 }
 
@@ -565,9 +640,9 @@ window.addToCart = function (itemId) {
 window.changeQty = function (itemId, delta) {
   const idx = currentCart.findIndex(i => i.id === itemId);
   if (idx > -1) {
-      currentCart[idx].qty += delta;
-      if (currentCart[idx].qty <= 0) currentCart.splice(idx, 1);
-      updateCartUI();
+    currentCart[idx].qty += delta;
+    if (currentCart[idx].qty <= 0) currentCart.splice(idx, 1);
+    updateCartUI();
   }
 };
 
@@ -578,27 +653,46 @@ function updateCartUI() {
   const t = TRANSLATIONS[currentLang];
 
   if (currentCart.length === 0) {
-      cartItemsContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${t.basket_empty}</div>`;
-      checkoutBtn.disabled = true;
-      checkoutBtn.textContent = t.browse;
+    cartItemsContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${t.basket_empty}</div>`;
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = t.browse;
   } else {
-      currentCart.forEach(item => {
-          total += item.price * item.qty;
-          const row = document.createElement('div');
-          row.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.9rem; align-items:center;';
-          row.innerHTML = `
+    currentCart.forEach(item => {
+      total += item.price * item.qty;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.9rem; align-items:center;';
+      row.innerHTML = `
               <span style="flex:1;">${item.name}</span> 
               <div class="cart-controls" style="display:flex;gap:6px;align-items:center;">
                   <button class="btn-qty" onclick="changeQty(${item.id}, -1)">−</button> 
                   <span style="min-width:20px; text-align:center; font-weight:600;">${item.qty}</span> 
                   <button class="btn-qty" onclick="changeQty(${item.id}, 1)">+</button>
               </div>`;
-          cartItemsContainer.appendChild(row);
-      });
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
+      cartItemsContainer.appendChild(row);
+    });
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
   }
   cartTotalDisplay.textContent = total.toFixed(2);
+
+  // Mobile cart button updates
+  let totalQty = currentCart.reduce((acc, curr) => acc + curr.qty, 0);
+  if (document.getElementById('floatCartItemCount')) {
+    document.getElementById('floatCartItemCount').textContent = totalQty;
+    document.getElementById('floatCartTotal').textContent = total.toFixed(2);
+
+    const floatingBtn = document.getElementById('floatingCartBtn');
+    if (totalQty > 0) {
+      floatingBtn.classList.add('visible');
+    } else {
+      floatingBtn.classList.remove('visible');
+      document.getElementById('cartPanel').classList.remove('open');
+    }
+  }
+}
+
+window.toggleCartMobile = function () {
+  document.getElementById('cartPanel').classList.toggle('open');
 }
 
 // --- CHECKOUT & DB ---
@@ -612,44 +706,44 @@ async function handleCheckout() {
   checkoutBtn.innerHTML = t.processing;
 
   const payload = {
-      user_id: currentUser.id,
-      total_amount: total,
-      payment_method: 'card',
-      delivery_lat: selectedLocation.lat,
-      delivery_lng: selectedLocation.lng,
-      delivery_address: selectedLocation.address || selectedLocation.name
+    user_id: currentUser.id,
+    total_amount: total,
+    payment_method: 'card',
+    delivery_lat: selectedLocation.lat,
+    delivery_lng: selectedLocation.lng,
+    delivery_address: selectedLocation.address || selectedLocation.name
   };
 
   try {
-      try {
-          await fetch(`${API_BASE}/orders`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-          });
-      } catch (e) { }
+    try {
+      await fetch(`${API_BASE}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) { }
 
-      const newOrder = {
-          id: Date.now(),
-          date: new Date().toISOString(),
-          items: [...currentCart],
-          ...payload,
-          status: 'pending'
-      };
+    const newOrder = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      items: [...currentCart],
+      ...payload,
+      status: 'pending'
+    };
 
-      let orders = getLocalOrders();
-      orders.push(newOrder);
-      localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
+    let orders = getLocalOrders();
+    orders.push(newOrder);
+    localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
 
-      currentCart = [];
-      updateCartUI();
-      loadLocalOrders();
-      alert(t.checkout + " Success!");
+    currentCart = [];
+    updateCartUI();
+    loadLocalOrders();
+    alert(t.checkout + " Success!");
 
   } catch (err) { console.error(err); }
   finally {
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = t.checkout;
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = t.checkout;
   }
 }
 
@@ -672,13 +766,13 @@ function renderDatabaseStats() {
   let totalSpent = 0;
 
   [...orders].reverse().forEach(order => {
-      totalSpent += order.total_amount;
-      const tr = document.createElement('tr');
-      const dateStr = new Date(order.date || Date.now()).toLocaleString();
-      const itemsStr = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(', ') : '...';
-      const locationStr = order.delivery_address || `${order.delivery_lat.toFixed(4)}, ${order.delivery_lng.toFixed(4)}`;
+    totalSpent += order.total_amount;
+    const tr = document.createElement('tr');
+    const dateStr = new Date(order.date || Date.now()).toLocaleString();
+    const itemsStr = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(', ') : '...';
+    const locationStr = order.delivery_address || `${order.delivery_lat.toFixed(4)}, ${order.delivery_lng.toFixed(4)}`;
 
-      tr.innerHTML = `
+    tr.innerHTML = `
           <td>#${order.id.toString().slice(-6)}</td>
           <td>${dateStr}</td>
           <td>${itemsStr}</td>
@@ -686,7 +780,7 @@ function renderDatabaseStats() {
           <td><span class="pill-badge" style="background:var(--primary-light);color:var(--primary);">${order.status}</span></td>
           <td><strong>$${order.total_amount.toFixed(2)}</strong></td>
       `;
-      tableBody.appendChild(tr);
+    tableBody.appendChild(tr);
   });
 
   const t = TRANSLATIONS[currentLang];
@@ -704,12 +798,12 @@ window.showSection = function (section) {
   const stats = document.getElementById('statsSection');
 
   if (section === 'stats') {
-      dash.classList.add('hidden');
-      stats.classList.remove('hidden');
-      renderDatabaseStats();
+    dash.classList.add('hidden');
+    stats.classList.remove('hidden');
+    renderDatabaseStats();
   } else {
-      stats.classList.add('hidden');
-      dash.classList.remove('hidden');
+    stats.classList.add('hidden');
+    dash.classList.remove('hidden');
   }
   document.querySelector('.navbar').style.display = 'grid';
 }
