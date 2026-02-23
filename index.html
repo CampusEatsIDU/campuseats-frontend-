@@ -201,28 +201,65 @@
                 </div>
             </div>
 
+            <!-- Categories row -->
+            <div class="category-scroll" id="categoryScroll"></div>
+
             <div class="app-grid">
-                <!-- Main Content -->
-                <div class="main-column">
-                    <div class="section-title"><span id="menuTitle">Lunch Menu</span></div>
-                    <div class="category-scroll" id="categoryScroll"></div>
+                <!-- Home View (Restaurants list) -->
+                <div class="main-column" id="mainHomeView">
+                    <!-- Special For You -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h2 class="section-title" id="specialTitle" style="margin:0;">Specially for you</h2>
+                        <button class="btn-text" id="viewAllBtn">All</button>
+                    </div>
+                    <div class="horizontal-scroll" id="specialGrid"></div>
+
+                    <!-- Restaurants Grid -->
+                    <h2 class="section-title" id="restTitle" style="margin-top:40px; margin-bottom:20px;">Restaurants
+                    </h2>
+                    <div class="restaurant-grid" id="restaurantGrid"></div>
+                </div>
+
+                <!-- Restaurant Internal Menu (Hidden initially) -->
+                <div class="main-column hidden" id="restaurantMenuView">
+                    <button class="btn-secondary" id="backToRestaurantsBtn" style="margin-bottom:24px;">&larr; <span
+                            id="backToListText">Back to categories</span></button>
+
+                    <div class="restaurant-header-card" id="currentRestHeader">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <h2 class="section-title" id="menuTitle" style="margin-top:32px; margin-bottom:20px;">Menu</h2>
                     <div class="food-grid" id="menuGrid"></div>
                 </div>
 
-                <!-- Cart Sidebar -->
-                <aside class="cart-panel">
-                    <div class="section-title" style="font-size:1.2rem;" id="basketTitle">Your Basket</div>
-                    <div id="cartItems" style="max-height:300px; overflow-y:auto; margin-bottom:20px;">
+                <!-- Cart Sidebar (Desktop) / Slide-up Overlay (Mobile) -->
+                <aside class="cart-panel" id="cartPanel">
+                    <div class="cart-header-mobile">
+                        <h2 class="section-title" style="margin:0; font-size:1.4rem;" id="basketTitle">Your Basket</h2>
+                        <button class="close-cart-mobile" onclick="toggleCartMobile()">&times;</button>
+                    </div>
+                    <div id="cartItems" class="cart-items-scroll">
                         <div id="cartEmptyText" style="text-align:center; padding:20px; color:#aaa;">Empty</div>
                     </div>
-                    <div class="cart-total"
-                        style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; border-top:1px solid #eee; padding-top:16px;">
-                        <span id="cartTotalLabel">Total</span>
-                        <span>$<span id="cartTotal">0.00</span></span>
+                    <div class="cart-footer-sticky">
+                        <div class="cart-total"
+                            style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; padding-bottom:12px; padding-top:12px; border-top:1px solid #eee;">
+                            <span id="cartTotalLabel">Total</span>
+                            <span>$<span id="cartTotal">0.00</span></span>
+                        </div>
+                        <button id="checkoutBtn" class="btn-checkout" disabled>Checkout</button>
                     </div>
-                    <button id="checkoutBtn" class="btn-checkout" disabled>Checkout</button>
                 </aside>
             </div>
+
+            <!-- Floating Cart Button (Mobile Only) -->
+            <button class="floating-cart-btn" id="floatingCartBtn" onclick="toggleCartMobile()">
+                <div style="font-size:1.2rem;">🛒 <span id="floatCartItemCount"
+                        style="font-size:0.9rem; background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:10px; margin-left:4px;">0</span>
+                </div>
+                <div style="font-weight:700; font-size:1.1rem;">$<span id="floatCartTotal">0.00</span></div>
+            </button>
         </section>
 
         <!-- Orders Database / Stats Section -->
