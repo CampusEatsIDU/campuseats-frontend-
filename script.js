@@ -200,7 +200,7 @@ function safePlaceholder(id, text) {
 
 // --- APP LOGIC ---
 
-const API_BASE = "https://juratbek.alwaysdata.net/api";
+const API_BASE = "https://vercelbackenddeploy-teal.vercel.app/api";
 const MENU_ITEMS = [
   { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
   { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: '🧀', desc: 'Double cheese, double joy.' },
