@@ -158,7 +158,6 @@ function applyTranslations() {
   safeText('roleRest', t.role_rest);
   safeText('loginBtnText', t.login_btn);
   safeText('signupBtnText', t.create_acc);
-  safeText('demoHint', t.demo_text);
 
   safePlaceholder('loginPhone', t.ph_phone);
   safePlaceholder('loginPass', t.ph_pass);
@@ -273,14 +272,45 @@ function handleLoginSuccess() {
 }
 
 window.switchRole = function (role) {
-  document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
-  if (role === 'user') {
-    document.getElementById('roleUser').classList.add('active');
-    document.getElementById('restFields').classList.add('hidden');
-  } else {
-    document.getElementById('roleRest').classList.add('active');
-    document.getElementById('restFields').classList.remove('hidden');
-  }
+  const heroWrapper = document.getElementById('heroTextWrapper');
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSub = document.getElementById('heroSub');
+
+  // Fade out
+  if (heroWrapper) heroWrapper.style.opacity = '0';
+
+  setTimeout(() => {
+    document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
+
+    if (role === 'user') {
+      document.getElementById('roleUser').classList.add('active');
+      document.getElementById('restFields').classList.add('hidden');
+
+      if (heroTitle && heroSub) {
+        heroTitle.textContent = "Welcome to CampusEats";
+        heroSub.textContent = "Order food easily. Get cashback as a verified student.";
+      }
+
+      // Show signup tab 
+      document.getElementById('tabSignup').style.display = 'block';
+
+    } else {
+      document.getElementById('roleRest').classList.add('active');
+      document.getElementById('restFields').classList.remove('hidden');
+
+      if (heroTitle && heroSub) {
+        heroTitle.textContent = "CampusEats for Restaurant Partners";
+        heroSub.textContent = "Manage your menu. Track orders. Grow your business.";
+      }
+
+      // Hide signup tab and force login mode
+      document.getElementById('tabSignup').style.display = 'none';
+      switchAuthMode('login');
+    }
+
+    // Fade in
+    if (heroWrapper) heroWrapper.style.opacity = '1';
+  }, 300);
 };
 
 window.switchAuthMode = function (mode) {

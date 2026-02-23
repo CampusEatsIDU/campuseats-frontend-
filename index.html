@@ -130,9 +130,11 @@
     <div id="authPage" class="auth-container fade-in">
         <!-- Decoration Left -->
         <div class="auth-visual">
-            <h1 id="heroTitle">Back to Campus Sale!</h1>
-            <p id="heroSub">Get 20% cashback on all orders this week.</p>
-            <div style="margin-top:40px; font-size:4rem;">🍔 🍕 🍣</div>
+            <div id="heroTextWrapper" style="transition: opacity 0.3s ease; text-align: center;">
+                <h1 id="heroTitle">Welcome to CampusEats</h1>
+                <p id="heroSub">Order food easily. Get cashback as a verified student.</p>
+                <div style="margin-top:40px; font-size:4rem;">🍔 🍕 🍣</div>
+            </div>
         </div>
 
         <!-- Forms Right -->
@@ -163,9 +165,11 @@
                 <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
 
                 <button type="submit" id="loginBtnText" class="btn-checkout">Log In</button>
-                <p id="demoHint" style="color:#888; text-align:center; font-size:0.85rem; margin-top:16px;">Demo: Use
-                    any phone/pass
-                </p>
+                <div style="text-align:center; margin-top:16px;">
+                    <a href="https://t.me/CampusEats" target="_blank"
+                        style="color:var(--primary); text-decoration:none; font-size:0.9rem; font-weight:500;">Forgot
+                        Password?</a>
+                </div>
             </form>
 
             <!-- SIGNUP FORM (Hidden) -->
