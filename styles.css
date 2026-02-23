@@ -1020,7 +1020,22 @@ select:focus {
     }
 
     .app-container {
-        padding: 16px;
+        padding: 20px 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .navbar {
+        padding: 10px 16px;
+    }
+
+    .hero-banner {
+        padding: 24px 16px;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
     }
 }
 
