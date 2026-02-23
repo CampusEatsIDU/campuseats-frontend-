@@ -275,6 +275,8 @@ window.switchRole = function (role) {
   const heroWrapper = document.getElementById('heroTextWrapper');
   const heroTitle = document.getElementById('heroTitle');
   const heroSub = document.getElementById('heroSub');
+  const lblLoginPhone = document.getElementById('lblLoginPhone');
+  const loginPhoneInput = document.getElementById('loginPhone');
 
   // Fade out
   if (heroWrapper) heroWrapper.style.opacity = '0';
@@ -285,6 +287,12 @@ window.switchRole = function (role) {
     if (role === 'user') {
       document.getElementById('roleUser').classList.add('active');
       document.getElementById('restFields').classList.add('hidden');
+
+      if (lblLoginPhone) lblLoginPhone.textContent = "Phone Number";
+      if (loginPhoneInput) {
+        loginPhoneInput.type = "tel";
+        loginPhoneInput.placeholder = "+998 90 000 00 00";
+      }
 
       if (heroTitle && heroSub) {
         heroTitle.textContent = "Welcome to CampusEats";
@@ -297,6 +305,12 @@ window.switchRole = function (role) {
     } else {
       document.getElementById('roleRest').classList.add('active');
       document.getElementById('restFields').classList.remove('hidden');
+
+      if (lblLoginPhone) lblLoginPhone.textContent = "Login ID";
+      if (loginPhoneInput) {
+        loginPhoneInput.type = "text";
+        loginPhoneInput.placeholder = "restaurant_admin";
+      }
 
       if (heroTitle && heroSub) {
         heroTitle.textContent = "CampusEats for Restaurant Partners";
@@ -376,9 +390,10 @@ signupForm.addEventListener('submit', async (e) => {
 
   const phone = document.getElementById('regPhone').value.trim();
   const password = document.getElementById('regPass').value.trim();
+  const fullName = document.getElementById('regName').value.trim();
 
-  if (!phone || !password) {
-    alert("Phone and password required");
+  if (!phone || !password || !fullName) {
+    alert("Phone, password, and name required");
     return;
   }
 
@@ -388,7 +403,7 @@ signupForm.addEventListener('submit', async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ phone, password })
+      body: JSON.stringify({ phone, password, fullName })
     });
 
     const data = await res.json();

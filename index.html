@@ -130,10 +130,12 @@
     <div id="authPage" class="auth-container fade-in">
         <!-- Decoration Left -->
         <div class="auth-visual">
-            <div id="heroTextWrapper" style="transition: opacity 0.3s ease; text-align: center;">
-                <h1 id="heroTitle">Welcome to CampusEats</h1>
-                <p id="heroSub">Order food easily. Get cashback as a verified student.</p>
-                <div style="margin-top:40px; font-size:4rem;">🍔 🍕 🍣</div>
+            <div id="heroTextWrapper"
+                style="transition: opacity 0.3s ease; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <h1 id="heroTitle" style="text-align: center;">Welcome to CampusEats</h1>
+                <p id="heroSub" style="text-align: center; margin: 0 auto;">Order food easily. Get cashback as a
+                    verified student.</p>
+                <div style="margin-top:40px; font-size:4rem; text-align: center;">🍔 🍕 🍣</div>
             </div>
         </div>
 
@@ -158,8 +160,9 @@
 
             <!-- LOGIN FORM -->
             <form id="loginForm">
-                <label style="font-weight:500; display:block; margin-bottom:8px;">Phone Number</label>
-                <input type="tel" id="loginPhone" class="settings-input" placeholder="+1 555 000 0000" required>
+                <label id="lblLoginPhone" style="font-weight:500; display:block; margin-bottom:8px;">Phone
+                    Number</label>
+                <input type="text" id="loginPhone" class="settings-input" placeholder="+998 90 000 00 00" required>
 
                 <label style="font-weight:500; display:block; margin-bottom:8px;">Password</label>
                 <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
