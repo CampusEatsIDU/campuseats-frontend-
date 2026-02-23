@@ -1,0 +1,33 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="geoip2" />
+          <option value="ofxparse" />
+          <option value="passlib" />
+          <option value="polib" />
+          <option value="pyserial" />
+          <option value="pytz" />
+          <option value="pyusb" />
+          <option value="vobject" />
+          <option value="xlwt" />
+          <option value="fastapi" />
+          <option value="python-multipart" />
+          <option value="ujson" />
+          <option value="a2wsgi" />
+          <option value="parse-accept-language" />
+          <option value="packaging" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="list.*" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
