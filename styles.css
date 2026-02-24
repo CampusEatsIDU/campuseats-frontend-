@@ -38,6 +38,19 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     width: 100%;
+    animation: smoothLoad 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes smoothLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 html {

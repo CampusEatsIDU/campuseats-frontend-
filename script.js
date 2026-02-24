@@ -150,8 +150,11 @@ function setLanguage(lang) {
 function applyTranslations() {
   const t = TRANSLATIONS[currentLang];
 
-  safeText('heroTitle', t.welcome_hero);
-  safeText('heroSub', t.welcome_sub);
+  // We no longer overwrite the hero title randomly, because switchRole controls it.
+  // We'll update only if it's the homeHeroTitle (inside the app).
+  safeText('homeHeroTitle', t.welcome_hero);
+  safeText('homeHeroSub', t.welcome_sub);
+
   safeText('tabLogin', t.login_btn);
   safeText('tabSignup', t.signup_btn);
   safeText('roleUser', t.role_user);
@@ -211,12 +214,13 @@ const MENU_ITEMS = [
   { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: '🥤', desc: 'Cold brew with oat milk.' },
   { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: '🍵', desc: 'Authentic Japanese sencha.' },
 ];
-const CATEGORIES = [
-  { id: 'all', name: 'All' },
-  { id: 'burgers', name: 'Burgers' },
-  { id: 'pizza', name: 'Pizza' },
-  { id: 'asian', name: 'Asian' },
-  { id: 'drinks', name: 'Drinks' }
+
+const RESTAURANTS = [
+  { id: 1, name: "Burger King", desc: "Fast Food • Burgers", rating: 4.8, time: "15-25 min", image: "🍔", special: true },
+  { id: 2, name: "Pizza Hut", desc: "Italian • Pizza", rating: 4.5, time: "25-40 min", image: "🍕", special: true },
+  { id: 3, name: "KFC", desc: "Fast Food • Chicken", rating: 4.6, time: "20-30 min", image: "🍗", special: false },
+  { id: 4, name: "Sushi Shop", desc: "Asian • Sushi", rating: 4.9, time: "35-50 min", image: "🍣", special: false },
+  { id: 5, name: "Tashkent Plov", desc: "Uzbek • National", rating: 4.7, time: "30-45 min", image: "🍲", special: false }
 ];
 
 let currentUser = null;
@@ -238,9 +242,24 @@ const cartItemsContainer = document.getElementById('cartItems');
 const cartTotalDisplay = document.getElementById('cartTotal');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const menuGrid = document.getElementById('menuGrid');
+const restaurantGrid = document.getElementById('restaurantGrid');
+const specialGrid = document.getElementById('specialGrid');
+const mainHomeView = document.getElementById('mainHomeView');
+const restaurantMenuView = document.getElementById('restaurantMenuView');
+const backToRestaurantsBtn = document.getElementById('backToRestaurantsBtn');
+const currentRestHeader = document.getElementById('currentRestHeader');
 const categoryScroll = document.getElementById('categoryScroll');
 const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
+
+if (backToRestaurantsBtn) {
+  backToRestaurantsBtn.addEventListener('click', () => {
+    restaurantMenuView.classList.add('hidden');
+    mainHomeView.classList.remove('hidden');
+    // Also scroll up
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
 
 function init() {
   const savedLang = localStorage.getItem('campuseats_lang');
@@ -266,7 +285,7 @@ function handleLoginSuccess() {
   checkVerification();
   updateUserDisplay();
   renderCategories();
-  renderMenu('all');
+  renderRestaurants();
   loadLocalOrders();
   updateCartUI();
 }
@@ -564,22 +583,66 @@ function updateUserDisplay() {
 }
 
 // --- CART & MENU ---
-function renderCategories() {
-  categoryScroll.innerHTML = '';
-  CATEGORIES.forEach(cat => {
-    const btn = document.createElement('div');
-    btn.className = `cat-pill ${cat.id === 'all' ? 'active' : ''}`;
-    btn.textContent = cat.name;
-    btn.onclick = () => {
-      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderMenu(cat.id);
-    };
-    categoryScroll.appendChild(btn);
+function renderRestaurants() {
+  if (!restaurantGrid || !specialGrid) return;
+  restaurantGrid.innerHTML = '';
+  specialGrid.innerHTML = '';
+
+  RESTAURANTS.forEach(rest => {
+    const cardHTML = `
+      <div class="restaurant-card fade-in" style="border:1px solid var(--border-color); border-radius:16px; padding:16px; cursor:pointer; background:white; transition:all 0.3s ease; box-shadow:0 4px 10px rgba(0,0,0,0.05);" onclick="openRestaurant(${rest.id})">
+        <div style="font-size:3rem; text-align:center; margin-bottom:12px;">${rest.image}</div>
+        <h3 style="margin-bottom:4px; font-size:1.1rem;">${rest.name}</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">${rest.desc}</p>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
+          <span style="color:#f59e0b;">⭐ ${rest.rating}</span>
+          <span style="color:var(--text-main);">${rest.time}</span>
+        </div>
+      </div>
+    `;
+
+    restaurantGrid.innerHTML += cardHTML;
+
+    // Also add to Special For You if true
+    if (rest.special) {
+      const specialCard = `
+        <div class="restaurant-card fade-in" style="min-width:200px; border:1px solid var(--border-color); border-radius:16px; padding:16px; cursor:pointer; background:white; margin-right:16px;" onclick="openRestaurant(${rest.id})">
+          <div style="font-size:2.5rem; text-align:center; margin-bottom:8px;">${rest.image}</div>
+          <h3 style="margin-bottom:4px; font-size:1rem;">${rest.name}</h3>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">${rest.desc}</p>
+          <div style="font-size:0.8rem; font-weight:600; color:var(--primary);">Get 20% Cashback</div>
+        </div>
+      `;
+      specialGrid.innerHTML += specialCard;
+    }
   });
 }
 
-function renderMenu(category) {
+window.openRestaurant = function (id) {
+  const rest = RESTAURANTS.find(r => r.id === id);
+  if (!rest) return;
+
+  mainHomeView.classList.add('hidden');
+  restaurantMenuView.classList.remove('hidden');
+
+  if (currentRestHeader) {
+    currentRestHeader.innerHTML = `
+      <div style="display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, var(--bg-page), white); border-radius:20px; border:1px solid var(--border-color);">
+        <div style="font-size:4rem;">${rest.image}</div>
+        <div>
+          <h1 style="margin:0 0 8px 0; font-size:2rem;">${rest.name}</h1>
+          <p style="margin:0; color:var(--text-muted); font-weight:500;">⭐ ${rest.rating} • ${rest.desc} • ${rest.time}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // Pre-filter menu based on restaurant (for mock purpose just render all but change title)
+  renderMenu('all', rest.name);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+function renderMenu(category, restName = "") {
   menuGrid.innerHTML = '';
   const items = category === 'all' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === category);
   items.forEach(item => {
