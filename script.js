@@ -1269,14 +1269,14 @@ function renderDatabaseStats() {
 
   // Stats
   let totalSpent = 0;
-  orders.forEach(o => totalSpent += o.total_amount);
+  orders.forEach(o => totalSpent += (o.total_price || 0));
 
   const statSpent = document.getElementById('statTotalSpent');
   const statOrders = document.getElementById('statTotalOrders');
   const statLast = document.getElementById('statLastOrder');
   const dbCount = document.getElementById('dbOrderCount');
 
-  if (statSpent) statSpent.textContent = '$' + totalSpent.toFixed(2);
+  if (statSpent) statSpent.textContent = '$' + (totalSpent || 0).toFixed(2);
   if (statOrders) statOrders.textContent = orders.length;
   if (statLast) statLast.textContent = orders.length > 0
     ? new Date(orders[orders.length - 1].date).toLocaleDateString() : '—';
@@ -1315,8 +1315,8 @@ function renderDatabaseStats() {
         <div class="oc-date">${dateStr}</div>
       </div>
       <div class="oc-right">
-        <div class="oc-amount">$${order.total_amount.toFixed(2)}</div>
-        <div class="oc-status ${statusClass}">${order.status}</div>
+        <div class="oc-amount">$${(order.total_price || 0).toFixed(2)}</div>
+        <div class="oc-status ${statusClass}">${order.status || 'pending'}</div>
       </div>`;
     listContainer.appendChild(card);
   });

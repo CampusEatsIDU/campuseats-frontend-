@@ -18,6 +18,7 @@ const TRANSLATIONS = {
         total_users: "Total Users", pending_identities: "Pending Verifications",
         active_partners: "Active Partners", platform_revenue: "Platform Revenue",
         recent_activity: "Recent Activity", search: "Search...",
+        refresh: "Refresh",
         msg_auth_failed: "Auth verify failed", msg_forbidden: "Forbidden: You are not a superadmin."
     },
     ru: {
@@ -27,6 +28,7 @@ const TRANSLATIONS = {
         total_users: "Всего пользователей", pending_identities: "Ожидают проверки",
         active_partners: "Активные партнеры", platform_revenue: "Доход платформы",
         recent_activity: "Последние действия", search: "Поиск...",
+        refresh: "Обновить",
         msg_auth_failed: "Ошибка авторизации", msg_forbidden: "Доступ запрещен: Вы не суперадмин."
     },
     uz: {
@@ -36,6 +38,7 @@ const TRANSLATIONS = {
         total_users: "Jami foydalanuvchilar", pending_identities: "Kutilayotgan tasdiqlar",
         active_partners: "Faol hamkorlar", platform_revenue: "Platforma tushumi",
         recent_activity: "Oxirgi harakatlar", search: "Qidirish...",
+        refresh: "Yangilash",
         msg_auth_failed: "Avtorizatsiya xatosi", msg_forbidden: "Taqiqlangan: Siz superadmin emassiz."
     }
 };
@@ -46,11 +49,7 @@ function applyTranslations() {
     const t = TRANSLATIONS[currentLang];
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
-        if (t[key]) {
-            const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
-            if (textNode) textNode.textContent = " " + t[key];
-            else el.textContent = t[key];
-        }
+        if (t[key]) el.textContent = t[key];
     });
     document.querySelectorAll('[data-i18n-label]').forEach(el => {
         const key = el.dataset.i18nLabel;
