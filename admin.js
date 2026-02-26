@@ -19,6 +19,13 @@ const TRANSLATIONS = {
         active_partners: "Active Partners", platform_revenue: "Platform Revenue",
         recent_activity: "Recent Activity", search: "Search...",
         refresh: "Refresh",
+        pending_verifications: "Pending Verifications",
+        actions: "Actions", admin: "Admin", time: "Time",
+        user: "User", submitted: "Submitted", action: "Action",
+        user_mgmt: "User Management", manage_users: "Manage platform users",
+        search_users: "Search by phone or name...", all_roles: "All Roles",
+        all_status: "All Status", active: "Active", blocked: "Blocked",
+        id: "ID", role: "Role", status: "Status", verified: "Verified", registered: "Registered",
         msg_auth_failed: "Auth verify failed", msg_forbidden: "Forbidden: You are not a superadmin."
     },
     ru: {
@@ -29,6 +36,13 @@ const TRANSLATIONS = {
         active_partners: "Активные партнеры", platform_revenue: "Доход платформы",
         recent_activity: "Последние действия", search: "Поиск...",
         refresh: "Обновить",
+        pending_verifications: "Ожидают проверки",
+        actions: "Действия", admin: "Админ", time: "Время",
+        user: "Пользователь", submitted: "Отправлено", action: "Действие",
+        user_mgmt: "Управление пользователями", manage_users: "Управление всеми пользователями",
+        search_users: "Поиск по телефону или имени...", all_roles: "Все роли",
+        all_status: "Все статусы", active: "Активен", blocked: "Заблокирован",
+        id: "ID", role: "Роль", status: "Статус", verified: "Верификация", registered: "Регистрация",
         msg_auth_failed: "Ошибка авторизации", msg_forbidden: "Доступ запрещен: Вы не суперадмин."
     },
     uz: {
@@ -39,6 +53,13 @@ const TRANSLATIONS = {
         active_partners: "Faol hamkorlar", platform_revenue: "Platforma tushumi",
         recent_activity: "Oxirgi harakatlar", search: "Qidirish...",
         refresh: "Yangilash",
+        pending_verifications: "Tasdiq kutilmoqda",
+        actions: "Harakatlar", admin: "Admin", time: "Vaqt",
+        user: "Foydalanuvchi", submitted: "Yuborilgan", action: "Harakat",
+        user_mgmt: "Foydalanuvchilar boshqaruvi", manage_users: "Tizim foydalanuvchilarini boshqarish",
+        search_users: "Telefon yoki ism bo'yicha...", all_roles: "Barcha rollar",
+        all_status: "Barcha holatlar", active: "Faol", blocked: "Bloklangan",
+        id: "ID", role: "Rol", status: "Holat", verified: "Tasdiqlangan", registered: "Ro'yxatdan o'tgan",
         msg_auth_failed: "Avtorizatsiya xatosi", msg_forbidden: "Taqiqlangan: Siz superadmin emassiz."
     }
 };

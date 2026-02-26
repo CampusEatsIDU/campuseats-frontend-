@@ -449,11 +449,25 @@
             font-weight: 800;
             line-height: 1;
             margin-bottom: 6px;
+            letter-spacing: -1px;
         }
 
         .stat-card .stat-change {
             font-size: 12px;
             color: var(--text-muted);
+            opacity: 0.8;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at top right, var(--card-accent), transparent 70%);
+            opacity: 0.1;
+            pointer-events: none;
         }
 
         /* Card accent colors */
@@ -1347,7 +1361,7 @@
                 </div>
             </div>
             <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Sign Out
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Log Out</span>
             </button>
         </div>
     </aside>
@@ -1376,15 +1390,15 @@
                     <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
                         <h3 style="font-size: 15px; font-weight: 700;">
                             <i class="fas fa-clock" style="color: var(--accent); margin-right: 8px;"></i>
-                            Recent Activity
+                            <span data-i18n="recent_activity">Recent Activity</span>
                         </h3>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>Action</th>
-                                <th>Admin</th>
-                                <th>Time</th>
+                                <th data-i18n="action">Action</th>
+                                <th data-i18n="admin">Admin</th>
+                                <th data-i18n="time">Time</th>
                             </tr>
                         </thead>
                         <tbody id="recentActivity"></tbody>
@@ -1395,15 +1409,15 @@
                     <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
                         <h3 style="font-size: 15px; font-weight: 700;">
                             <i class="fas fa-user-clock" style="color: var(--warning); margin-right: 8px;"></i>
-                            Pending Verifications
+                            <span data-i18n="pending_verifications">Pending Verifications</span>
                         </h3>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>User</th>
-                                <th>Submitted</th>
-                                <th>Action</th>
+                                <th data-i18n="user">User</th>
+                                <th data-i18n="submitted">Submitted</th>
+                                <th data-i18n="action">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dashPendingList"></tbody>
@@ -1416,8 +1430,8 @@
         <section id="users" class="tab-section">
             <div class="page-header">
                 <div>
-                    <h1><i class="fas fa-users"></i> User Management</h1>
-                    <p class="page-subtitle">Manage all platform users</p>
+                    <h1><i class="fas fa-users"></i> <span data-i18n="user_mgmt">User Management</span></h1>
+                    <p class="page-subtitle" data-i18n="manage_users">Manage all platform users</p>
                 </div>
             </div>
 
@@ -1425,18 +1439,18 @@
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="userSearch" placeholder="Search by phone or name..."
-                        oninput="debounceLoadUsers()">
+                        data-i18n-ph="search_users" oninput="debounceLoadUsers()">
                 </div>
                 <select class="filter-select" id="userRoleFilter" onchange="loadUsers()">
-                    <option value="">All Roles</option>
+                    <option value="" data-i18n="all_roles">All Roles</option>
                     <option value="user">User</option>
                     <option value="restaurant">Restaurant</option>
                     <option value="superadmin">SuperAdmin</option>
                 </select>
                 <select class="filter-select" id="userStatusFilter" onchange="loadUsers()">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="blocked">Blocked</option>
+                    <option value="" data-i18n="all_status">All Status</option>
+                    <option value="active" data-i18n="active">Active</option>
+                    <option value="blocked" data-i18n="blocked">Blocked</option>
                     <option value="deleted">Deleted</option>
                 </select>
             </div>
@@ -1445,13 +1459,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Verified</th>
-                            <th>Registered</th>
-                            <th>Actions</th>
+                            <th data-i18n="id">ID</th>
+                            <th data-i18n="user">User</th>
+                            <th data-i18n="role">Role</th>
+                            <th data-i18n="status">Status</th>
+                            <th data-i18n="verified">Verified</th>
+                            <th data-i18n="registered">Registered</th>
+                            <th data-i18n="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody"></tbody>
