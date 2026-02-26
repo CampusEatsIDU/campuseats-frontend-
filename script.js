@@ -1269,7 +1269,10 @@ function renderDatabaseStats() {
 
   // Stats
   let totalSpent = 0;
-  orders.forEach(o => totalSpent += (o.total_price || 0));
+  orders.forEach(o => {
+    if (o && typeof o.total_price === 'number') totalSpent += o.total_price;
+    else if (o && typeof o.total_price === 'string') totalSpent += parseFloat(o.total_price) || 0;
+  });
 
   const statSpent = document.getElementById('statTotalSpent');
   const statOrders = document.getElementById('statTotalOrders');
@@ -1300,22 +1303,28 @@ function renderDatabaseStats() {
   const EMOJIS = ['🍔', '🍕', '🍣', '🍜', '🥗', '🌮', '🍗', '🥤'];
 
   [...orders].reverse().forEach((order, idx) => {
+    if (!order) return;
     const dateStr = new Date(order.date || Date.now()).toLocaleString();
     const itemsStr = order.items ? order.items.map(i => `${i.qty}× ${i.name}`).join(', ') : '—';
     const statusClass = order.status === 'pending' ? 'pending'
       : order.status === 'delivering' ? 'delivering' : '';
     const emoji = EMOJIS[idx % EMOJIS.length];
+
+    // Safety check for ID and price
+    const orderId = order.id ? order.id.toString().slice(-8) : '00000000';
+    const price = typeof order.total_price === 'number' ? order.total_price : parseFloat(order.total_price) || 0;
+
     const card = document.createElement('div');
     card.className = 'order-card fade-in';
     card.innerHTML = `
       <div class="oc-icon">${emoji}</div>
       <div class="oc-info">
-        <div class="oc-id">#${order.id.toString().slice(-8)}</div>
+        <div class="oc-id">#${orderId}</div>
         <div class="oc-items">${itemsStr}</div>
         <div class="oc-date">${dateStr}</div>
       </div>
       <div class="oc-right">
-        <div class="oc-amount">$${(order.total_price || 0).toFixed(2)}</div>
+        <div class="oc-amount">$${price.toFixed(2)}</div>
         <div class="oc-status ${statusClass}">${order.status || 'pending'}</div>
       </div>`;
     listContainer.appendChild(card);
