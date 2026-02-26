@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadUsers();
         loadRestaurants();
         loadCouriers();
+        loadCourierDashboard();
         loadVerifications();
         loadOrders();
         loadAuditLogs();
@@ -885,6 +886,162 @@ async function resetCourierPassword(id) {
     } catch (err) {
         showToast(err.message, "error");
     }
+}
+
+// ═══════════════════════════════════════════
+// COURIERS EXTENDED (Stats, Cash, Incidents)
+// ═══════════════════════════════════════════
+async function loadCourierDashboard() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-dashboard`, { headers: getAuthHeaders() });
+        const d = await res.json();
+
+        document.getElementById("courierStatsGrid").innerHTML = `
+            <div class="stat-card blue">
+                <div class="stat-header">
+                    <span class="stat-label">Online Couriers</span>
+                    <div class="stat-icon"><i class="fas fa-motorcycle"></i></div>
+                </div>
+                <div class="stat-value">${d.onlineCouriers || 0}</div>
+                <div class="stat-change">Out of ${d.totalCouriers || 0} total</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <span class="stat-label">Active Deliveries</span>
+                    <div class="stat-icon"><i class="fas fa-box-open"></i></div>
+                </div>
+                <div class="stat-value">${d.activeDeliveries || 0}</div>
+                <div class="stat-change">Currently en route</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-header">
+                    <span class="stat-label">Total Cash On Hand</span>
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                </div>
+                <div class="stat-value">${Number(d.totalCashOnHand || 0).toLocaleString()}</div>
+                <div class="stat-change">Sum of all couriers</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-header">
+                    <span class="stat-label">Critical Issues</span>
+                    <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                </div>
+                <div class="stat-value">${(d.slaBreaches || 0) + (d.openIncidents || 0)}</div>
+                <div class="stat-change">${d.openIncidents} SOS / ${d.slaBreaches} Late</div>
+            </div>
+        `;
+
+        loadCashSubmissions();
+        loadCourierIncidents();
+        loadSlaBreaches();
+    } catch (err) {
+        console.error("Courier dashboard error:", err);
+    }
+}
+
+async function loadCashSubmissions() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/cash-submissions?status=pending`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("cashSubmissionsTableBody");
+
+        if (!data.submissions || data.submissions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-check-circle" style="color:var(--success)"></i><p>No pending cash submissions</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.submissions.map(sub => `
+            <tr>
+                <td>
+                    <div style="font-weight:600;">${escapeHtml(sub.courier_name || "—")}</div>
+                    <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(sub.courier_phone)}</div>
+                </td>
+                <td style="font-weight:600; color:var(--success);">${Number(sub.amount).toLocaleString()} UZS</td>
+                <td style="color:var(--text-muted); font-size:12px;">${timeAgo(sub.created_at)}</td>
+                <td>
+                    <button class="btn btn-sm btn-success" onclick="confirmCash(${sub.id})" title="Confirm"><i class="fas fa-check"></i> Accept</button>
+                </td>
+            </tr>
+        `).join("");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function confirmCash(id) {
+    if (!confirm("Are you sure you have received this cash? This will reset the courier's cash balance.")) return;
+    try {
+        const res = await fetch(`${API_BASE}/admin/cash-submissions/${id}/confirm`, {
+            method: "POST", headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error("Failed to confirm");
+        showToast("Cash submission confirmed", "success");
+        loadCourierDashboard();
+        loadCouriers(couriersPage);
+    } catch (err) { showToast(err.message, "error"); }
+}
+
+async function loadCourierIncidents() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-incidents?status=open&limit=10`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("courierIncidentsTableBody");
+
+        if (!data.incidents || data.incidents.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-shield-alt" style="color:var(--success)"></i><p>All clear (No SOS)</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.incidents.map(inc => `
+            <tr style="background: rgba(239, 68, 68, 0.05);">
+                <td>
+                    <div style="font-weight:600;">${escapeHtml(inc.courier_name || "—")}</div>
+                    <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(inc.courier_phone)}</div>
+                </td>
+                <td><a href="#" onclick="viewOrderDetail(${inc.order_id})" style="color:var(--accent);">#${inc.order_id}</a></td>
+                <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(inc.issue_note || "SOS")}</td>
+                <td>
+                    <button class="btn btn-sm btn-default" onclick="resolveIncident(${inc.id})" title="Resolve"><i class="fas fa-check"></i> Resolve</button>
+                </td>
+            </tr>
+        `).join("");
+    } catch (err) { console.error(err); }
+}
+
+async function resolveIncident(id) {
+    if (!confirm("Mark this incident as resolved?")) return;
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-incidents/${id}/resolve`, {
+            method: "POST", headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error("Failed");
+        showToast("Incident resolved", "success");
+        loadCourierDashboard();
+    } catch (err) { showToast(err.message, "error"); }
+}
+
+async function loadSlaBreaches() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-sla-breaches?limit=10`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("slaBreachesTableBody");
+
+        if (!data.breaches || data.breaches.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-clock" style="color:var(--success)"></i><p>No late orders</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.breaches.map(b => `
+            <tr>
+                <td><a href="#" onclick="viewOrderDetail(${b.id})" style="color:var(--accent);">#${b.id}</a></td>
+                 <td>
+                    <div style="font-weight:600;">${escapeHtml(b.courier_name || "Unassigned")}</div>
+                </td>
+                <td style="color:var(--danger); font-size:12px;">${timeAgo(b.sla_delivery_deadline)}</td>
+                <td><span class="badge ${b.delivery_status}">${b.delivery_status.toUpperCase()}</span></td>
+            </tr>
+        `).join("");
+    } catch (err) { console.error(err); }
 }
 
 // ═══════════════════════════════════════════

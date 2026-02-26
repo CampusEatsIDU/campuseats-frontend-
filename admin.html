@@ -1486,7 +1486,12 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px;">
+            <!-- Courier Stats Dashboard -->
+            <div class="stats-grid" id="courierStatsGrid" style="margin-bottom: 24px;">
+                <!-- Filled by JS -->
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px;">
                 <!-- Create Form -->
                 <div class="form-card">
                     <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 20px;">
@@ -1507,32 +1512,96 @@
                     <div class="result-box" id="courierResult"></div>
                 </div>
 
-                <!-- Couriers List -->
+                <!-- Pending Cash Submissions -->
                 <div class="table-container">
-                    <div
-                        style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
                         <h3 style="font-size: 15px; font-weight: 700;">
-                            <i class="fas fa-users" style="color: var(--info); margin-right: 8px;"></i>
-                            All Couriers
+                            <i class="fas fa-money-bill-wave" style="color: var(--success); margin-right: 8px;"></i>
+                            Pending Cash Submissions
                         </h3>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Rating</th>
-                                <th>Orders</th>
-                                <th>Balance (Cash)</th>
-                                <th>Actions</th>
+                                <th>Courier</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="couriersTableBody"></tbody>
+                        <tbody id="cashSubmissionsTableBody"></tbody>
                     </table>
-                    <div class="pagination" id="couriersPagination"></div>
                 </div>
+            </div>
+
+            <!-- Active Incidents & SLA -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="table-container">
+                    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+                        <h3 style="font-size: 15px; font-weight: 700;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger); margin-right: 8px;"></i>
+                            Open SOS Incidents
+                        </h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Courier</th>
+                                <th>Order</th>
+                                <th>Issue Note</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courierIncidentsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+                        <h3 style="font-size: 15px; font-weight: 700;">
+                            <i class="fas fa-clock" style="color: var(--warning); margin-right: 8px;"></i>
+                            SLA Breaches (Late Orders)
+                        </h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Courier</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slaBreachesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Couriers List -->
+            <div class="table-container">
+                <div
+                    style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 15px; font-weight: 700;">
+                        <i class="fas fa-users" style="color: var(--info); margin-right: 8px;"></i>
+                        All Couriers
+                    </h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                            <th>Orders</th>
+                            <th>Balance (Cash)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="couriersTableBody"></tbody>
+                </table>
+                <div class="pagination" id="couriersPagination"></div>
             </div>
         </section>
 
