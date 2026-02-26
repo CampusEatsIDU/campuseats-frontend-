@@ -468,6 +468,10 @@ function init() {
       window.location.href = "admin.html";
       return;
     }
+    if (currentUser.role === "restaurant") {
+      window.location.href = "restaurant.html";
+      return;
+    }
     handleLoginSuccess();
   }
 }
@@ -619,6 +623,11 @@ loginForm.addEventListener('submit', async (e) => {
       return;
     }
 
+    if (currentUser.role === "restaurant") {
+      window.location.href = "restaurant.html";
+      return;
+    }
+
     handleLoginSuccess();
 
   } catch (err) {
@@ -660,6 +669,11 @@ signupForm.addEventListener('submit', async (e) => {
 
     localStorage.setItem("campuseats_user", JSON.stringify(currentUser));
     localStorage.setItem("campuseats_token", data.token);
+
+    if (currentUser.role === "restaurant") {
+      window.location.href = "restaurant.html";
+      return;
+    }
 
     handleLoginSuccess();
 
