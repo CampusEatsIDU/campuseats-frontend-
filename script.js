@@ -509,6 +509,14 @@ async function fetchRestaurants() {
   }
 }
 
+function getImgSrc(url) {
+  if (!url) return "🍽️"; // Fallback emoji
+  if (url.startsWith('data:') || url.startsWith('http')) return url;
+  // If it's a path like /uploads/xxx, append backend domain
+  const base = "https://campuseats-backend.vercel.app";
+  return url.startsWith('/') ? base + url : base + '/' + url;
+}
+
 async function fetchMenu(restaurantId, isApi = false) {
   try {
     if (!isApi) {
@@ -1034,11 +1042,12 @@ function renderRestaurants() {
   RESTAURANTS.forEach(rest => {
     // Determine image src
     let imgHTML = "";
-    if (rest.image.length < 5) {
-      imgHTML = `<div style="font-size:3rem; text-align:center; margin-bottom:12px;">${rest.image}</div>`;
+    const finalSrc = getImgSrc(rest.image);
+
+    if (finalSrc.length < 5) {
+      imgHTML = `<div style="font-size:3rem; text-align:center; margin-bottom:12px;">${finalSrc}</div>`;
     } else {
-      const fullUrl = rest.image.startsWith('http') ? rest.image : `https://campuseats-backend.vercel.app${rest.image}`;
-      imgHTML = `<div style="margin-bottom:12px; height:80px; width:100%; border-radius:12px; overflow:hidden;"><img src="${fullUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+      imgHTML = `<div style="margin-bottom:12px; height:80px; width:100%; border-radius:12px; overflow:hidden;"><img src="${finalSrc}" style="width:100%; height:100%; object-fit:cover;"></div>`;
     }
 
     const cardHTML = `
@@ -1055,10 +1064,11 @@ function renderRestaurants() {
     rGrid.innerHTML += cardHTML;
 
     if (rest.special && rest.isOpen) {
+      const finalSrc = getImgSrc(rest.image);
       const specialCard = `
         <div class="restaurant-card-special fade-in" onclick="openRestaurant(${rest.id})">
           <div style="margin-bottom:8px; height:60px; display:flex; align-items:center; justify-content:center;">
-             ${rest.image.length < 5 ? rest.image : `<img src="https://campuseats-backend.vercel.app${rest.image}" style="height:100%; border-radius:8px;">`}
+             ${finalSrc.length < 5 ? finalSrc : `<img src="${finalSrc}" style="height:100%; border-radius:8px;">`}
           </div>
           <h3 style="margin-bottom:4px; font-size:1rem;">${rest.name}</h3>
           <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">${rest.desc}</p>
@@ -1082,14 +1092,8 @@ window.openRestaurant = function (id) {
   if (rmv) rmv.classList.remove('hidden');
 
   if (crh) {
-    let imgHTML = "";
-    if (rest.image.length < 5) {
-      imgHTML = `<div style="font-size:4rem;">${rest.image}</div>`;
-    } else {
-      const fullUrl = rest.image.startsWith('http') ? rest.image : `https://campuseats-backend.vercel.app${rest.image}`;
-      imgHTML = `<img src="${fullUrl}" style="width:100px; height:100px; border-radius:15px; object-fit:cover;">`;
-    }
-
+    const finalSrc = getImgSrc(rest.image);
+    let imgHTML = finalSrc.length < 5 ? `<div style="font-size:4rem;">${finalSrc}</div>` : `<img src="${finalSrc}" style="width:100px; height:100px; border-radius:15px; object-fit:cover;">`;
     crh.innerHTML = `
       <div style="display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, var(--bg-page), white); border-radius:20px; border:1px solid var(--border-color);">
         ${imgHTML}
@@ -1113,11 +1117,12 @@ function renderMenu(category, restName = "") {
     card.className = 'food-card fade-in';
 
     let imgHTML = "";
-    if (item.image.length < 5) {
-      imgHTML = `<div class="food-img">${item.image}</div>`;
+    const finalSrc = getImgSrc(item.image);
+
+    if (finalSrc.length < 5) {
+      imgHTML = `<div class="food-img">${finalSrc}</div>`;
     } else {
-      const fullUrl = item.image.startsWith('http') ? item.image : `https://campuseats-backend.vercel.app${item.image}`;
-      imgHTML = `<div class="food-img" style="overflow:hidden;"><img src="${fullUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+      imgHTML = `<div class="food-img" style="overflow:hidden;"><img src="${finalSrc}" style="width:100%; height:100%; object-fit:cover;"></div>`;
     }
 
     card.innerHTML = `
