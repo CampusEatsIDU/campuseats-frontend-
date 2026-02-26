@@ -392,7 +392,7 @@ function safePlaceholder(id, text) {
 
 // --- APP LOGIC ---
 
-const API_BASE = "https://vercelbackenddeploy-teal.vercel.app/api";
+const API_BASE = "https://campuseats-backend.vercel.app/api";
 const MENU_ITEMS = [
   { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
   { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: '🧀', desc: 'Double cheese, double joy.' },
@@ -463,6 +463,11 @@ function init() {
 
   if (savedUser && savedToken) {
     currentUser = JSON.parse(savedUser);
+    // Redirect superadmins to admin panel
+    if (currentUser.role === "superadmin") {
+      window.location.href = "admin.html";
+      return;
+    }
     handleLoginSuccess();
   }
 }
@@ -607,6 +612,12 @@ loginForm.addEventListener('submit', async (e) => {
 
     localStorage.setItem("campuseats_user", JSON.stringify(currentUser));
     localStorage.setItem("campuseats_token", data.token);
+
+    // Redirect superadmins to admin panel
+    if (currentUser.role === "superadmin") {
+      window.location.href = "admin.html";
+      return;
+    }
 
     handleLoginSuccess();
 
@@ -865,55 +876,56 @@ function updateUserDisplay() {
   if (profVerified) {
     profVerified.textContent = currentUser.verified ? (t.prof_verified || 'Verified') : (t.prof_not_verified || 'Not Verified');
     profVerified.className = 'prof-verified-badge ' + (currentUser.verified ? 'verified' : 'unverified');
-    // Update location in location section
-    const locAddrDisplay = document.getElementById('locCurrentAddress');
-    if (locAddrDisplay) locAddrDisplay.textContent = selectedLocation.address || selectedLocation.name || 'Main Campus';
+  }
+  // Update location in location section
+  const locAddrDisplay = document.getElementById('locCurrentAddress');
+  if (locAddrDisplay) locAddrDisplay.textContent = selectedLocation.address || selectedLocation.name || 'Main Campus';
 
-    const menuAdmin = document.getElementById('profMenuAdmin');
-    if (menuAdmin) {
-      if (currentUser.role === 'superadmin') {
-        menuAdmin.style.display = 'flex';
-      } else {
-        menuAdmin.style.display = 'none';
-      }
+  const menuAdmin = document.getElementById('profMenuAdmin');
+  if (menuAdmin) {
+    if (currentUser.role === 'superadmin') {
+      menuAdmin.style.display = 'flex';
+    } else {
+      menuAdmin.style.display = 'none';
     }
   }
+}
 
-  function updateLangPills() {
-    // Desktop nav pills
-    ['nlEN', 'nlRU', 'nlUZ'].forEach((id, i) => {
-      const el = document.getElementById(id);
-      const langs = ['en', 'ru', 'uz'];
-      if (el) el.classList.toggle('active', langs[i] === currentLang);
-    });
-    // Settings modal pills
-    ['lpEN', 'lpRU', 'lpUZ'].forEach((id, i) => {
-      const el = document.getElementById(id);
-      const langs = ['en', 'ru', 'uz'];
-      if (el) el.classList.toggle('active', langs[i] === currentLang);
-    });
-    // Profile section lang pills
-    ['profLpEN', 'profLpRU', 'profLpUZ'].forEach((id, i) => {
-      const el = document.getElementById(id);
-      const langs = ['en', 'ru', 'uz'];
-      if (el) el.classList.toggle('active', langs[i] === currentLang);
-    });
-    // Lang badge in profile menu
-    const langMap = { en: 'EN', ru: 'RU', uz: 'UZ' };
-    const badge = document.getElementById('profLangBadge');
-    if (badge) badge.textContent = langMap[currentLang] || 'EN';
-  }
+function updateLangPills() {
+  // Desktop nav pills
+  ['nlEN', 'nlRU', 'nlUZ'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    const langs = ['en', 'ru', 'uz'];
+    if (el) el.classList.toggle('active', langs[i] === currentLang);
+  });
+  // Settings modal pills
+  ['lpEN', 'lpRU', 'lpUZ'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    const langs = ['en', 'ru', 'uz'];
+    if (el) el.classList.toggle('active', langs[i] === currentLang);
+  });
+  // Profile section lang pills
+  ['profLpEN', 'profLpRU', 'profLpUZ'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    const langs = ['en', 'ru', 'uz'];
+    if (el) el.classList.toggle('active', langs[i] === currentLang);
+  });
+  // Lang badge in profile menu
+  const langMap = { en: 'EN', ru: 'RU', uz: 'UZ' };
+  const badge = document.getElementById('profLangBadge');
+  if (badge) badge.textContent = langMap[currentLang] || 'EN';
+}
 
-  // --- CART & MENU ---
-  function renderRestaurants() {
-    const rGrid = document.getElementById('restaurantGrid');
-    const sGrid = document.getElementById('specialGrid');
-    if (!rGrid || !sGrid) return;
-    rGrid.innerHTML = '';
-    sGrid.innerHTML = '';
+// --- CART & MENU ---
+function renderRestaurants() {
+  const rGrid = document.getElementById('restaurantGrid');
+  const sGrid = document.getElementById('specialGrid');
+  if (!rGrid || !sGrid) return;
+  rGrid.innerHTML = '';
+  sGrid.innerHTML = '';
 
-    RESTAURANTS.forEach(rest => {
-      const cardHTML = `
+  RESTAURANTS.forEach(rest => {
+    const cardHTML = `
       <div class="restaurant-card fade-in" onclick="openRestaurant(${rest.id})">
         <div style="font-size:3rem; text-align:center; margin-bottom:12px;">${rest.image}</div>
         <h3 style="margin-bottom:4px; font-size:1.1rem;">${rest.name}</h3>
@@ -924,10 +936,10 @@ function updateUserDisplay() {
         </div>
       </div>
     `;
-      rGrid.innerHTML += cardHTML;
+    rGrid.innerHTML += cardHTML;
 
-      if (rest.special) {
-        const specialCard = `
+    if (rest.special) {
+      const specialCard = `
         <div class="restaurant-card-special fade-in" onclick="openRestaurant(${rest.id})">
           <div style="font-size:2.5rem; text-align:center; margin-bottom:8px;">${rest.image}</div>
           <h3 style="margin-bottom:4px; font-size:1rem;">${rest.name}</h3>
@@ -935,24 +947,24 @@ function updateUserDisplay() {
           <div style="font-size:0.8rem; font-weight:600; color:var(--primary);">Get 20% Cashback</div>
         </div>
       `;
-        sGrid.innerHTML += specialCard;
-      }
-    });
-  }
+      sGrid.innerHTML += specialCard;
+    }
+  });
+}
 
-  window.openRestaurant = function (id) {
-    const rest = RESTAURANTS.find(r => r.id === id);
-    if (!rest) return;
+window.openRestaurant = function (id) {
+  const rest = RESTAURANTS.find(r => r.id === id);
+  if (!rest) return;
 
-    const mhv = document.getElementById('mainHomeView');
-    const rmv = document.getElementById('restaurantMenuView');
-    const crh = document.getElementById('currentRestHeader');
+  const mhv = document.getElementById('mainHomeView');
+  const rmv = document.getElementById('restaurantMenuView');
+  const crh = document.getElementById('currentRestHeader');
 
-    if (mhv) mhv.classList.add('hidden');
-    if (rmv) rmv.classList.remove('hidden');
+  if (mhv) mhv.classList.add('hidden');
+  if (rmv) rmv.classList.remove('hidden');
 
-    if (crh) {
-      crh.innerHTML = `
+  if (crh) {
+    crh.innerHTML = `
       <div style="display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, var(--bg-page), white); border-radius:20px; border:1px solid var(--border-color);">
         <div style="font-size:4rem;">${rest.image}</div>
         <div>
@@ -961,19 +973,19 @@ function updateUserDisplay() {
         </div>
       </div>
     `;
-    }
+  }
 
-    renderMenu('all');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  renderMenu('all');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
-  function renderMenu(category, restName = "") {
-    menuGrid.innerHTML = '';
-    const items = category === 'all' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === category);
-    items.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'food-card fade-in';
-      card.innerHTML = `
+function renderMenu(category, restName = "") {
+  menuGrid.innerHTML = '';
+  const items = category === 'all' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === category);
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'food-card fade-in';
+    card.innerHTML = `
           <div class="food-img">${item.image}</div>
           <div class="food-info">
               <div class="food-name">${item.name}</div>
@@ -983,175 +995,175 @@ function updateUserDisplay() {
                   <button class="btn-add" onclick="addToCart(${item.id})">+</button>
               </div>
           </div>`;
-      menuGrid.appendChild(card);
-    });
-  }
+    menuGrid.appendChild(card);
+  });
+}
 
-  window.addToCart = function (itemId) {
-    const item = MENU_ITEMS.find(i => i.id === itemId);
-    const existing = currentCart.find(i => i.id === itemId);
-    if (existing) existing.qty++;
-    else currentCart.push({ ...item, qty: 1 });
+window.addToCart = function (itemId) {
+  const item = MENU_ITEMS.find(i => i.id === itemId);
+  const existing = currentCart.find(i => i.id === itemId);
+  if (existing) existing.qty++;
+  else currentCart.push({ ...item, qty: 1 });
+  updateCartUI();
+};
+
+window.changeQty = function (itemId, delta) {
+  const idx = currentCart.findIndex(i => i.id === itemId);
+  if (idx > -1) {
+    currentCart[idx].qty += delta;
+    if (currentCart[idx].qty <= 0) currentCart.splice(idx, 1);
     updateCartUI();
-  };
+  }
+};
 
-  window.changeQty = function (itemId, delta) {
-    const idx = currentCart.findIndex(i => i.id === itemId);
-    if (idx > -1) {
-      currentCart[idx].qty += delta;
-      if (currentCart[idx].qty <= 0) currentCart.splice(idx, 1);
-      updateCartUI();
-    }
-  };
+function updateCartUI() {
+  if (!cartItemsContainer) return;
+  cartItemsContainer.innerHTML = '';
+  let total = 0;
+  const t = TRANSLATIONS[currentLang];
 
-  function updateCartUI() {
-    if (!cartItemsContainer) return;
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-    const t = TRANSLATIONS[currentLang];
-
-    if (currentCart.length === 0) {
-      cartItemsContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${t.basket_empty}</div>`;
-      checkoutBtn.disabled = true;
-      checkoutBtn.textContent = t.browse;
-    } else {
-      currentCart.forEach(item => {
-        total += item.price * item.qty;
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.9rem; align-items:center;';
-        row.innerHTML = `
+  if (currentCart.length === 0) {
+    cartItemsContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${t.basket_empty}</div>`;
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = t.browse;
+  } else {
+    currentCart.forEach(item => {
+      total += item.price * item.qty;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.9rem; align-items:center;';
+      row.innerHTML = `
               <span style="flex:1;">${item.name}</span> 
               <div class="cart-controls" style="display:flex;gap:6px;align-items:center;">
                   <button class="btn-qty" onclick="changeQty(${item.id}, -1)">−</button> 
                   <span style="min-width:20px; text-align:center; font-weight:600;">${item.qty}</span> 
                   <button class="btn-qty" onclick="changeQty(${item.id}, 1)">+</button>
               </div>`;
-        cartItemsContainer.appendChild(row);
-      });
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
-    }
-    // Update cart badge on mobile bottom nav
-    const mbnBadge = document.getElementById('mbnCartCount');
-    if (mbnBadge) {
-      const totalQty = currentCart.reduce((sum, i) => sum + i.qty, 0);
-      if (totalQty > 0) {
-        mbnBadge.textContent = totalQty;
-        mbnBadge.classList.remove('hidden');
-      } else {
-        mbnBadge.classList.add('hidden');
-      }
-    }
-    cartTotalDisplay.textContent = total.toFixed(2);
+      cartItemsContainer.appendChild(row);
+    });
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
   }
+  // Update cart badge on mobile bottom nav
+  const mbnBadge = document.getElementById('mbnCartCount');
+  if (mbnBadge) {
+    const totalQty = currentCart.reduce((sum, i) => sum + i.qty, 0);
+    if (totalQty > 0) {
+      mbnBadge.textContent = totalQty;
+      mbnBadge.classList.remove('hidden');
+    } else {
+      mbnBadge.classList.add('hidden');
+    }
+  }
+  cartTotalDisplay.textContent = total.toFixed(2);
+}
 
-  // --- CHECKOUT & DB ---
-  checkoutBtn.addEventListener('click', handleCheckout);
+// --- CHECKOUT & DB ---
+checkoutBtn.addEventListener('click', handleCheckout);
 
-  async function handleCheckout() {
-    if (!currentUser || currentCart.length === 0) return;
-    const t = TRANSLATIONS[currentLang];
-    const total = parseFloat(cartTotalDisplay.textContent);
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = t.processing;
+async function handleCheckout() {
+  if (!currentUser || currentCart.length === 0) return;
+  const t = TRANSLATIONS[currentLang];
+  const total = parseFloat(cartTotalDisplay.textContent);
+  checkoutBtn.disabled = true;
+  checkoutBtn.innerHTML = t.processing;
 
-    const payload = {
-      user_id: currentUser.id,
-      total_amount: total,
-      payment_method: 'card',
-      delivery_lat: selectedLocation.lat,
-      delivery_lng: selectedLocation.lng,
-      delivery_address: selectedLocation.address || selectedLocation.name
+  const payload = {
+    user_id: currentUser.id,
+    total_amount: total,
+    payment_method: 'card',
+    delivery_lat: selectedLocation.lat,
+    delivery_lng: selectedLocation.lng,
+    delivery_address: selectedLocation.address || selectedLocation.name
+  };
+
+  try {
+    try {
+      await fetch(`${API_BASE}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) { }
+
+    const newOrder = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      items: [...currentCart],
+      ...payload,
+      status: 'pending'
     };
 
-    try {
-      try {
-        await fetch(`${API_BASE}/orders`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch (e) { }
+    let orders = getLocalOrders();
+    orders.push(newOrder);
+    localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
 
-      const newOrder = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        items: [...currentCart],
-        ...payload,
-        status: 'pending'
-      };
+    currentCart = [];
+    updateCartUI();
+    loadLocalOrders();
+    alert(t.checkout + " Success!");
 
-      let orders = getLocalOrders();
-      orders.push(newOrder);
-      localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
+  } catch (err) { console.error(err); }
+  finally {
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = t.checkout;
+  }
+}
 
-      currentCart = [];
-      updateCartUI();
-      loadLocalOrders();
-      alert(t.checkout + " Success!");
+function getLocalOrders() {
+  if (!currentUser) return [];
+  const data = localStorage.getItem(`campuseats_orders_${currentUser.id}`);
+  return data ? JSON.parse(data) : [];
+}
 
-    } catch (err) { console.error(err); }
-    finally {
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = t.checkout;
-    }
+function loadLocalOrders() {
+  renderDatabaseStats();
+}
+
+function renderDatabaseStats() {
+  const orders = getLocalOrders();
+  const t = TRANSLATIONS[currentLang];
+
+  // Stats
+  let totalSpent = 0;
+  orders.forEach(o => totalSpent += o.total_amount);
+
+  const statSpent = document.getElementById('statTotalSpent');
+  const statOrders = document.getElementById('statTotalOrders');
+  const statLast = document.getElementById('statLastOrder');
+  const dbCount = document.getElementById('dbOrderCount');
+
+  if (statSpent) statSpent.textContent = '$' + totalSpent.toFixed(2);
+  if (statOrders) statOrders.textContent = orders.length;
+  if (statLast) statLast.textContent = orders.length > 0
+    ? new Date(orders[orders.length - 1].date).toLocaleDateString() : '—';
+  if (dbCount) dbCount.textContent = orders.length + ' ' + (t.orders_count || 'orders');
+
+  // Order cards
+  const listContainer = document.getElementById('ordersListContainer');
+  const emptyState = document.getElementById('ordersEmptyState');
+  if (!listContainer || !emptyState) return;
+
+  if (orders.length === 0) {
+    emptyState.classList.remove('hidden');
+    listContainer.classList.add('hidden');
+    return;
   }
 
-  function getLocalOrders() {
-    if (!currentUser) return [];
-    const data = localStorage.getItem(`campuseats_orders_${currentUser.id}`);
-    return data ? JSON.parse(data) : [];
-  }
+  emptyState.classList.add('hidden');
+  listContainer.classList.remove('hidden');
+  listContainer.innerHTML = '';
 
-  function loadLocalOrders() {
-    renderDatabaseStats();
-  }
+  const EMOJIS = ['🍔', '🍕', '🍣', '🍜', '🥗', '🌮', '🍗', '🥤'];
 
-  function renderDatabaseStats() {
-    const orders = getLocalOrders();
-    const t = TRANSLATIONS[currentLang];
-
-    // Stats
-    let totalSpent = 0;
-    orders.forEach(o => totalSpent += o.total_amount);
-
-    const statSpent = document.getElementById('statTotalSpent');
-    const statOrders = document.getElementById('statTotalOrders');
-    const statLast = document.getElementById('statLastOrder');
-    const dbCount = document.getElementById('dbOrderCount');
-
-    if (statSpent) statSpent.textContent = '$' + totalSpent.toFixed(2);
-    if (statOrders) statOrders.textContent = orders.length;
-    if (statLast) statLast.textContent = orders.length > 0
-      ? new Date(orders[orders.length - 1].date).toLocaleDateString() : '—';
-    if (dbCount) dbCount.textContent = orders.length + ' ' + (t.orders_count || 'orders');
-
-    // Order cards
-    const listContainer = document.getElementById('ordersListContainer');
-    const emptyState = document.getElementById('ordersEmptyState');
-    if (!listContainer || !emptyState) return;
-
-    if (orders.length === 0) {
-      emptyState.classList.remove('hidden');
-      listContainer.classList.add('hidden');
-      return;
-    }
-
-    emptyState.classList.add('hidden');
-    listContainer.classList.remove('hidden');
-    listContainer.innerHTML = '';
-
-    const EMOJIS = ['🍔', '🍕', '🍣', '🍜', '🥗', '🌮', '🍗', '🥤'];
-
-    [...orders].reverse().forEach((order, idx) => {
-      const dateStr = new Date(order.date || Date.now()).toLocaleString();
-      const itemsStr = order.items ? order.items.map(i => `${i.qty}× ${i.name}`).join(', ') : '—';
-      const statusClass = order.status === 'pending' ? 'pending'
-        : order.status === 'delivering' ? 'delivering' : '';
-      const emoji = EMOJIS[idx % EMOJIS.length];
-      const card = document.createElement('div');
-      card.className = 'order-card fade-in';
-      card.innerHTML = `
+  [...orders].reverse().forEach((order, idx) => {
+    const dateStr = new Date(order.date || Date.now()).toLocaleString();
+    const itemsStr = order.items ? order.items.map(i => `${i.qty}× ${i.name}`).join(', ') : '—';
+    const statusClass = order.status === 'pending' ? 'pending'
+      : order.status === 'delivering' ? 'delivering' : '';
+    const emoji = EMOJIS[idx % EMOJIS.length];
+    const card = document.createElement('div');
+    card.className = 'order-card fade-in';
+    card.innerHTML = `
       <div class="oc-icon">${emoji}</div>
       <div class="oc-info">
         <div class="oc-id">#${order.id.toString().slice(-8)}</div>
@@ -1162,155 +1174,155 @@ function updateUserDisplay() {
         <div class="oc-amount">$${order.total_amount.toFixed(2)}</div>
         <div class="oc-status ${statusClass}">${order.status}</div>
       </div>`;
-      listContainer.appendChild(card);
-    });
-  }
+    listContainer.appendChild(card);
+  });
+}
 
-  window.showSection = function (section) {
-    const dash = document.getElementById('dashboardSection');
-    const stats = document.getElementById('statsSection');
-    const info = document.getElementById('infoSection');
-    const location = document.getElementById('locationSection');
-    const profile = document.getElementById('profileSection');
+window.showSection = function (section) {
+  const dash = document.getElementById('dashboardSection');
+  const stats = document.getElementById('statsSection');
+  const info = document.getElementById('infoSection');
+  const location = document.getElementById('locationSection');
+  const profile = document.getElementById('profileSection');
 
-    // Hide all
-    [dash, stats, info, location, profile].forEach(el => { if (el) el.classList.add('hidden'); });
+  // Hide all
+  [dash, stats, info, location, profile].forEach(el => { if (el) el.classList.add('hidden'); });
 
-    if (section === 'stats') {
-      if (stats) stats.classList.remove('hidden');
-      renderDatabaseStats();
-    } else if (section === 'info') {
-      if (info) info.classList.remove('hidden');
-    } else if (section === 'location') {
-      if (location) location.classList.remove('hidden');
-      initLocationSection();
-    } else if (section === 'profile') {
-      if (profile) profile.classList.remove('hidden');
-      updateUserDisplay();
-      applyTranslations();
-    } else {
-      if (dash) dash.classList.remove('hidden');
-    }
-
-    // Update active btn on mobile bottom nav
-    document.querySelectorAll('.mbn-btn').forEach(b => b.classList.remove('active'));
-    const btnMap = { home: 'mbnHome', stats: 'mbnOrders', location: 'mbnLocation', profile: 'mbnProfile' };
-    const activeId = btnMap[section] || 'mbnHome';
-    const activeBtn = document.getElementById(activeId);
-    if (activeBtn) activeBtn.classList.add('active');
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Initialize location section map
-  let locationSectionMap = null;
-  function initLocationSection() {
+  if (section === 'stats') {
+    if (stats) stats.classList.remove('hidden');
+    renderDatabaseStats();
+  } else if (section === 'info') {
+    if (info) info.classList.remove('hidden');
+  } else if (section === 'location') {
+    if (location) location.classList.remove('hidden');
+    initLocationSection();
+  } else if (section === 'profile') {
+    if (profile) profile.classList.remove('hidden');
     updateUserDisplay();
     applyTranslations();
-    // init mini-map in location section
-    const mapDiv = document.getElementById('locMiniMap');
-    if (!mapDiv) return;
-    if (!locationSectionMap) {
-      locationSectionMap = L.map('locMiniMap').setView([selectedLocation.lat, selectedLocation.lng], 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(locationSectionMap);
-      let locMarker = L.marker([selectedLocation.lat, selectedLocation.lng]).addTo(locationSectionMap);
-      locationSectionMap.on('click', async (e) => {
-        if (locMarker) locationSectionMap.removeLayer(locMarker);
-        locMarker = L.marker(e.latlng).addTo(locationSectionMap);
-        selectedLocation.lat = e.latlng.lat;
-        selectedLocation.lng = e.latlng.lng;
-        // reverse geocode
-        try {
-          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18`);
-          const d = await r.json();
-          if (d && d.display_name) {
-            selectedLocation.address = d.display_name.split(',').slice(0, 3).join(', ');
-          } else {
-            selectedLocation.address = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-          }
-        } catch { selectedLocation.address = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`; }
-        const locAddr = document.getElementById('locCurrentAddress');
-        if (locAddr) locAddr.textContent = selectedLocation.address;
-        updateUserDisplay();
-      });
-    } else {
-      locationSectionMap.invalidateSize();
-      locationSectionMap.setView([selectedLocation.lat, selectedLocation.lng], 15);
-    }
+  } else {
+    if (dash) dash.classList.remove('hidden');
   }
 
-  // Save address from location section
-  window.saveLocationAddress = function () {
-    selectedLocation.name = selectedLocation.address || selectedLocation.name;
-    const entrance = document.getElementById('locEntrance')?.value || '';
-    const floor = document.getElementById('locFloor')?.value || '';
-    const apt = document.getElementById('locApt')?.value || '';
-    if (entrance || floor || apt) {
-      let extra = [];
-      if (entrance) extra.push('Entrance ' + entrance);
-      if (floor) extra.push('Floor ' + floor);
-      if (apt) extra.push('Apt ' + apt);
-      selectedLocation.extra = extra.join(', ');
-    }
-    updateUserDisplay();
-    const t = TRANSLATIONS[currentLang];
-    const btn = document.getElementById('locSaveBtn');
-    if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = t.loc_save || 'Save Address'; }, 1500); }
-    showSection('home');
-  };
+  // Update active btn on mobile bottom nav
+  document.querySelectorAll('.mbn-btn').forEach(b => b.classList.remove('active'));
+  const btnMap = { home: 'mbnHome', stats: 'mbnOrders', location: 'mbnLocation', profile: 'mbnProfile' };
+  const activeId = btnMap[section] || 'mbnHome';
+  const activeBtn = document.getElementById(activeId);
+  if (activeBtn) activeBtn.classList.add('active');
 
-  // Toggle cart slide-up panel on mobile
-  window.toggleCartMobile = function () {
-    const panel = document.getElementById('cartPanel');
-    if (!panel) return;
-    panel.classList.toggle('cart-open');
-  };
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
-
-  // Modal
-  const settingsModal = document.getElementById('settingsModal');
-  document.getElementById('profileBtn').addEventListener('click', () => showSection('profile'));
-  document.getElementById('mthProfileBtn').addEventListener('click', () => showSection('profile'));
-  document.getElementById('mthLocationTrigger').addEventListener('click', () => showSection('location'));
-  document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsModal.classList.add('hidden'));
-  document.getElementById('settingsForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    settingsModal.classList.add('hidden');
-    alert("Settings Saved!");
-  });
-
-  // Handle window resize — switch between mobile and desktop nav
-  window.addEventListener('resize', () => {
-    if (!currentUser) return;
-    const isMobile = window.innerWidth <= 640;
-    const navbar = document.getElementById('desktopNav');
-    const mobileNav = document.getElementById('mobileBottomNav');
-    const mobileHeader = document.getElementById('mobileHeader');
-    if (isMobile) {
-      if (navbar) navbar.style.display = 'none';
-      if (mobileNav) mobileNav.style.display = 'flex';
-      if (mobileHeader) mobileHeader.style.display = 'flex';
-    } else {
-      if (navbar) navbar.style.display = 'grid';
-      if (mobileNav) mobileNav.style.display = 'none';
-      if (mobileHeader) mobileHeader.style.display = 'none';
-    }
-  });
-
-
-
-  // ============================
-  // FOOTER PAGE MODAL SYSTEM  (multilingual)
-  // ============================
-  function getPageContent(key) {
-    const lang = currentLang;
-    const PC = PAGE_CONTENT_ALL;
-    return (PC[lang] && PC[lang][key]) ? PC[lang][key] : (PC['en'][key] || '');
+// Initialize location section map
+let locationSectionMap = null;
+function initLocationSection() {
+  updateUserDisplay();
+  applyTranslations();
+  // init mini-map in location section
+  const mapDiv = document.getElementById('locMiniMap');
+  if (!mapDiv) return;
+  if (!locationSectionMap) {
+    locationSectionMap = L.map('locMiniMap').setView([selectedLocation.lat, selectedLocation.lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(locationSectionMap);
+    let locMarker = L.marker([selectedLocation.lat, selectedLocation.lng]).addTo(locationSectionMap);
+    locationSectionMap.on('click', async (e) => {
+      if (locMarker) locationSectionMap.removeLayer(locMarker);
+      locMarker = L.marker(e.latlng).addTo(locationSectionMap);
+      selectedLocation.lat = e.latlng.lat;
+      selectedLocation.lng = e.latlng.lng;
+      // reverse geocode
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18`);
+        const d = await r.json();
+        if (d && d.display_name) {
+          selectedLocation.address = d.display_name.split(',').slice(0, 3).join(', ');
+        } else {
+          selectedLocation.address = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+        }
+      } catch { selectedLocation.address = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`; }
+      const locAddr = document.getElementById('locCurrentAddress');
+      if (locAddr) locAddr.textContent = selectedLocation.address;
+      updateUserDisplay();
+    });
+  } else {
+    locationSectionMap.invalidateSize();
+    locationSectionMap.setView([selectedLocation.lat, selectedLocation.lng], 15);
   }
-  const PAGE_CONTENT_ALL = { en: {}, ru: {}, uz: {} };
-  const PAGE_CONTENT = {
-    about: `
+}
+
+// Save address from location section
+window.saveLocationAddress = function () {
+  selectedLocation.name = selectedLocation.address || selectedLocation.name;
+  const entrance = document.getElementById('locEntrance')?.value || '';
+  const floor = document.getElementById('locFloor')?.value || '';
+  const apt = document.getElementById('locApt')?.value || '';
+  if (entrance || floor || apt) {
+    let extra = [];
+    if (entrance) extra.push('Entrance ' + entrance);
+    if (floor) extra.push('Floor ' + floor);
+    if (apt) extra.push('Apt ' + apt);
+    selectedLocation.extra = extra.join(', ');
+  }
+  updateUserDisplay();
+  const t = TRANSLATIONS[currentLang];
+  const btn = document.getElementById('locSaveBtn');
+  if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = t.loc_save || 'Save Address'; }, 1500); }
+  showSection('home');
+};
+
+// Toggle cart slide-up panel on mobile
+window.toggleCartMobile = function () {
+  const panel = document.getElementById('cartPanel');
+  if (!panel) return;
+  panel.classList.toggle('cart-open');
+};
+
+
+// Modal
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('profileBtn').addEventListener('click', () => showSection('profile'));
+document.getElementById('mthProfileBtn').addEventListener('click', () => showSection('profile'));
+document.getElementById('mthLocationTrigger').addEventListener('click', () => showSection('location'));
+document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsModal.classList.add('hidden'));
+document.getElementById('settingsForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  settingsModal.classList.add('hidden');
+  alert("Settings Saved!");
+});
+
+// Handle window resize — switch between mobile and desktop nav
+window.addEventListener('resize', () => {
+  if (!currentUser) return;
+  const isMobile = window.innerWidth <= 640;
+  const navbar = document.getElementById('desktopNav');
+  const mobileNav = document.getElementById('mobileBottomNav');
+  const mobileHeader = document.getElementById('mobileHeader');
+  if (isMobile) {
+    if (navbar) navbar.style.display = 'none';
+    if (mobileNav) mobileNav.style.display = 'flex';
+    if (mobileHeader) mobileHeader.style.display = 'flex';
+  } else {
+    if (navbar) navbar.style.display = 'grid';
+    if (mobileNav) mobileNav.style.display = 'none';
+    if (mobileHeader) mobileHeader.style.display = 'none';
+  }
+});
+
+
+
+// ============================
+// FOOTER PAGE MODAL SYSTEM  (multilingual)
+// ============================
+function getPageContent(key) {
+  const lang = currentLang;
+  const PC = PAGE_CONTENT_ALL;
+  return (PC[lang] && PC[lang][key]) ? PC[lang][key] : (PC['en'][key] || '');
+}
+const PAGE_CONTENT_ALL = { en: {}, ru: {}, uz: {} };
+const PAGE_CONTENT = {
+  about: `
     <h1>About CampusEats</h1>
     <p class="page-subtitle">Last updated: February 2026 &nbsp;|&nbsp; Version 2.0</p>
     <h2>Who We Are</h2>
@@ -1332,7 +1344,7 @@ function updateUserDisplay() {
     <p>For customer support, business inquiries, or media coverage, reach out through our official Telegram channel. Our admin team is available daily and responds within 24 hours.</p>
   `,
 
-    how: `
+  how: `
     <h1>How CampusEats Works</h1>
     <p class="page-subtitle">From browsing to delivery — here's the full journey.</p>
     <h2>Step 1 — Create Your Account</h2>
@@ -1350,7 +1362,7 @@ function updateUserDisplay() {
     <div class="highlight-box">Need help with a specific step? Contact our admin on Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary); font-weight:700;">@CampusEats</a></div>
   `,
 
-    partners: `
+  partners: `
     <h1>Restaurant Partnership</h1>
     <p class="page-subtitle">Grow your restaurant business with CampusEats.</p>
     <h2>Why Partner With Us?</h2>
@@ -1376,7 +1388,7 @@ function updateUserDisplay() {
     <p>Our commission model is transparent and competitive. There are no hidden setup fees. Commission rates vary by region and volume — our admin team will walk you through the exact terms during onboarding.</p>
   `,
 
-    help: `
+  help: `
     <h1>Help Center</h1>
     <p class="page-subtitle">Everything you need to know to get the most out of CampusEats.</p>
     <h2>Account & Login</h2>
@@ -1402,7 +1414,7 @@ function updateUserDisplay() {
     <div class="highlight-box">💬 Our support team is available via Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary); font-weight:700;">@CampusEats</a> — response time is typically under 4 hours on business days.</div>
   `,
 
-    faq: `
+  faq: `
     <h1>Frequently Asked Questions</h1>
     <p class="page-subtitle">Quick answers to common questions about the CampusEats platform.</p>
     <h2>Is CampusEats free to use?</h2>
@@ -1423,7 +1435,7 @@ function updateUserDisplay() {
     <p>CampusEats is expanding rapidly. Restaurant availability depends on your selected delivery location. If there are no restaurants available in your area, we are likely coming soon!</p>
   `,
 
-    refund: `
+  refund: `
     <h1>Refund Policy</h1>
     <p class="page-subtitle">Effective date: January 1, 2026</p>
     <h2>Overview</h2>
@@ -1456,7 +1468,7 @@ function updateUserDisplay() {
     <div class="highlight-box">For urgent refund requests, message us directly: <a href="https://t.me/CampusEats" style="color:var(--primary); font-weight:700;">@CampusEats</a></div>
   `,
 
-    terms: `
+  terms: `
     <h1>Terms of Service</h1>
     <p class="page-subtitle">Effective date: January 1, 2026 &nbsp;|&nbsp; Please read these terms carefully before using CampusEats.</p>
     <h2>1. Acceptance of Terms</h2>
@@ -1484,7 +1496,7 @@ function updateUserDisplay() {
     <div class="highlight-box">Questions about these Terms? Contact our admin: <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>
   `,
 
-    privacy: `
+  privacy: `
     <h1>Privacy Policy</h1>
     <p class="page-subtitle">Effective date: January 1, 2026 &nbsp;|&nbsp; CampusEats is committed to protecting your privacy.</p>
     <h2>1. Information We Collect</h2>
@@ -1519,7 +1531,7 @@ function updateUserDisplay() {
     <div class="highlight-box">For all data-related requests, reach out to our admin: <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>
   `,
 
-    cookies: `
+  cookies: `
     <h1>Cookies Policy</h1>
     <p class="page-subtitle">Effective date: January 1, 2026</p>
     <h2>What Are Cookies?</h2>
@@ -1545,20 +1557,20 @@ function updateUserDisplay() {
     <p>We may use third-party services (such as mapping libraries or font providers) that set their own cookies. These are governed by the respective third parties' privacy policies.</p>
     <div class="highlight-box">Questions about our cookie practices? Contact our admin: <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>
   `
-  };
+};
 
-  // Copy EN content to the all-languages object
-  Object.keys(PAGE_CONTENT).forEach(k => { PAGE_CONTENT_ALL.en[k] = PAGE_CONTENT[k]; });
+// Copy EN content to the all-languages object
+Object.keys(PAGE_CONTENT).forEach(k => { PAGE_CONTENT_ALL.en[k] = PAGE_CONTENT[k]; });
 
-  // Russian translations for page content
-  PAGE_CONTENT_ALL.ru = {
-    about: `<h1>О CampusEats</h1><p class="page-subtitle">Последнее обновление: Февраль 2026 &nbsp;|&nbsp; Версия 2.0</p>
+// Russian translations for page content
+PAGE_CONTENT_ALL.ru = {
+  about: `<h1>О CampusEats</h1><p class="page-subtitle">Последнее обновление: Февраль 2026 &nbsp;|&nbsp; Версия 2.0</p>
     <h2>Кто мы</h2><p>CampusEats — современная платформа доставки еды, которая связывает голодных клиентов с качественными местными ресторанами — быстро, надёжно и в масштабе. Основанная в 2024 году, мы выросли из небольшого стартапа в быстро развивающуюся платформу, работающую в нескольких регионах.</p>
     <p>Наша миссия проста: <strong>сделать хорошую еду доступной для всех, везде, в кратчайшие сроки.</strong></p>
     <h2>Наше видение</h2><p>Мы представляем мир, где расстояние никогда не является барьером для хорошей еды. Где бы вы ни находились, CampusEats доставит то, что вам нужно — свежим, быстрым и без лишних хлопот.</p>
     <h2>Наши преимущества</h2><ul><li><strong>Инфраструктура для скорости</strong> — платформа создана для обработки заказов в реальном времени.</li><li><strong>Подход, ориентированный на рестораны</strong> — мы помогаем местным ресторанам расти.</li><li><strong>Прозрачность для клиентов</strong> — живой статус заказа, чёткое ценообразование и честная политика.</li><li><strong>Кэшбэк-вознаграждения</strong> — верифицированные клиенты получают кэшбэк с каждого заказа.</li></ul>
     <div class="highlight-box">📞 По вопросам партнёрства и полного доступа к платформе свяжитесь с нами в Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    how: `<h1>Как работает CampusEats</h1><p class="page-subtitle">От просмотра до доставки — весь путь.</p>
+  how: `<h1>Как работает CampusEats</h1><p class="page-subtitle">От просмотра до доставки — весь путь.</p>
     <h2>Шаг 1 — Создайте аккаунт</h2><p>Зарегистрируйтесь за 60 секунд с помощью номера телефона. Просто ваш номер, надёжный пароль и полное имя — и вы уже в системе.</p>
     <h2>Шаг 2 — Подтвердите личность (необязательно)</h2><p>Загрузите удостоверение личности в настройках аккаунта, чтобы разблокировать преимущества: кэшбэк, более высокие лимиты заказов и приоритетную поддержку.</p>
     <h2>Шаг 3 — Выберите ресторан</h2><p>Просматривайте наши рестораны-партнёры, отфильтрованные по категории, рейтингу или времени доставки.</p>
@@ -1566,88 +1578,88 @@ function updateUserDisplay() {
     <h2>Шаг 5 — Отслеживайте доставку в реальном времени</h2><p>После оформления заказа вы можете видеть его статус: подтверждение, приготовление, в пути.</p>
     <h2>Шаг 6 — Получите и оставьте отзыв</h2><p>Ваш заказ прибыл. Оцените опыт и получите кэшбэк на кошелёк для следующих заказов.</p>
     <div class="highlight-box">Нужна помощь? Пишите в Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    partners: `<h1>Партнёрство с ресторанами</h1><p class="page-subtitle">Развивайте бизнес вместе с CampusEats.</p>
+  partners: `<h1>Партнёрство с ресторанами</h1><p class="page-subtitle">Развивайте бизнес вместе с CampusEats.</p>
     <h2>Почему стоит сотрудничать с нами?</h2><p>CampusEats открывает рестораны для растущей базы пользователей, которые активно ищут еду онлайн. Мы берём на себя технологии, логистику и привлечение клиентов — вы занимаетесь тем, что делаете лучше всего: готовите.</p>
     <h2>Что мы предлагаем</h2><ul><li>🚀 Моментальная видимость тысячам активных пользователей</li><li>📊 Панель управления заказами в реальном времени</li><li>💰 Конкурентная комиссия и быстрые выплаты</li><li>📣 Размещение в акциях и кэшбэк-кампаниях</li></ul>
     <div class="highlight-box">📩 Для подачи заявки на партнёрство напишите нам: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    help: `<h1>Центр помощи</h1><p class="page-subtitle">Всё, что нужно знать для работы с CampusEats.</p>
+  help: `<h1>Центр помощи</h1><p class="page-subtitle">Всё, что нужно знать для работы с CampusEats.</p>
     <h2>Аккаунт и вход</h2><ul><li><strong>Забыли пароль?</strong> — Свяжитесь с администратором через <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a> для ручного сброса.</li><li><strong>Номер телефона не принимается?</strong> — Используйте полный международный формат (например, +998 90 000 00 00).</li></ul>
     <h2>Заказы</h2><ul><li><strong>Заказ не прибыл?</strong> — Проверьте статус. Если показывает «Доставлен», но ничего нет — срочно свяжитесь с поддержкой.</li><li><strong>Получили не то блюдо?</strong> — Отправьте запрос на возврат с ID заказа и фото.</li></ul>
     <h2>Платежи и кэшбэк</h2><ul><li>Кэшбэк зачисляется в кошелёк в течение 24 часов после доставки.</li><li>Баланс кошелька применяется к следующим заказам.</li></ul>
     <div class="highlight-box">💬 Поддержка в Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    faq: `<h1>Часто задаваемые вопросы</h1>
+  faq: `<h1>Часто задаваемые вопросы</h1>
     <h2>CampusEats бесплатный?</h2><p>Да. Создание аккаунта и просмотр ресторанов — бесплатно. За доставку может взиматься небольшая плата.</p>
     <h2>Как получить кэшбэк?</h2><p>Кэшбэк начисляется за заказы в участвующих ресторанах. Верифицированные пользователи получают повышенный процент.</p>
     <h2>Как долго доставка?</h2><p>Время доставки зависит от ресторана и вашего местоположения. Большинство заказов доставляется за 20–45 минут.</p>
     <h2>Мои данные в безопасности?</h2><p>Да. Мы серьёзно относимся к конфиденциальности данных. Ваша информация хранится безопасно и никогда не продаётся третьим лицам.</p>
     <h2>Как стать партнёром-рестораном?</h2><p>Напишите нам в Telegram <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a>. Партнёрство требует одобрения и проходит через процесс онбординга.</p>`,
-    refund: `<h1>Политика возврата</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
+  refund: `<h1>Политика возврата</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
     <h2>Случаи, дающие право на возврат</h2><ul><li>Заказ не был доставлен, хотя помечен как «Доставлен».</li><li>Получены неправильные или неполные товары.</li><li>Качество еды явно ненадлежащее.</li><li>Техническая ошибка привела к двойному списанию.</li></ul>
     <h2>Как запросить возврат</h2><p>Свяжитесь с поддержкой в течение <strong>24 часов</strong> с момента доставки через <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a>. Укажите номер телефона, ID заказа и описание проблемы.</p>
     <div class="highlight-box">Срочные запросы: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    terms: `<h1>Пользовательское соглашение</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
+  terms: `<h1>Пользовательское соглашение</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
     <h2>1. Принятие условий</h2><p>Используя платформу CampusEats, вы соглашаетесь с настоящими Условиями. Если вы не согласны, прекратите использование платформы.</p>
     <h2>2. Регистрация аккаунта</h2><p>Вы обязаны предоставить точные данные при регистрации. Вы несёте ответственность за конфиденциальность своих учётных данных.</p>
     <h2>3. Запрещённые действия</h2><ul><li>Мошеннические заказы</li><li>Попытки взлома системы</li><li>Сбор данных автоматизированными инструментами</li></ul>
     <div class="highlight-box">Вопросы? <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>`,
-    privacy: `<h1>Политика конфиденциальности</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
+  privacy: `<h1>Политика конфиденциальности</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
     <h2>Данные, которые мы собираем</h2><ul><li><strong>Данные аккаунта</strong> — номер телефона, полное имя.</li><li><strong>Данные заказов</strong> — подробности заказов, адреса доставки.</li><li><strong>Данные устройства</strong> — IP-адрес, браузер, ОС.</li><li><strong>Данные местоположения</strong> — координаты при оформлении заказа.</li></ul>
     <h2>Ваши права</h2><p>Вы можете запросить доступ, исправление или удаление своих данных через <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a>.</p>
     <div class="highlight-box">Запросы по данным: <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>`,
-    cookies: `<h1>Политика куки</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
+  cookies: `<h1>Политика куки</h1><p class="page-subtitle">Дата вступления в силу: 1 января 2026</p>
     <h2>Что такое куки?</h2><p>Куки — это небольшие текстовые файлы, сохраняемые на вашем устройстве при посещении сайта. Они помогают запоминать ваши настройки и поддерживать авторизацию.</p>
     <h2>Как CampusEats использует куки</h2><ul><li><strong>Аутентификация</strong> — хранение JWT-токена для автоматического входа.</li><li><strong>Язык</strong> — запоминание выбранного языка.</li><li><strong>Сессия</strong> — сохранение корзины и адреса доставки.</li></ul>
     <div class="highlight-box">Вопросы? <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a></div>`
-  };
+};
 
-  // Uzbek (brief versions)
-  PAGE_CONTENT_ALL.uz = {
-    about: `<h1>CampusEats haqida</h1><p class="page-subtitle">Oxirgi yangilanish: Fevral 2026</p>
+// Uzbek (brief versions)
+PAGE_CONTENT_ALL.uz = {
+  about: `<h1>CampusEats haqida</h1><p class="page-subtitle">Oxirgi yangilanish: Fevral 2026</p>
     <h2>Biz kimiz</h2><p>CampusEats — zamonaviy taom yetkazib berish platformasi. 2024 yilda tashkil etilgan bo'lib, bir necha mintaqada faoliyat yuritib kelmoqda.</p>
     <p>Bizning maqsadimiz: <strong>sifatli taomni hamma joyda va tez yetkazib berish.</strong></p>
     <h2>Afzalliklarimiz</h2><ul><li>Tezkor buyurtma qayta ishlash</li><li>Restoranlar bilan chambarchas hamkorlik</li><li>Shaffof narxlar va siyosat</li><li>Bonuslar va keshbek tizimi</li></ul>
     <div class="highlight-box">📞 Hamkorlik uchun: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    how: `<h1>CampusEats qanday ishlaydi</h1>
+  how: `<h1>CampusEats qanday ishlaydi</h1>
     <h2>1-qadam — Hisob yarating</h2><p>60 soniya ichida telefon raqamingiz bilan ro'yxatdan o'ting.</p>
     <h2>2-qadam — Restoran tanlang</h2><p>Reytingi va yetkazish vaqtiga qarab filtrlangan restoranlarni ko'ring.</p>
     <h2>3-qadam — Buyurtma bering</h2><p>Taomlarni savatga qo'shing, xaritada manzilni belgilang va buyurtmani tasdiqlang.</p>
     <h2>4-qadam — Yetkazish</h2><p>Buyurtmangiz holati real vaqtda ko'rsatiladi.</p>
     <div class="highlight-box">Yordam kerakmi? <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    partners: PAGE_CONTENT_ALL.en.partners,
-    help: `<h1>Yordam markazi</h1>
+  partners: PAGE_CONTENT_ALL.en.partners,
+  help: `<h1>Yordam markazi</h1>
     <h2>Hisob va kirish</h2><ul><li><strong>Parolni unutdingizmi?</strong> — <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a> orqali bog'laning.</li></ul>
     <h2>Buyurtmalar</h2><ul><li><strong>Buyurtma kelmadi?</strong> — Qo'llab-quvvatlash bilan darhol bog'laning.</li></ul>
     <div class="highlight-box">💬 Telegram: <a href="https://t.me/CampusEats" style="color:var(--primary);font-weight:700;">@CampusEats</a></div>`,
-    faq: `<h1>Ko'p so'raladigan savollar</h1>
+  faq: `<h1>Ko'p so'raladigan savollar</h1>
     <h2>CampusEats bepulmi?</h2><p>Ha. Hisob yaratish va restoranlarni ko'rish bepul.</p>
     <h2>Keshbek qanday olinadi?</h2><p>Tasdiqlangan foydalanuvchilar har bir buyurtmadan keshbek oladi.</p>
     <h2>Yetkazish qancha vaqt oladi?</h2><p>Ko'pincha 20–45 daqiqa.</p>`,
-    refund: `<h1>Qaytarish siyosati</h1>
+  refund: `<h1>Qaytarish siyosati</h1>
     <h2>Qaytarish mumkin bo'lgan holatlar</h2><ul><li>Buyurtma yetkazilmagan.</li><li>Noto'g'ri yoki to'liq bo'lmagan tovarlar.</li></ul>
     <h2>Qaytarish qanday so'raladi</h2><p>Yetkazilgandan <strong>24 soat ichida</strong> <a href="https://t.me/CampusEats" style="color:var(--primary);">@CampusEats</a> ga yozing.</p>`,
-    terms: PAGE_CONTENT_ALL.en.terms,
-    privacy: PAGE_CONTENT_ALL.en.privacy,
-    cookies: PAGE_CONTENT_ALL.en.cookies
-  };
+  terms: PAGE_CONTENT_ALL.en.terms,
+  privacy: PAGE_CONTENT_ALL.en.privacy,
+  cookies: PAGE_CONTENT_ALL.en.cookies
+};
 
-  window.openPage = function (key) {
-    const content = getPageContent(key);
-    if (!content) return;
-    document.getElementById('pageContent').innerHTML = content;
-    const modal = document.getElementById('pageModal');
-    modal.style.display = 'block';
-    modal.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
-  };
+window.openPage = function (key) {
+  const content = getPageContent(key);
+  if (!content) return;
+  document.getElementById('pageContent').innerHTML = content;
+  const modal = document.getElementById('pageModal');
+  modal.style.display = 'block';
+  modal.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+};
 
-  window.closePage = function () {
-    document.getElementById('pageModal').style.display = 'none';
-    document.body.style.overflow = '';
-  };
+window.closePage = function () {
+  document.getElementById('pageModal').style.display = 'none';
+  document.body.style.overflow = '';
+};
 
-  // Close page modal on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePage();
-  });
+// Close page modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePage();
+});
 
-  init();
+init();
