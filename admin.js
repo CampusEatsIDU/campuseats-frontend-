@@ -671,16 +671,16 @@ async function loadVerifications(page = 1) {
             // Handle both old (file_url) and new (front/back) schema
             let imagesHtml = "";
             if (v.front_image_url) {
-                const front = v.front_image_url.startsWith("http") ? v.front_image_url : host + v.front_image_url;
-                imagesHtml += `<img src="${front}" class="img-preview" onclick="window.open('${front}', '_blank')" alt="Front" onerror="this.style.display='none'">`;
+                const front = v.front_image_url.startsWith("http") || v.front_image_url.startsWith("data:") ? v.front_image_url : host + v.front_image_url;
+                imagesHtml += `<img src="${front}" class="img-preview" onclick="const w=window.open('','_blank');w.document.write('<img src=\\''+'${front}'+'\\'>');" alt="Front" onerror="this.style.display='none'">`;
             }
             if (v.back_image_url) {
-                const back = v.back_image_url.startsWith("http") ? v.back_image_url : host + v.back_image_url;
-                imagesHtml += ` <img src="${back}" class="img-preview" onclick="window.open('${back}', '_blank')" alt="Back" onerror="this.style.display='none'">`;
+                const back = v.back_image_url.startsWith("http") || v.back_image_url.startsWith("data:") ? v.back_image_url : host + v.back_image_url;
+                imagesHtml += ` <img src="${back}" class="img-preview" onclick="const w=window.open('','_blank');w.document.write('<img src=\\''+'${back}'+'\\'>');" alt="Back" onerror="this.style.display='none'">`;
             }
             if (v.file_url && !v.front_image_url) {
-                const file = v.file_url.startsWith("http") ? v.file_url : host + v.file_url;
-                imagesHtml = `<img src="${file}" class="img-preview" onclick="window.open('${file}', '_blank')" alt="Photo" onerror="this.style.display='none'">`;
+                const file = v.file_url.startsWith("http") || v.file_url.startsWith("data:") ? v.file_url : host + v.file_url;
+                imagesHtml = `<img src="${file}" class="img-preview" onclick="const w=window.open('','_blank');w.document.write('<img src=\\''+'${file}'+'\\'>');" alt="Photo" onerror="this.style.display='none'">`;
             }
             if (!imagesHtml) imagesHtml = `<span style="color:var(--text-muted);">No images</span>`;
 

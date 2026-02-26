@@ -693,12 +693,42 @@ document.getElementById('submitVerificationBtn').addEventListener('click', async
     return;
   }
 
-  const formData = new FormData();
-  formData.append("front_image", frontFile);
-  formData.append("back_image", backFile);
+  // Client-side compression to avoid Vercel 4.5MB payload limit and save DB space
+  const resizeImage = (file, maxWidth) => new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          resolve(new File([blob], file.name, { type: "image/jpeg" }));
+        }, "image/jpeg", 0.7);
+      };
+    };
+  });
 
   const statusDiv = document.getElementById('uploadStatus');
   statusDiv.classList.remove('hidden');
+  statusDiv.textContent = "Compressing images...";
+
+  const compressedFront = await resizeImage(frontFile, 800);
+  const compressedBack = await resizeImage(backFile, 800);
+
+  const formData = new FormData();
+  formData.append("front_image", compressedFront);
+  formData.append("back_image", compressedBack);
+
   statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_pending;
 
   try {
