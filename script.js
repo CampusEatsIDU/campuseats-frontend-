@@ -393,24 +393,8 @@ function safePlaceholder(id, text) {
 // --- APP LOGIC ---
 
 const API_BASE = "https://campuseats-backend.vercel.app/api";
-const MENU_ITEMS = [
-  { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
-  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: '🧀', desc: 'Double cheese, double joy.' },
-  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 12.00, image: '🍕', desc: 'Spicy pepperoni on crispy crust.' },
-  { id: 104, category: 'pizza', name: 'Margherita', price: 11.00, image: '🍅', desc: 'Simple, fresh basil & mozzarella.' },
-  { id: 105, category: 'asian', name: 'Sushi Set A', price: 15.00, image: '🍱', desc: 'Salmon, Tuna, and Avocado rolls.' },
-  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 13.50, image: '🍜', desc: 'Rich broth with chashu pork.' },
-  { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: '🥤', desc: 'Cold brew with oat milk.' },
-  { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: '🍵', desc: 'Authentic Japanese sencha.' },
-];
-
-const RESTAURANTS = [
-  { id: 1, name: "Burger King", desc: "Fast Food • Burgers", rating: 4.8, time: "15-25 min", image: "🍔", special: true },
-  { id: 2, name: "Pizza Hut", desc: "Italian • Pizza", rating: 4.5, time: "25-40 min", image: "🍕", special: true },
-  { id: 3, name: "KFC", desc: "Fast Food • Chicken", rating: 4.6, time: "20-30 min", image: "🍗", special: false },
-  { id: 4, name: "Sushi Shop", desc: "Asian • Sushi", rating: 4.9, time: "35-50 min", image: "🍣", special: false },
-  { id: 5, name: "Tashkent Plov", desc: "Uzbek • National", rating: 4.7, time: "30-45 min", image: "🍲", special: false }
-];
+let MENU_ITEMS = []; // Will be populated when opening a restaurant
+let RESTAURANTS = []; // Will be populated from API
 
 let currentUser = null;
 let currentCart = [];
@@ -473,6 +457,54 @@ function init() {
       return;
     }
     handleLoginSuccess();
+  }
+
+  fetchRestaurants();
+}
+
+async function fetchRestaurants() {
+  try {
+    const res = await fetch(`${API_BASE}/restaurant/list`);
+    if (!res.ok) throw new Error("Failed to fetch restaurants");
+    const data = await res.json();
+
+    // Map backend data to local structure
+    RESTAURANTS = data.map(r => ({
+      id: r.user_id,
+      name: r.name,
+      desc: r.description || "Fresh & Delicious",
+      rating: 4.5, // Default for now
+      time: "20-40 min", // Default for now
+      image: r.logo_url || "🍔",
+      special: Math.random() > 0.5, // Randomized for demo, could be a flag later
+      isOpen: r.is_open
+    }));
+
+    renderRestaurants();
+  } catch (err) {
+    console.error("API Error:", err);
+    // Fallback if needed, but per user request we want real data
+  }
+}
+
+async function fetchMenu(restaurantId) {
+  try {
+    const res = await fetch(`${API_BASE}/restaurant/${restaurantId}/menu-public`);
+    if (!res.ok) throw new Error("Failed to fetch menu");
+    const data = await res.json();
+
+    MENU_ITEMS = data.map(m => ({
+      id: m.id,
+      category: m.category,
+      name: m.name,
+      price: parseFloat(m.price),
+      image: m.image_url || "🍽️",
+      desc: m.description || ""
+    }));
+
+    renderMenu('all');
+  } catch (err) {
+    console.error("Menu API Error:", err);
   }
 }
 
@@ -969,10 +1001,19 @@ function renderRestaurants() {
   sGrid.innerHTML = '';
 
   RESTAURANTS.forEach(rest => {
+    // Determine image src
+    let imgHTML = "";
+    if (rest.image.length < 5) {
+      imgHTML = `<div style="font-size:3rem; text-align:center; margin-bottom:12px;">${rest.image}</div>`;
+    } else {
+      const fullUrl = rest.image.startsWith('http') ? rest.image : `https://campuseats-backend.vercel.app${rest.image}`;
+      imgHTML = `<div style="margin-bottom:12px; height:80px; width:100%; border-radius:12px; overflow:hidden;"><img src="${fullUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+    }
+
     const cardHTML = `
-      <div class="restaurant-card fade-in" onclick="openRestaurant(${rest.id})">
-        <div style="font-size:3rem; text-align:center; margin-bottom:12px;">${rest.image}</div>
-        <h3 style="margin-bottom:4px; font-size:1.1rem;">${rest.name}</h3>
+      <div class="restaurant-card fade-in ${!rest.isOpen ? 'rest-closed' : ''}" onclick="openRestaurant(${rest.id})">
+        ${imgHTML}
+        <h3 style="margin-bottom:4px; font-size:1.1rem;">${rest.name} ${!rest.isOpen ? '<span style="font-size:0.7rem; color:var(--text-muted);">(Closed)</span>' : ''}</h3>
         <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">${rest.desc}</p>
         <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
           <span style="color:#f59e0b;">⭐ ${rest.rating}</span>
@@ -982,10 +1023,12 @@ function renderRestaurants() {
     `;
     rGrid.innerHTML += cardHTML;
 
-    if (rest.special) {
+    if (rest.special && rest.isOpen) {
       const specialCard = `
         <div class="restaurant-card-special fade-in" onclick="openRestaurant(${rest.id})">
-          <div style="font-size:2.5rem; text-align:center; margin-bottom:8px;">${rest.image}</div>
+          <div style="margin-bottom:8px; height:60px; display:flex; align-items:center; justify-content:center;">
+             ${rest.image.length < 5 ? rest.image : `<img src="https://campuseats-backend.vercel.app${rest.image}" style="height:100%; border-radius:8px;">`}
+          </div>
           <h3 style="margin-bottom:4px; font-size:1rem;">${rest.name}</h3>
           <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">${rest.desc}</p>
           <div style="font-size:0.8rem; font-weight:600; color:var(--primary);">Get 20% Cashback</div>
@@ -1008,9 +1051,10 @@ window.openRestaurant = function (id) {
   if (rmv) rmv.classList.remove('hidden');
 
   if (crh) {
+    let imgHTML = rest.image.length < 5 ? `<div style="font-size:4rem;">${rest.image}</div>` : `<img src="https://campuseats-backend.vercel.app${rest.image}" style="width:100px; height:100px; border-radius:15px; object-fit:cover;">`;
     crh.innerHTML = `
       <div style="display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, var(--bg-page), white); border-radius:20px; border:1px solid var(--border-color);">
-        <div style="font-size:4rem;">${rest.image}</div>
+        ${imgHTML}
         <div>
           <h1 style="margin:0 0 8px 0; font-size:2rem;">${rest.name}</h1>
           <p style="margin:0; color:var(--text-muted); font-weight:500;">⭐ ${rest.rating} • ${rest.desc} • ${rest.time}</p>
@@ -1019,7 +1063,7 @@ window.openRestaurant = function (id) {
     `;
   }
 
-  renderMenu('all');
+  fetchMenu(id);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -1029,8 +1073,17 @@ function renderMenu(category, restName = "") {
   items.forEach(item => {
     const card = document.createElement('div');
     card.className = 'food-card fade-in';
+
+    let imgHTML = "";
+    if (item.image.length < 5) {
+      imgHTML = `<div class="food-img">${item.image}</div>`;
+    } else {
+      const fullUrl = item.image.startsWith('http') ? item.image : `https://campuseats-backend.vercel.app${item.image}`;
+      imgHTML = `<div class="food-img" style="overflow:hidden;"><img src="${fullUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+    }
+
     card.innerHTML = `
-          <div class="food-img">${item.image}</div>
+          ${imgHTML}
           <div class="food-info">
               <div class="food-name">${item.name}</div>
               <div class="food-desc">${item.desc}</div>
