@@ -12,7 +12,7 @@ const API_BASE = "https://campuseats-backend.vercel.app/api";
 // ═══════════════════════════════════════════
 const TRANSLATIONS = {
     en: {
-        dashboard: "Dashboard", users: "Users", restaurants: "Restaurants", verifications: "Verifications",
+        dashboard: "Dashboard", users: "Users", restaurants: "Restaurants", couriers: "Couriers", verifications: "Verifications",
         orders: "Orders", logs: "Audit Logs", system: "System", logout: "Log Out",
         welcome: "Welcome Back", overview: "Platform Overview",
         total_users: "Total Users", pending_identities: "Pending Verifications",
@@ -29,7 +29,7 @@ const TRANSLATIONS = {
         msg_auth_failed: "Auth verify failed", msg_forbidden: "Forbidden: You are not a superadmin."
     },
     ru: {
-        dashboard: "Главная", users: "Пользователи", restaurants: "Рестораны", verifications: "Верификации",
+        dashboard: "Главная", users: "Пользователи", restaurants: "Рестораны", couriers: "Курьеры", verifications: "Верификации",
         orders: "Заказы", logs: "Логи аудита", system: "Система", logout: "Выйти",
         welcome: "С возвращением", overview: "Обзор платформы",
         total_users: "Всего пользователей", pending_identities: "Ожидают проверки",
@@ -46,7 +46,7 @@ const TRANSLATIONS = {
         msg_auth_failed: "Ошибка авторизации", msg_forbidden: "Доступ запрещен: Вы не суперадмин."
     },
     uz: {
-        dashboard: "Boshqaruv", users: "Foydalanuvchilar", restaurants: "Restoranlar", verifications: "Verifikatsiya",
+        dashboard: "Boshqaruv", users: "Foydalanuvchilar", restaurants: "Restoranlar", couriers: "Kuryerlar", verifications: "Verifikatsiya",
         orders: "Buyurtmalar", logs: "Audit loglari", system: "Tizim", logout: "Chiqish",
         welcome: "Xush kelibsiz", overview: "Platforma sharhi",
         total_users: "Jami foydalanuvchilar", pending_identities: "Kutilayotgan tasdiqlar",
@@ -138,6 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadDashboard();
         loadUsers();
         loadRestaurants();
+        loadCouriers();
         loadVerifications();
         loadOrders();
         loadAuditLogs();
@@ -263,6 +264,10 @@ function getActionTag(action) {
         RESTAURANT_CREATED: { cls: "create", icon: "fa-plus" },
         PASSWORD_RESET: { cls: "reset", icon: "fa-key" },
         ROLE_CHANGED: { cls: "role", icon: "fa-exchange-alt" },
+        COURIER_CREATED: { cls: "create", icon: "fa-motorcycle" },
+        COURIER_BLOCKED: { cls: "block", icon: "fa-ban" },
+        COURIER_UNBLOCKED: { cls: "unblock", icon: "fa-check-circle" },
+        COURIER_PASSWORD_RESET: { cls: "reset", icon: "fa-key" },
         // legacy mappings
         approve_verification: { cls: "approve", icon: "fa-check" },
         reject_verification: { cls: "reject", icon: "fa-times" },
@@ -732,6 +737,153 @@ async function createRestaurant() {
     } catch (err) {
         resultBox.className = "result-box error";
         resultBox.textContent = "Creation failed: " + err.message;
+    }
+}
+
+// ═══════════════════════════════════════════
+// COURIERS
+// ═══════════════════════════════════════════
+let couriersPage = 1;
+const COURIERS_LIMIT = 50;
+
+async function loadCouriers(page = 1) {
+    couriersPage = page;
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers?limit=${COURIERS_LIMIT}&page=${page}`, { headers: getAuthHeaders() });
+        const data = await res.json();
+
+        const tbody = document.getElementById("couriersTableBody");
+
+        if (!data.couriers || data.couriers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-motorcycle"></i><p>No couriers yet</p></div></td></tr>`;
+            document.getElementById("couriersPagination").innerHTML = "";
+            return;
+        }
+
+        tbody.innerHTML = data.couriers.map((c) => {
+            const statusBadge = `<span class="badge ${c.status || 'active'}">${(c.status || 'active').toUpperCase()}</span>`;
+            const ratingStr = c.rating ? Number(c.rating).toFixed(1) : "5.0";
+
+            return `
+                <tr>
+                    <td style="color:var(--text-muted); font-weight:600;">#${c.id}</td>
+                    <td style="font-weight:600;">${escapeHtml(c.full_name || "—")}</td>
+                    <td style="color:var(--text-secondary);">${escapeHtml(c.phone)}</td>
+                    <td>${statusBadge} ${c.is_online ? '<i class="fas fa-circle" style="color:var(--success); font-size:10px;" title="Online"></i>' : '<i class="fas fa-circle" style="color:var(--danger); font-size:10px;" title="Offline"></i>'}</td>
+                    <td><i class="fas fa-star" style="color:var(--warning); font-size:12px;"></i> ${ratingStr}</td>
+                    <td>${c.completed_orders || 0}</td>
+                    <td style="font-weight:600;">${Number(c.cash_on_hand || 0).toLocaleString()} UZS</td>
+                    <td>
+                        <div class="btn-group">
+                            ${(c.status === 'active')
+                    ? `<button class="btn btn-sm btn-danger" onclick="courierAction(${c.id}, 'block')" title="Block"><i class="fas fa-ban"></i></button>`
+                    : `<button class="btn btn-sm btn-success" onclick="courierAction(${c.id}, 'unblock')" title="Activate"><i class="fas fa-check"></i></button>`}
+                            <button class="btn btn-sm btn-warning" onclick="resetCourierPassword(${c.id})" title="Reset Password"><i class="fas fa-key"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        renderPagination("couriersPagination", data.total, data.page, data.limit, loadCouriers);
+    } catch (err) {
+        console.error("Load couriers error:", err);
+    }
+}
+
+async function createCourier() {
+    const phone = document.getElementById("courierPhone").value.trim();
+    const full_name = document.getElementById("courierName").value.trim();
+    const resultBox = document.getElementById("courierResult");
+
+    if (!phone || !full_name) {
+        resultBox.className = "result-box error";
+        resultBox.textContent = "Full Name and Phone number are required.";
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ phone, full_name }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            resultBox.className = "result-box error";
+            resultBox.textContent = "Error: " + data.message;
+            return;
+        }
+
+        resultBox.className = "result-box success";
+        resultBox.innerHTML = `
+            <strong><i class="fas fa-check-circle"></i> ${escapeHtml(data.message)}</strong><br><br>
+            <strong>Phone:</strong> ${escapeHtml(data.courier.phone)}<br>
+            <strong>Temp Password:</strong> <span class="password-display" style="font-size: 16px;">${escapeHtml(data.courier.temporary_password)}</span>
+            <br><small style="margin-top:8px; display:block;">Send this to the courier so they can login to the bot.</small>
+        `;
+
+        document.getElementById("courierPhone").value = "";
+        document.getElementById("courierName").value = "";
+
+        showToast("Courier created!", "success");
+        loadCouriers(couriersPage);
+        loadAuditLogs();
+
+    } catch (err) {
+        resultBox.className = "result-box error";
+        resultBox.textContent = "Creation failed: " + err.message;
+    }
+}
+
+async function courierAction(id, action) {
+    const confirmMsg = action === "block" ? "Block this courier?" : "Unblock this courier?";
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers/${id}/${action}`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message);
+        }
+        showToast(`Courier ${action}ed successfully`, "success");
+        loadCouriers(couriersPage);
+        loadAuditLogs();
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function resetCourierPassword(id) {
+    if (!confirm("Reset this courier's password? A new temporary password will be generated and they will be logged out.")) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers/${id}/reset-password`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+
+        openModal("Courier Password Reset", `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-key" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">New password for courier <strong style="color: var(--text-primary);">${escapeHtml(data.courier.phone)}</strong></p>
+                <div class="password-display">${escapeHtml(data.courier.temporary_password)}</div>
+                <p style="margin-top: 16px; font-size: 12px; color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle"></i> Save this password — it will NOT be shown again!
+                </p>
+            </div>
+        `);
+
+        showToast("Password reset successfully", "success");
+        loadAuditLogs();
+    } catch (err) {
+        showToast(err.message, "error");
     }
 }
 
