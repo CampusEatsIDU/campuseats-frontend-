@@ -7,7 +7,79 @@ const API_BASE = "https://campuseats-backend.vercel.app/api";
 // ═══════════════════════════════════════════
 // AUTH & INITIALIZATION
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// MULTI-LANGUAGE SUPPORT
+// ═══════════════════════════════════════════
+const TRANSLATIONS = {
+    en: {
+        dashboard: "Dashboard", users: "Users", restaurants: "Restaurants", verifications: "Verifications",
+        orders: "Orders", logs: "Audit Logs", system: "System", logout: "Log Out",
+        welcome: "Welcome Back", overview: "Platform Overview",
+        total_users: "Total Users", pending_identities: "Pending Verifications",
+        active_partners: "Active Partners", platform_revenue: "Platform Revenue",
+        recent_activity: "Recent Activity", search: "Search...",
+        msg_auth_failed: "Auth verify failed", msg_forbidden: "Forbidden: You are not a superadmin."
+    },
+    ru: {
+        dashboard: "Главная", users: "Пользователи", restaurants: "Рестораны", verifications: "Верификации",
+        orders: "Заказы", logs: "Логи аудита", system: "Система", logout: "Выйти",
+        welcome: "С возвращением", overview: "Обзор платформы",
+        total_users: "Всего пользователей", pending_identities: "Ожидают проверки",
+        active_partners: "Активные партнеры", platform_revenue: "Доход платформы",
+        recent_activity: "Последние действия", search: "Поиск...",
+        msg_auth_failed: "Ошибка авторизации", msg_forbidden: "Доступ запрещен: Вы не суперадмин."
+    },
+    uz: {
+        dashboard: "Boshqaruv", users: "Foydalanuvchilar", restaurants: "Restoranlar", verifications: "Verifikatsiya",
+        orders: "Buyurtmalar", logs: "Audit loglari", system: "Tizim", logout: "Chiqish",
+        welcome: "Xush kelibsiz", overview: "Platforma sharhi",
+        total_users: "Jami foydalanuvchilar", pending_identities: "Kutilayotgan tasdiqlar",
+        active_partners: "Faol hamkorlar", platform_revenue: "Platforma tushumi",
+        recent_activity: "Oxirgi harakatlar", search: "Qidirish...",
+        msg_auth_failed: "Avtorizatsiya xatosi", msg_forbidden: "Taqiqlangan: Siz superadmin emassiz."
+    }
+};
+
+let currentLang = localStorage.getItem("campuseats_lang") || "en";
+
+function applyTranslations() {
+    const t = TRANSLATIONS[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key]) {
+            const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.textContent = " " + t[key];
+            else el.textContent = t[key];
+        }
+    });
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+        const key = el.dataset.i18nLabel;
+        if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.dataset.i18nPh;
+        if (t[key]) el.placeholder = t[key];
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+}
+
+window.setLanguage = function (lang) {
+    currentLang = lang;
+    localStorage.setItem("campuseats_lang", lang);
+    applyTranslations();
+};
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'campuseats_lang') {
+        currentLang = e.newValue || 'en';
+        applyTranslations();
+    }
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
+    applyTranslations();
     const token = localStorage.getItem("campuseats_token");
     if (!token) {
         window.location.href = "index.html";

@@ -417,6 +417,7 @@ let MENU_ITEMS = [...STATIC_MENU];
 let RESTAURANTS = [...STATIC_REST];
 
 let currentUser = null;
+let currentRestaurantId = null;
 let currentCart = [];
 let mapInstance = null;
 let currentMarker = null;
@@ -1105,6 +1106,7 @@ window.openRestaurant = function (id) {
     `;
   }
 
+  currentRestaurantId = id; // Store for checkout
   fetchMenu(id, !!rest.isApi);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -1209,32 +1211,34 @@ async function handleCheckout() {
 
   const payload = {
     user_id: currentUser.id,
-    total_amount: total,
-    payment_method: 'card',
-    delivery_lat: selectedLocation.lat,
-    delivery_lng: selectedLocation.lng,
-    delivery_address: selectedLocation.address || selectedLocation.name
+    restaurant_id: currentRestaurantId,
+    total_price: total,
+    latitude: selectedLocation.lat,
+    longitude: selectedLocation.lng,
+    delivery_address: selectedLocation.address || selectedLocation.name,
+    items: currentCart.map(i => ({ name: i.name, qty: i.qty, price: i.price }))
   };
 
   try {
-    try {
-      await fetch(`${API_BASE}/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } catch (e) { }
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('campuseats_token')}`
+      },
+      body: JSON.stringify(payload)
+    });
 
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toISOString(),
-      items: [...currentCart],
-      ...payload,
-      status: 'pending'
-    };
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || "Checkout failed");
+    }
 
-    let orders = getLocalOrders();
-    orders.push(newOrder);
+    const savedOrder = await res.json();
+
+    // Add to local history for instant UI update
+    const orders = getLocalOrders();
+    orders.push(savedOrder);
     localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
 
     currentCart = [];
