@@ -393,8 +393,28 @@ function safePlaceholder(id, text) {
 // --- APP LOGIC ---
 
 const API_BASE = "https://campuseats-backend.vercel.app/api";
-let MENU_ITEMS = []; // Will be populated when opening a restaurant
-let RESTAURANTS = []; // Will be populated from API
+
+const STATIC_MENU = [
+  { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
+  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: '🧀', desc: 'Double cheese, double joy.' },
+  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 12.00, image: '🍕', desc: 'Spicy pepperoni on crispy crust.' },
+  { id: 104, category: 'pizza', name: 'Margherita', price: 11.00, image: '🍅', desc: 'Simple, fresh basil & mozzarella.' },
+  { id: 105, category: 'asian', name: 'Sushi Set A', price: 15.00, image: '🍱', desc: 'Salmon, Tuna, and Avocado rolls.' },
+  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 13.50, image: '🍜', desc: 'Rich broth with chashu pork.' },
+  { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: '🥤', desc: 'Cold brew with oat milk.' },
+  { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: '🍵', desc: 'Authentic Japanese sencha.' },
+];
+
+const STATIC_REST = [
+  { id: 1, name: "Burger King", desc: "Fast Food • Burgers", rating: 4.8, time: "15-25 min", image: "🍔", special: true, isOpen: true },
+  { id: 2, name: "Pizza Hut", desc: "Italian • Pizza", rating: 4.5, time: "25-40 min", image: "🍕", special: true, isOpen: true },
+  { id: 3, name: "KFC", desc: "Fast Food • Chicken", rating: 4.6, time: "20-30 min", image: "🍗", special: false, isOpen: true },
+  { id: 4, name: "Sushi Shop", desc: "Asian • Sushi", rating: 4.9, time: "35-50 min", image: "🍣", special: false, isOpen: true },
+  { id: 5, name: "Tashkent Plov", desc: "Uzbek • National", rating: 4.7, time: "30-45 min", image: "🍲", special: false, isOpen: true }
+];
+
+let MENU_ITEMS = [...STATIC_MENU];
+let RESTAURANTS = [...STATIC_REST];
 
 let currentUser = null;
 let currentCart = [];
@@ -469,8 +489,9 @@ async function fetchRestaurants() {
     const data = await res.json();
 
     // Map backend data to local structure
-    RESTAURANTS = data.map(r => ({
+    const apiRest = data.map(r => ({
       id: r.user_id,
+      isApi: true,
       name: r.name,
       desc: r.description || "Fresh & Delicious",
       rating: 4.5, // Default for now
@@ -480,20 +501,27 @@ async function fetchRestaurants() {
       isOpen: r.is_open
     }));
 
+    RESTAURANTS = [...STATIC_REST, ...apiRest];
     renderRestaurants();
   } catch (err) {
     console.error("API Error:", err);
-    // Fallback if needed, but per user request we want real data
+    renderRestaurants(); // Render static at least
   }
 }
 
-async function fetchMenu(restaurantId) {
+async function fetchMenu(restaurantId, isApi = false) {
   try {
+    if (!isApi) {
+      MENU_ITEMS = [...STATIC_MENU];
+      renderMenu('all');
+      return;
+    }
+
     const res = await fetch(`${API_BASE}/restaurant/${restaurantId}/menu-public`);
     if (!res.ok) throw new Error("Failed to fetch menu");
     const data = await res.json();
 
-    MENU_ITEMS = data.map(m => ({
+    const apiMenu = data.map(m => ({
       id: m.id,
       category: m.category,
       name: m.name,
@@ -502,9 +530,12 @@ async function fetchMenu(restaurantId) {
       desc: m.description || ""
     }));
 
+    MENU_ITEMS = [...STATIC_MENU, ...apiMenu];
     renderMenu('all');
   } catch (err) {
     console.error("Menu API Error:", err);
+    MENU_ITEMS = [...STATIC_MENU];
+    renderMenu('all');
   }
 }
 
@@ -1051,7 +1082,14 @@ window.openRestaurant = function (id) {
   if (rmv) rmv.classList.remove('hidden');
 
   if (crh) {
-    let imgHTML = rest.image.length < 5 ? `<div style="font-size:4rem;">${rest.image}</div>` : `<img src="https://campuseats-backend.vercel.app${rest.image}" style="width:100px; height:100px; border-radius:15px; object-fit:cover;">`;
+    let imgHTML = "";
+    if (rest.image.length < 5) {
+      imgHTML = `<div style="font-size:4rem;">${rest.image}</div>`;
+    } else {
+      const fullUrl = rest.image.startsWith('http') ? rest.image : `https://campuseats-backend.vercel.app${rest.image}`;
+      imgHTML = `<img src="${fullUrl}" style="width:100px; height:100px; border-radius:15px; object-fit:cover;">`;
+    }
+
     crh.innerHTML = `
       <div style="display:flex; align-items:center; gap:20px; padding:24px; background:linear-gradient(135deg, var(--bg-page), white); border-radius:20px; border:1px solid var(--border-color);">
         ${imgHTML}
@@ -1063,7 +1101,7 @@ window.openRestaurant = function (id) {
     `;
   }
 
-  fetchMenu(id);
+  fetchMenu(id, !!rest.isApi);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
