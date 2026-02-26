@@ -66,6 +66,7 @@ const sectionLoaders = {
     orders: loadOrders,
     analytics: loadAnalytics,
     profile: loadProfile,
+    security: () => { } // No loader needed for security
 };
 
 document.querySelectorAll(".nav-item[data-target]").forEach(btn => {
@@ -168,6 +169,12 @@ async function loadMenu() {
         const res = await fetch(`${API}/restaurant/menu`, { headers: AUTH });
         if (!res.ok) throw new Error("Menu load failed");
         const items = await res.json();
+
+        // Populate category datalist
+        const cats = [...new Set(items.map(i => i.category))];
+        const dl = document.getElementById("categoryList");
+        if (dl) dl.innerHTML = cats.map(c => `<option value="${c}">`).join("");
+
         const tbody = document.getElementById("menuBody");
         tbody.innerHTML = items.length ? items.map(m => `
             <tr>
@@ -260,33 +267,69 @@ document.getElementById("menuForm").addEventListener("submit", async e => {
 });
 
 // ── 3. Orders ─────────────────────────────────────────────────
+// Live polling orders every 20s
+let lastOrderCount = -1;
+setInterval(async () => {
+    // We check for new orders regardless of current view to play sound
+    try {
+        const res = await fetch(`${API}/restaurant/orders`, { headers: AUTH });
+        if (!res.ok) return;
+        const orders = await res.json();
+
+        if (Array.isArray(orders)) {
+            const pendingCount = orders.filter(o => o.status === 'pending').length;
+            if (lastOrderCount !== -1 && pendingCount > lastOrderCount) {
+                // New order arrived!
+                if (document.getElementById('profNotifSound').checked) {
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+                    audio.play().catch(e => console.log("Sound play error:", e));
+                }
+                showToast("🔔 New Order Received!");
+            }
+            lastOrderCount = pendingCount;
+
+            // If we are currently in orders view, refresh the list
+            if (document.getElementById("view-orders").classList.contains("active")) {
+                renderOrders(orders);
+            }
+            // If we are in dashboard, refresh dashboard
+            if (document.getElementById("view-dashboard").classList.contains("active")) {
+                loadDashboard();
+            }
+        }
+    } catch (e) { }
+}, 20000);
+
+function renderOrders(orders) {
+    const tbody = document.getElementById("ordersBody");
+    const nextStatus = { pending: "accepted", accepted: "preparing", preparing: "ready", ready: "completed" };
+    const nextLabel = { pending: "✓ Accept", accepted: "🧑‍🍳 Cook", preparing: "🛍 Ready", ready: "✅ Complete" };
+
+    tbody.innerHTML = Array.isArray(orders) && orders.length ? orders.map(o => {
+        const items = Array.isArray(o.items) ? o.items.map(i => `${i.quantity}×${i.item_name}`).join(", ") : "—";
+        const nxt = nextStatus[o.status];
+        const actions = nxt
+            ? `<button class="btn-accept" onclick="updateOrderStatus(${o.id}, '${nxt}')">${nextLabel[o.status]}</button>` + (o.status === "pending" ? `<button class="btn-reject" onclick="updateOrderStatus(${o.id}, 'cancelled')">✕ Reject</button>` : "")
+            : `<span style="font-size:11px;color:var(--text-secondary)">—</span>`;
+        return `<tr>
+            <td style="font-weight:700;color:var(--text-secondary)">#${o.id}</td>
+            <td style="white-space:nowrap;font-size:12px;color:var(--text-secondary)">${fmtDate(o.created_at)}</td>
+            <td><div style="font-weight:600">${o.user_name || "User"}</div><div style="font-size:11px;color:var(--text-secondary)">${o.user_phone || ""}</div></td>
+            <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;" title="${items}">${items}</td>
+            <td style="font-weight:700;color:var(--success)">${fmt(o.total_price)}</td>
+            <td><span class="badge ${o.status}">${o.status}</span></td>
+            <td><div class="btn-sm-group">${actions}</div></td>
+        </tr>`;
+    }).join("")
+        : `<tr><td colspan="7" style="text-align:center;color:var(--text-secondary);padding:40px;">No orders yet.</td></tr>`;
+}
+
 async function loadOrders() {
     try {
         const res = await fetch(`${API}/restaurant/orders`, { headers: AUTH });
         if (!res.ok) throw new Error("Orders load failed");
         const orders = await res.json();
-        const tbody = document.getElementById("ordersBody");
-
-        const nextStatus = { pending: "accepted", accepted: "preparing", preparing: "ready", ready: "completed" };
-        const nextLabel = { pending: "✓ Accept", accepted: "🧑‍🍳 Cook", preparing: "🛍 Ready", ready: "✅ Complete" };
-
-        tbody.innerHTML = Array.isArray(orders) && orders.length ? orders.map(o => {
-            const items = Array.isArray(o.items) ? o.items.map(i => `${i.quantity}×${i.item_name}`).join(", ") : "—";
-            const nxt = nextStatus[o.status];
-            const actions = nxt
-                ? `<button class="btn-accept" onclick="updateOrderStatus(${o.id}, '${nxt}')">${nextLabel[o.status]}</button>` + (o.status === "pending" ? `<button class="btn-reject" onclick="updateOrderStatus(${o.id}, 'cancelled')">✕ Reject</button>` : "")
-                : `<span style="font-size:11px;color:var(--text-secondary)">—</span>`;
-            return `<tr>
-                <td style="font-weight:700;color:var(--text-secondary)">#${o.id}</td>
-                <td style="white-space:nowrap;font-size:12px;color:var(--text-secondary)">${fmtDate(o.created_at)}</td>
-                <td><div style="font-weight:600">${o.user_name || "User"}</div><div style="font-size:11px;color:var(--text-secondary)">${o.user_phone || ""}</div></td>
-                <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;" title="${items}">${items}</td>
-                <td style="font-weight:700;color:var(--success)">${fmt(o.total_price)}</td>
-                <td><span class="badge ${o.status}">${o.status}</span></td>
-                <td><div class="btn-sm-group">${actions}</div></td>
-            </tr>`;
-        }).join("")
-            : `<tr><td colspan="7" style="text-align:center;color:var(--text-secondary);padding:40px;">No orders yet.</td></tr>`;
+        renderOrders(orders);
     } catch (err) {
         showToast("Error loading orders: " + err.message, true);
     }
@@ -305,11 +348,6 @@ window.updateOrderStatus = async function (id, status) {
         loadDashboard();
     } catch (err) { showToast("Error: " + err.message, true); }
 };
-
-// Live polling orders every 20s
-setInterval(() => {
-    if (document.getElementById("view-orders").classList.contains("active")) loadOrders();
-}, 20000);
 
 // ── 4. Analytics ─────────────────────────────────────────────
 let chartO, chartR;
@@ -360,6 +398,7 @@ async function loadProfile() {
         document.getElementById("profDesc").value = p.description || "";
         document.getElementById("profAddress").value = p.address || "";
         document.getElementById("profPhone").value = p.phone || "";
+        document.getElementById("profHours").value = p.working_hours || "";
         document.getElementById("profMin").value = Number(p.min_order || 0).toFixed(2);
         document.getElementById("profFee").value = Number(p.delivery_fee || 0).toFixed(2);
         const lp = document.getElementById("profLogoPreview");
@@ -378,6 +417,7 @@ document.getElementById("profileForm").addEventListener("submit", async e => {
     fd.append("description", document.getElementById("profDesc").value);
     fd.append("address", document.getElementById("profAddress").value);
     fd.append("phone", document.getElementById("profPhone").value);
+    fd.append("working_hours", document.getElementById("profHours").value);
     fd.append("min_order", document.getElementById("profMin").value);
     fd.append("delivery_fee", document.getElementById("profFee").value);
     const logoFile = document.getElementById("profLogo").files[0];
@@ -397,6 +437,36 @@ document.getElementById("profileForm").addEventListener("submit", async e => {
         loadProfile();
     } catch (err) { showToast("Error: " + err.message, true); }
     finally { btn.disabled = false; btn.textContent = "Save Profile"; }
+});
+
+// ── 6. Security ───────────────────────────────────────────────
+document.getElementById("passwordForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const currentPassword = document.getElementById("currentPass").value;
+    const newPassword = document.getElementById("newPass").value;
+    const confirmPassword = document.getElementById("confirmPass").value;
+
+    if (newPassword !== confirmPassword) {
+        return showToast("Passwords do not match", true);
+    }
+
+    const btn = e.submitter;
+    btn.disabled = true; btn.textContent = "Updating…";
+    try {
+        const res = await fetch(`${API}/auth/profile/password`, {
+            method: "POST",
+            headers: { ...AUTH, "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const d = await res.json();
+        if (!res.ok) throw new Error(d.message || "Password update failed");
+        showToast("Password updated successfully ✓");
+        document.getElementById("passwordForm").reset();
+    } catch (err) {
+        showToast(err.message, true);
+    } finally {
+        btn.disabled = false; btn.textContent = "Update Password";
+    }
 });
 
 // ── Start ─────────────────────────────────────────────────────
