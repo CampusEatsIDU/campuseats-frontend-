@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CampusEats — Food Delivery</title>
+    <meta name="description"
+        content="CampusEats — order food from the best campus restaurants. Fast delivery, cashback, and student bonuses.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="styles.css?v=1.6">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- SVG Logo inline helper -->
+    <style>
+        .ce-logo-svg {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f86b08, #ff9a44);
+            flex-shrink: 0;
+        }
+
+        .ce-logo-svg svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .rest-closed {
+            opacity: 0.6;
+            filter: grayscale(0.8);
+            pointer-events: none;
+            position: relative;
+        }
+
+        .rest-closed::after {
+            content: 'CLOSED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: var(--bg-card);
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            border: 2px solid #ccc;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MAP MODAL -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-card">
+            <div class="map-header">
+                <h3 id="mapModalTitle" style="font-family:var(--font-heading); margin:0;">Select Delivery Location</h3>
+                <button id="closeMapBtn"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <div id="leafletMap" class="map-container"></div>
+            <div class="map-footer">
+                <button id="useGpsBtn" class="btn-secondary"
+                    style="margin-right:auto; padding:8px 16px; font-size:0.9rem;">
+                    📍 Use My Location
+                </button>
+                <div style="flex:1; text-align:right;">
+                    <span id="locationStatus" style="font-size:0.9rem; color:#666; margin-right:12px;">Click map to
+                        pin</span>
+                    <button id="confirmLocationBtn" class="btn-checkout" style="width:auto; padding:10px 24px;">Confirm
+                        Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (desktop) -->
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="font-family:var(--font-heading); margin:0;" id="settingsTitle">Account Settings</h2>
+                <button id="closeSettingsBtn"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <!-- User info strip -->
+            <div id="settingsUserStrip"
+                style="display:flex; align-items:center; gap:14px; padding:16px; background:var(--bg-page); border-radius:16px; margin-bottom:24px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, var(--primary), #ff6b35); display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:white; font-weight:700;"
+                    id="settingsAvatar">U</div>
+                <div>
+                    <div style="font-weight:700; font-size:1rem;" id="settingsName">User</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);" id="settingsPhone">—</div>
+                </div>
+                <div style="margin-left:auto; text-align:right;">
+                    <div style="font-size:1.2rem; font-weight:800; color:var(--primary);" id="settingsBalance">$0.00
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted);" id="settingsBalanceLabel">Balance</div>
+                </div>
+            </div>
+
+            <form id="settingsForm">
+                <div class="settings-group">
+                    <label id="lblSetPhone">Phone Number</label>
+                    <input type="tel" id="setPhone" class="settings-input" placeholder="+1...">
+                </div>
+                <div class="settings-group">
+                    <label id="lblSetEmail">Email Address</label>
+                    <input type="email" id="setEmail" class="settings-input" placeholder="you@campus.edu">
+                </div>
+
+                <!-- Language inside settings -->
+                <div class="settings-group" id="mobileSettingsLang">
+                    <label id="lblSetLang">Language / Язык / Til</label>
+                    <div style="display:flex; gap:8px; margin-top:8px;">
+                        <button type="button" class="lang-pill" id="lpEN" onclick="setLanguage('en')">🇬🇧 EN</button>
+                        <button type="button" class="lang-pill" id="lpRU" onclick="setLanguage('ru')">🇷🇺 RU</button>
+                        <button type="button" class="lang-pill" id="lpUZ" onclick="setLanguage('uz')">🇺🇿 UZ</button>
+                    </div>
+                </div>
+
+                <!-- STUDENT ID VALIDATION SECTION -->
+                <div class="settings-group" style="margin-top:24px; padding-top:24px; border-top:1px solid #eee;">
+                    <label id="verifyTitle" style="font-weight:700; font-size:1rem;">Verify Student Status</label>
+                    <p id="verifyDesc" style="font-size:0.85rem; color:#666; margin-bottom:12px;">Upload your ID card to
+                        unlock student bonuses and free delivery.</p>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <div class="upload-card" style="flex:1"
+                            onclick="document.getElementById('fileInputFront').click()">
+                            <div style="font-size:2rem;">🆔</div>
+                            <div id="uploadCtaFront" style="font-weight:600; margin-top:8px; font-size: 0.8rem">Front ID
+                            </div>
+                            <input type="file" id="fileInputFront" hidden accept="image/*">
+                        </div>
+                        <div class="upload-card" style="flex:1"
+                            onclick="document.getElementById('fileInputBack').click()">
+                            <div style="font-size:2rem;">🔄</div>
+                            <div id="uploadCtaBack" style="font-weight:600; margin-top:8px; font-size: 0.8rem">Back ID
+                            </div>
+                            <input type="file" id="fileInputBack" hidden accept="image/*">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-checkout" style="padding: 10px; margin-top: 10px; width: 100%"
+                        id="submitVerificationBtn">Submit Verification</button>
+                    <div id="uploadStatus" class="upload-status status-pending hidden">Processing Verification... (Admin
+                        Review)</div>
+                </div>
+
+                <button type="submit" class="btn-checkout" style="margin-top:16px;" id="saveSettingsBtn">Save &amp;
+                    Update</button>
+
+                <!-- Logout inside settings -->
+                <button type="button" class="btn-logout-settings" id="logoutBtnSettings" onclick="doLogout()">
+                    🚪 <span id="logoutBtnSettingsText">Log Out</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DESKTOP NAVBAR -->
+    <nav class="navbar" id="desktopNav" style="display:none;">
+        <div class="nav-left">
+            <div class="nav-location" id="locationTrigger">
+                <span style="font-size:1.1rem; color:var(--primary);">📍</span>
+                <span id="navLocationText">Select Location</span>
+            </div>
+        </div>
+        <!-- SVG Logo (no img file dependency) -->
+        <a href="#" onclick="showSection('home')" class="logo" id="navLogo">
+            <span class="ce-logo-svg">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+                        fill="rgba(255,255,255,0.2)" />
+                    <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
+                    <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
+                </svg>
+            </span>
+            CampusEats
+        </a>
+        <div class="nav-right">
+            <!-- Language pills -->
+            <div class="nav-lang-group">
+                <button class="nav-lang-btn" id="nlEN" onclick="setLanguage('en')">EN</button>
+                <button class="nav-lang-btn" id="nlRU" onclick="setLanguage('ru')">RU</button>
+                <button class="nav-lang-btn" id="nlUZ" onclick="setLanguage('uz')">UZ</button>
+            </div>
+            <div class="pill-badge" style="cursor:pointer;" onclick="showSection('stats')" id="navOrdersDB">My Orders
+            </div>
+            <div class="nav-balance-pill">
+                <span class="balance-icon">💰</span>
+                <span>$<span id="navBalance">0.00</span></span>
+            </div>
+            <button class="profile-btn" id="profileBtn" title="Account Settings" onclick="showSection('profile')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+            <button id="logoutBtn" class="nav-logout-btn" onclick="doLogout()">
+                <span id="logoutBtnText">Log Out</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE TOP HEADER (shown after login on mobile) -->
+    <header class="mobile-top-header" id="mobileHeader" style="display:none;">
+        <div class="mth-left">
+            <div class="mth-location" id="mthLocationTrigger">
+                <span style="color:var(--primary); font-size:1rem;">📍</span>
+                <div>
+                    <div style="font-size:0.65rem; color:var(--text-muted); font-weight:500;" id="mthLocationLabel">
+                        Delivery to</div>
+                    <div style="font-size:0.85rem; font-weight:700; color:var(--text-main); max-width:120px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"
+                        id="mthLocationText">Select location</div>
+                </div>
+            </div>
+        </div>
+        <!-- FIXED: Only SVG logo + text, no img file -->
+        <div class="mth-center">
+            <span class="ce-logo-svg" style="width:28px;height:28px;border-radius:8px;">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+                    <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
+                    <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
+                </svg>
+            </span>
+            <span
+                style="font-family:var(--font-heading); font-weight:800; font-size:1rem; color:var(--text-main); letter-spacing:-0.3px;">CampusEats</span>
+        </div>
+        <div class="mth-right">
+            <div class="mth-balance" onclick="showSection('profile')">
+                <span style="font-size:0.65rem; color:var(--text-muted); display:block; line-height:1;">balance</span>
+                <span style="font-size:0.85rem; font-weight:800; color:var(--primary);">$<span
+                        id="mthBalance">0.00</span></span>
+            </div>
+            <button class="mth-profile-btn" id="mthProfileBtn" onclick="showSection('profile')">
+                <div class="mth-avatar" id="mthAvatar">U</div>
+            </button>
+        </div>
+    </header>
+
+    <!-- AUTH PAGE — Always in English (point 4) -->
+    <div id="authPage" class="auth-container fade-in">
+        <!-- Visual Left -->
+        <div class="auth-visual">
+            <div id="heroTextWrapper"
+                style="transition:opacity 0.3s ease; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                <h1 id="heroTitle" style="text-align:center;">Welcome to CampusEats</h1>
+                <p id="heroSub" style="text-align:center; margin:0 auto;">Order food easily. Get cashback as a verified
+                    student.</p>
+                <div style="margin-top:40px; font-size:4rem; text-align:center;">🍔 🍕 🍣</div>
+            </div>
+        </div>
+
+        <!-- Form Right -->
+        <div class="auth-form-wrapper">
+            <!-- SVG Logo -->
+            <div class="logo" style="margin-bottom:28px;">
+                <span class="ce-logo-svg">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
+                        <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
+                    </svg>
+                </span>
+                <span style="color:var(--text-main);">CampusEats</span>
+            </div>
+
+            <!-- Role Switcher — always English -->
+            <div class="role-selector">
+                <div class="role-pill active" id="roleUser" onclick="switchRole('user')">Student / User</div>
+                <div class="role-pill" id="roleRest" onclick="switchRole('restaurant')">Restaurant Partner</div>
+            </div>
+
+            <!-- Login/Signup Toggle — always English -->
+            <div class="auth-toggle">
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">Log In</div>
+                <div class="auth-tab" id="tabSignup" onclick="switchAuthMode('signup')">Sign Up</div>
+            </div>
+
+            <!-- LOGIN FORM — always English -->
+            <form id="loginForm">
+                <label id="lblLoginPhone" style="font-weight:500; display:block; margin-bottom:8px;">Phone
+                    Number</label>
+                <input type="text" id="loginPhone" class="settings-input" placeholder="+998 90 000 00 00" required>
+                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Password</label>
+                <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
+                <button type="submit" id="loginBtnText" class="btn-checkout" style="margin-top:20px;">Log In</button>
+                <div style="text-align:center; margin-top:14px;">
+                    <a href="https://t.me/CampusEats" target="_blank" id="forgotPassLink"
+                        style="color:var(--primary); text-decoration:none; font-size:0.9rem; font-weight:500;">Forgot
+                        Password?</a>
+                </div>
+            </form>
+
+            <!-- SIGNUP FORM — always English -->
+            <form id="signupForm" class="hidden">
+                <label style="font-weight:500; display:block; margin-bottom:8px;">Full Name</label>
+                <input type="text" id="regName" class="settings-input" placeholder="John Doe">
+                <div id="restFields" class="hidden">
+                    <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Restaurant
+                        Name</label>
+                    <input type="text" id="regRestName" class="settings-input" placeholder="Tasty Burger Place">
+                </div>
+                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Phone Number</label>
+                <input type="tel" id="regPhone" class="settings-input" placeholder="+1 555 ...">
+                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Create
+                    Password</label>
+                <input type="password" id="regPass" class="settings-input" placeholder="••••••••">
+                <button type="submit" id="signupBtnText" class="btn-checkout" style="margin-top:20px;">Create
+                    Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTENT -->
+    <main id="appContent" class="hidden" style="flex:1; display:flex; flex-direction:column;">
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="fade-in app-container">
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h1 id="homeHeroTitle">Back to Campus Sale!</h1>
+                    <p id="homeHeroSub">Get 20% cashback on all orders this week.</p>
+                </div>
+            </div>
+
+            <!-- Categories row -->
+            <div class="category-scroll" id="categoryScroll"></div>
+
+            <div class="app-grid">
+                <!-- Home View -->
+                <div class="main-column" id="mainHomeView">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h2 class="section-title" id="specialTitle" style="margin:0;">Specially for you</h2>
+                        <button class="btn-text" id="viewAllBtn">All</button>
+                    </div>
+                    <div class="horizontal-scroll" id="specialGrid"></div>
+
+                    <h2 class="section-title" id="restTitle" style="margin-top:40px; margin-bottom:20px;">Restaurants
+                    </h2>
+                    <div class="restaurant-grid" id="restaurantGrid"></div>
+                </div>
+
+                <!-- Restaurant Menu View -->
+                <div class="main-column hidden" id="restaurantMenuView">
+                    <button class="btn-secondary" id="backToRestaurantsBtn" style="margin-bottom:24px;">← <span
+                            id="backToListText">Back to categories</span></button>
+                    <div class="restaurant-header-card" id="currentRestHeader"></div>
+                    <h2 class="section-title" id="menuTitle" style="margin-top:32px; margin-bottom:20px;">Menu</h2>
+                    <div class="food-grid" id="menuGrid"></div>
+                </div>
+
+                <!-- Cart Sidebar -->
+                <aside class="cart-panel" id="cartPanel">
+                    <div class="cart-header-mobile">
+                        <h2 class="section-title" style="margin:0; font-size:1.4rem;" id="basketTitle">Your Basket</h2>
+                        <button class="close-cart-mobile" onclick="toggleCartMobile()">&times;</button>
+                    </div>
+                    <div id="cartItems" class="cart-items-scroll">
+                        <div id="cartEmptyText" style="text-align:center; padding:40px 20px; color:#bbb;">
+                            <div style="font-size:2.5rem; margin-bottom:12px;">🛒</div>
+                            <div>Basket is empty</div>
+                        </div>
+                    </div>
+                    <div class="cart-footer-sticky">
+                        <div class="cart-total"
+                            style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; padding:12px 0; border-top:1px solid #eee;">
+                            <span id="cartTotalLabel">Total</span>
+                            <span>$<span id="cartTotal">0.00</span></span>
+                        </div>
+                        <button id="checkoutBtn" class="btn-checkout" disabled>Checkout</button>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- MY ORDERS SECTION (Premium Redesign) -->
+        <section id="statsSection" class="hidden fade-in">
+            <div class="orders-hero">
+                <div class="orders-hero-content">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                        <span style="font-size:2rem;">📋</span>
+                        <h1 style="margin:0; font-size:1.8rem; font-weight:900; color:white;" id="dbTitle">My Orders
+                        </h1>
+                    </div>
+                    <p style="margin:0; opacity:0.8; font-size:0.9rem;" id="dbSubtitle">Your complete order history</p>
+                </div>
+                <button class="orders-back-btn" onclick="showSection('home')" id="backToMenuBtn">← Back</button>
+            </div>
+
+            <div class="orders-body app-container">
+                <div class="orders-stats-row">
+                    <div class="order-stat-card">
+                        <div class="osc-icon">💸</div>
+                        <div class="osc-value" id="statTotalSpent">$0.00</div>
+                        <div class="osc-label" id="lblTotalSpent">Total Spent</div>
+                    </div>
+                    <div class="order-stat-card">
+                        <div class="osc-icon">🛍</div>
+                        <div class="osc-value" id="statTotalOrders">0</div>
+                        <div class="osc-label" id="lblTotalOrders">Total Orders</div>
+                    </div>
+                    <div class="order-stat-card">
+                        <div class="osc-icon">⏰</div>
+                        <div class="osc-value" id="statLastOrder">—</div>
+                        <div class="osc-label" id="lblLastAct">Last Order</div>
+                    </div>
+                </div>
+
+                <div class="orders-table-card">
+                    <div class="otc-header">
+                        <span class="section-title" style="margin:0; font-size:1.1rem;" id="dbRecordsTitle">Order
+                            History</span>
+                        <span class="otc-count" id="dbOrderCount">0 orders</span>
+                    </div>
+                    <div id="ordersEmptyState" class="orders-empty">
+                        <div style="font-size:3.5rem; margin-bottom:16px;">📭</div>
+                        <div style="font-weight:700; font-size:1.1rem; margin-bottom:8px;" id="ordersEmptyTitle">No
+                            orders yet</div>
+                        <div style="color:var(--text-muted); font-size:0.9rem;" id="ordersEmptyDesc">Your orders will
+                            appear here after your first purchase.</div>
+                    </div>
+                    <div id="ordersListContainer" class="orders-list hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOCATION SECTION (Point 1) -->
+        <section id="locationSection" class="hidden fade-in">
+            <div class="loc-section-header">
+                <button class="orders-back-btn" onclick="showSection('home')"
+                    style="position:static; margin-bottom:0;">← Back</button>
+                <div>
+                    <h1 id="locSectionTitle" style="margin:0; font-size:1.4rem; font-weight:900; color:white;">My
+                        Addresses</h1>
+                    <p id="locSectionSubtitle" style="margin:0; opacity:0.8; font-size:0.85rem;">Select your delivery
+                        address</p>
+                </div>
+            </div>
+
+            <!-- Embedded Map -->
+            <div id="locMiniMap" style="width:100%; height:280px; position:relative; z-index:1;"></div>
+
+            <!-- Address form — bottom sheet style -->
+            <div class="loc-form-card">
+                <!-- Current address display -->
+                <div class="loc-current-row">
+                    <span style="color:var(--primary); font-size:1.2rem; flex-shrink:0;">📍</span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">Street, building</div>
+                        <div id="locCurrentAddress"
+                            style="font-size:0.9rem; font-weight:700; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            Select on map above</div>
+                    </div>
+                    <button id="locUseMapBtn" class="loc-change-btn" onclick="openMap()">Choose on Map</button>
+                </div>
+
+                <!-- Address type tags -->
+                <div class="loc-type-row">
+                    <button class="loc-type-btn active"
+                        onclick="this.closest('.loc-type-row').querySelectorAll('.loc-type-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active')">
+                        <span id="locHomeLabel">🏠 Home</span>
+                    </button>
+                    <button class="loc-type-btn"
+                        onclick="this.closest('.loc-type-row').querySelectorAll('.loc-type-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active')">
+                        <span id="locWorkLabel">💼 Work</span>
+                    </button>
+                    <button class="loc-type-btn"
+                        onclick="this.closest('.loc-type-row').querySelectorAll('.loc-type-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active')">+</button>
+                </div>
+
+                <!-- Detail fields grid -->
+                <div class="loc-fields-grid">
+                    <input type="text" id="locEntrance" class="loc-field" placeholder="Entrance">
+                    <input type="text" id="locIntercom" class="loc-field" placeholder="Intercom">
+                    <input type="text" id="locFloor" class="loc-field" placeholder="Floor">
+                    <input type="text" id="locApt" class="loc-field" placeholder="Apt / Office">
+                </div>
+                <input type="text" id="locComment" class="loc-field loc-field-full" placeholder="Comment for courier"
+                    style="width:100%; box-sizing:border-box;">
+
+                <!-- Save button -->
+                <button id="locSaveBtn" class="btn-checkout loc-save-btn" onclick="saveLocationAddress()">Save
+                    Address</button>
+            </div>
+        </section>
+
+        <!-- PROFILE SECTION (Point 2) -->
+        <section id="profileSection" class="hidden fade-in">
+            <!-- Profile Hero Header -->
+            <div class="prof-hero">
+                <div class="prof-avatar-wrap">
+                    <div class="prof-avatar-circle" id="profAvatarLetter">U</div>
+                    <span class="prof-verified-badge unverified" id="profVerifiedBadge">Not Verified</span>
+                </div>
+                <div class="prof-hero-info">
+                    <div class="prof-name" id="profName">User</div>
+                    <div class="prof-phone" id="profPhone">—</div>
+                    <div class="prof-balance-row">
+                        <span class="prof-balance-amount" id="profBalance">$0.00</span>
+                        <span class="prof-balance-label" id="profBalanceLabel">wallet balance</span>
+                    </div>
+                </div>
+                <h1 class="prof-title-hidden" id="profTitle" style="display:none;">My Profile</h1>
+            </div>
+
+            <!-- Profile Menu List (like the photo) -->
+            <div class="prof-menu-list">
+                <button class="prof-menu-item" onclick="showSection('stats')">
+                    <span class="prof-menu-icon">📋</span>
+                    <span class="prof-menu-label" id="profMenuOrders">My Orders</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+                <button class="prof-menu-item" id="profMenuAdmin" style="display:none;"
+                    onclick="window.location.href='admin.html'">
+                    <span class="prof-menu-icon">🛡️</span>
+                    <span class="prof-menu-label" style="color: #fe5000; font-weight: bold;">Admin Panel</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+                <button class="prof-menu-item"
+                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
+                    <span class="prof-menu-icon">👤</span>
+                    <span class="prof-menu-label" id="profMenuPersonal">Personal Data</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+                <button class="prof-menu-item" onclick="showSection('location')">
+                    <span class="prof-menu-icon">📍</span>
+                    <span class="prof-menu-label" id="profMenuAddress">My Addresses</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+                <button class="prof-menu-item"
+                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
+                    <span class="prof-menu-icon">💳</span>
+                    <span class="prof-menu-label" id="profMenuPayment">Payment Methods</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+                <button class="prof-menu-item"
+                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
+                    <span class="prof-menu-icon">⚙️</span>
+                    <span class="prof-menu-label" id="profMenuLanguage">Language</span>
+                    <span class="prof-menu-chevron">› <span
+                            style="font-size:0.75rem; color:var(--primary); font-weight:700;"
+                            id="profLangBadge">EN</span></span>
+                </button>
+                <button class="prof-menu-item" onclick="showSection('info')">
+                    <span class="prof-menu-icon">ℹ️</span>
+                    <span class="prof-menu-label" id="profMenuInfo">Info &amp; Help</span>
+                    <span class="prof-menu-chevron">›</span>
+                </button>
+            </div>
+
+            <!-- Language quick-select in profile -->
+            <div class="prof-lang-section">
+                <div style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:10px;">Language /
+                    Язык / Til</div>
+                <div style="display:flex; gap:8px;">
+                    <button class="lang-pill" id="profLpEN" onclick="setLanguage('en'); updateProfLang()">🇬🇧
+                        EN</button>
+                    <button class="lang-pill" id="profLpRU" onclick="setLanguage('ru'); updateProfLang()">🇷🇺
+                        RU</button>
+                    <button class="lang-pill" id="profLpUZ" onclick="setLanguage('uz'); updateProfLang()">🇺🇿
+                        UZ</button>
+                </div>
+            </div>
+
+            <!-- Logout -->
+            <div style="padding:0 16px 120px;">
+                <button class="btn-logout-settings prof-logout-btn" onclick="doLogout()">
+                    🚪 <span id="profMenuLogout">Log Out</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- INFO PAGES SECTION -->
+        <section id="infoSection" class="hidden fade-in app-container">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+                <button class="btn-secondary" onclick="showSection('profile')"
+                    style="padding:10px 18px; font-size:0.9rem;">← <span id="infoBackText">Back</span></button>
+                <h2 style="margin:0; font-size:1.3rem; font-weight:800;" id="infoSectionTitle">Info</h2>
+            </div>
+            <div class="info-pages-grid">
+                <div class="info-section-group">
+                    <div class="info-group-title" id="ig_company">Company</div>
+                    <button class="info-page-btn" onclick="openPage('about')"><span>🏢</span><span id="ipb_about">About
+                            Us</span></button>
+                    <button class="info-page-btn" onclick="openPage('how')"><span>⚡</span><span id="ipb_how">How It
+                            Works</span></button>
+                    <button class="info-page-btn" onclick="openPage('partners')"><span>🤝</span><span
+                            id="ipb_partners">Restaurant Partnership</span></button>
+                </div>
+                <div class="info-section-group">
+                    <div class="info-group-title" id="ig_support">Support</div>
+                    <button class="info-page-btn" onclick="openPage('help')"><span>💬</span><span id="ipb_help">Help
+                            Center</span></button>
+                    <button class="info-page-btn" onclick="openPage('faq')"><span>❓</span><span
+                            id="ipb_faq">FAQs</span></button>
+                    <button class="info-page-btn" onclick="openPage('refund')"><span>↩️</span><span
+                            id="ipb_refund">Refund Policy</span></button>
+                </div>
+                <div class="info-section-group">
+                    <div class="info-group-title" id="ig_legal">Legal</div>
+                    <button class="info-page-btn" onclick="openPage('terms')"><span>📄</span><span id="ipb_terms">Terms
+                            of Service</span></button>
+                    <button class="info-page-btn" onclick="openPage('privacy')"><span>🔒</span><span
+                            id="ipb_privacy">Privacy Policy</span></button>
+                    <button class="info-page-btn" onclick="openPage('cookies')"><span>🍪</span><span
+                            id="ipb_cookies">Cookies Policy</span></button>
+                </div>
+                <div class="info-section-group">
+                    <div class="info-group-title">Admin</div>
+                    <a href="https://t.me/CampusEats" target="_blank" class="info-page-btn info-tg-btn">
+                        <span>📞</span><span>@CampusEats on Telegram</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer (Desktop only) -->
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-col footer-col--brand">
+                    <div class="logo" style="color:white; margin-bottom:16px; font-size:1.5rem;">
+                        <span class="ce-logo-svg" style="width:28px;height:28px;border-radius:8px;">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+                                <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
+                                <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
+                            </svg>
+                        </span>
+                        CampusEats
+                    </div>
+                    <div id="footerTagline" style="color:#888; font-size:0.9rem; line-height:1.8;">Modern food delivery
+                        platform. Fast. Reliable. Everywhere.</div>
+                    <div style="margin-top:16px;">
+                        <a href="https://t.me/CampusEats" target="_blank"
+                            style="color:var(--primary); font-size:0.9rem; text-decoration:none; font-weight:600;">
+                            📞 <span id="footerAdminLink">Admin &amp; Support: @CampusEats</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 id="footerCompanyTitle">Company</h3>
+                    <nav class="footer-links">
+                        <a href="#" id="flink_about" onclick="openPage('about')">About Us</a>
+                        <a href="#" id="flink_how" onclick="openPage('how')">How It Works</a>
+                        <a href="#" id="flink_partners" onclick="openPage('partners')">Restaurant Partnership</a>
+                    </nav>
+                </div>
+                <div class="footer-col">
+                    <h3 id="footerSupportTitle">Support</h3>
+                    <nav class="footer-links">
+                        <a href="#" id="flink_help" onclick="openPage('help')">Help Center</a>
+                        <a href="#" id="flink_faq" onclick="openPage('faq')">FAQs</a>
+                        <a href="#" id="flink_refund" onclick="openPage('refund')">Refund Policy</a>
+                    </nav>
+                </div>
+                <div class="footer-col">
+                    <h3 id="footerLegalTitle">Legal</h3>
+                    <nav class="footer-links">
+                        <a href="#" id="flink_terms" onclick="openPage('terms')">Terms of Service</a>
+                        <a href="#" id="flink_privacy" onclick="openPage('privacy')">Privacy Policy</a>
+                        <a href="#" id="flink_cookies" onclick="openPage('cookies')">Cookies Policy</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span id="footerCopy">&copy; 2026 CampusEats &mdash; All rights reserved.</span>
+                <span style="color:#555; font-size:0.8rem;">
+                    <span id="footerAdminNote">For full access &amp; info contact</span>
+                    <a href="https://t.me/CampusEats" style="color:var(--primary); margin-left:4px;">@CampusEats</a>
+                </span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- MOBILE BOTTOM NAV — Home | Orders | Cart | Location | Profile -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" style="display:none;">
+        <button class="mbn-btn active" id="mbnHome" onclick="showSection('home')">
+            <span class="mbn-icon">🏠</span>
+            <span class="mbn-label" id="mbn_home">Home</span>
+        </button>
+        <button class="mbn-btn" id="mbnOrders" onclick="showSection('stats')">
+            <span class="mbn-icon">📋</span>
+            <span class="mbn-label" id="mbn_orders">Orders</span>
+        </button>
+        <button class="mbn-btn mbn-cart" id="mbnCart" onclick="toggleCartMobile()">
+            <span class="mbn-icon">🛒</span>
+            <span class="mbn-label" id="mbn_cart">Cart</span>
+            <span class="mbn-cart-count hidden" id="mbnCartCount">0</span>
+        </button>
+        <button class="mbn-btn" id="mbnLocation" onclick="showSection('location')">
+            <span class="mbn-icon">📍</span>
+            <span class="mbn-label" id="mbn_location">Address</span>
+        </button>
+        <button class="mbn-btn" id="mbnProfile" onclick="showSection('profile')">
+            <span class="mbn-icon">👤</span>
+            <span class="mbn-label" id="mbn_profile">Profile</span>
+        </button>
+    </nav>
+
+    <!-- FULL PAGE MODAL (for info pages) -->
+    <div id="pageModal"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:#fff; overflow-y:auto; animation:pageSlideIn 0.3s cubic-bezier(0.32,0.72,0,1);">
+        <div class="page-modal-inner">
+            <button onclick="closePage()" id="pageBackBtn" class="page-back-btn">
+                ← <span id="pageBackText">Back</span>
+            </button>
+            <div id="pageContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.6"></script>
+
+    <script>
+        // Helper: update lang badge in profile section
+        window.updateProfLang = function () {
+            const langMap = { en: 'EN', ru: 'RU', uz: 'UZ' };
+            const badge = document.getElementById('profLangBadge');
+            if (badge) badge.textContent = langMap[currentLang] || 'EN';
+            // sync prof lang pills active state
+            ['profLpEN', 'profLpRU', 'profLpUZ'].forEach((id, i) => {
+                const el = document.getElementById(id);
+                const langs = ['en', 'ru', 'uz'];
+                if (el) el.classList.toggle('active', langs[i] === currentLang);
+            });
+        };
+        // Also update on normal setLanguage
+        const _origUpdateLangPills = window.updateLangPills;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,188 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+    width: 100%;
+    height: 80px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 80px;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #ff6b00;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.login {
+    border: 2px solid #ff6b00;
+    color: #ff6b00;
+    background: white;
+}
+
+.login:hover {
+    background: #ff6b00;
+    color: white;
+}
+
+.signup {
+    background: #ff6b00;
+    color: white;
+}
+
+.signup:hover {
+    background: #e05f00;
+}
+
+/* button anim */
+
+:root{
+  --main-color: #ff6b00;
+  --dark-color: #1f1f1f;
+  --white: #ffffff;
+}
+
+/* ОБЩИЙ СТИЛЬ КНОПОК */
+.btn-primary,
+.btn-outline{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+/* PRIMARY (Sign Up) */
+.btn-primary{
+  background: var(--main-color);
+  color: var(--white);
+  border: none;
+  box-shadow: 0 10px 25px rgba(255,107,0,0.25);
+}
+
+/* OUTLINE (Login) */
+.btn-outline{
+  background: transparent;
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+}
+
+/* АНИМАЦИОННЫЕ КРУГИ */
+.btn-primary::before,
+.btn-primary::after,
+.btn-outline::before,
+.btn-outline::after{
+  content:"";
+  position:absolute;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  z-index:-1;
+  transform: translate(-50%, -50%);
+  transition: 0.9s ease;
+}
+
+/* цвет волны */
+.btn-primary::before,
+.btn-primary::after{
+  background: var(--dark-color);
+}
+
+.btn-outline::before,
+.btn-outline::after{
+  background: var(--main-color);
+}
+
+/* стартовые позиции */
+.btn-primary::before,
+.btn-outline::before{
+  top:-2em;
+  left:-2em;
+}
+
+.btn-primary::after,
+.btn-outline::after{
+  top: calc(100% + 2em);
+  left: calc(100% + 2em);
+}
+
+/* HOVER */
+.btn-primary:hover,
+.btn-outline:hover{
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* волна */
+.btn-primary:hover::before,
+.btn-primary:hover::after,
+.btn-outline:hover::before,
+.btn-outline:hover::after{
+  width:420px;
+  height:420px;
+}
+
+/* нажали */
+.btn-primary:active,
+.btn-outline:active{
+  transform: translateY(0);
+}

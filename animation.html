@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CampusEats Intro</title>
+
+<style>
+    html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #fff;
+        }
+    video {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        object-fit: cover;
+        background: #fff;
+        transform: scale(1.01);
+    }
+</style>
+</head>
+
+<body>
+    <video id="intro" autoplay muted playsinline preload="auto">
+    <source src="./anim/cmapuseats_animlogo.mp4" type="video/mp4" />
+    </video>
+
+<script>
+    const v = document.getElementById("intro");
+
+    function goToSite() {
+
+        sessionStorage.setItem("fromIntro", "1");
+        
+        window.location.replace("index.html");
+    }
+
+    v.addEventListener("ended", goToSite);
+
+    setTimeout(goToSite, 3000);
+</script>
+</body>
+</html>
