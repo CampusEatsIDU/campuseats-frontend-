@@ -18,22 +18,12 @@
     <link rel="stylesheet" href="styles.css?v=1.6">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- SVG Logo inline helper -->
+    <link rel="icon" type="image/png" href="img/Campus eats logo-01.png">
+    <!-- Logo image helper -->
     <style>
-        .ce-logo-svg {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #f86b08, #ff9a44);
+        .ce-logo-img {
             flex-shrink: 0;
-        }
-
-        .ce-logo-svg svg {
-            width: 18px;
-            height: 18px;
+            object-fit: contain;
         }
 
         .rest-closed {
@@ -179,17 +169,8 @@
                 <span id="navLocationText">Select Location</span>
             </div>
         </div>
-        <!-- SVG Logo (no img file dependency) -->
         <a href="#" onclick="showSection('home')" class="logo" id="navLogo">
-            <span class="ce-logo-svg">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
-                        fill="rgba(255,255,255,0.2)" />
-                    <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2" stroke-linecap="round" />
-                    <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
-                    <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
-                </svg>
-            </span>
+            <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
             CampusEats
         </a>
         <div class="nav-right">
@@ -231,15 +212,8 @@
                 </div>
             </div>
         </div>
-        <!-- FIXED: Only SVG logo + text, no img file -->
         <div class="mth-center">
-            <span class="ce-logo-svg" style="width:28px;height:28px;border-radius:8px;">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-                    <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
-                    <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
-                </svg>
-            </span>
+            <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:32px; height:32px;">
             <span
                 style="font-family:var(--font-heading); font-weight:800; font-size:1rem; color:var(--text-main); letter-spacing:-0.3px;">CampusEats</span>
         </div>
@@ -264,21 +238,14 @@
                 <h1 id="heroTitle" style="text-align:center;">Welcome to CampusEats</h1>
                 <p id="heroSub" style="text-align:center; margin:0 auto;">Order food easily. Get cashback as a verified
                     student.</p>
-                <div style="margin-top:40px; font-size:4rem; text-align:center;">🍔 🍕 🍣</div>
+                <img src="img/Campus eats logo-01.png" alt="CampusEats Logo" style="margin-top:40px; width:200px; height:200px; object-fit:contain;">
             </div>
         </div>
 
         <!-- Form Right -->
         <div class="auth-form-wrapper">
-            <!-- SVG Logo -->
             <div class="logo" style="margin-bottom:28px;">
-                <span class="ce-logo-svg">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-                        <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
-                        <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
-                    </svg>
-                </span>
+                <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:40px; height:40px;">
                 <span style="color:var(--text-main);">CampusEats</span>
             </div>
 
@@ -668,13 +635,7 @@
             <div class="footer-grid">
                 <div class="footer-col footer-col--brand">
                     <div class="logo" style="color:white; margin-bottom:16px; font-size:1.5rem;">
-                        <span class="ce-logo-svg" style="width:28px;height:28px;border-radius:8px;">
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M8 10h8M8 13h5" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-                                <path d="M7 7c0-1.1.9-2 2-2h6a2 2 0 012 2v1H7V7z" fill="white" fill-opacity="0.9" />
-                                <rect x="6" y="17" width="12" height="2" rx="1" fill="white" fill-opacity="0.7" />
-                            </svg>
-                        </span>
+                        <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
                         CampusEats
                     </div>
                     <div id="footerTagline" style="color:#888; font-size:0.9rem; line-height:1.8;">Modern food delivery
