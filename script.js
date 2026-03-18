@@ -1828,3 +1828,4 @@ document.addEventListener('keydown', (e) => {
 });
 
 init();
+function togglePassword(inputId) { const input = document.getElementById(inputId); const btn = input.nextElementSibling; if (input.type === " password\) { input.type = \text\; btn.textContent = \??\; } else { input.type = \password\; btn.textContent = \???\; } }

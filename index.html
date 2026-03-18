@@ -296,12 +296,20 @@
 
             <!-- LOGIN FORM — always English -->
             <form id="loginForm">
-                <label id="lblLoginPhone" style="font-weight:500; display:block; margin-bottom:8px;">Phone
-                    Number</label>
-                <input type="text" id="loginPhone" class="settings-input" placeholder="+998 90 000 00 00" required>
-                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Password</label>
-                <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
-                <button type="submit" id="loginBtnText" class="btn-checkout" style="margin-top:20px;">Log In</button>
+                <label id="lblLoginPhone" style="font-weight:600; display:block; margin-bottom:8px; font-size: 0.9rem;">Phone Number</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">📞</span>
+                    <input type="text" id="loginPhone" class="settings-input" placeholder="+998 90 000 00 00" required>
+                </div>
+                
+                <label style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Password</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('loginPass')">👁️</button>
+                </div>
+                
+                <button type="submit" id="loginBtnText" class="btn-checkout" style="margin-top:28px;">Log In</button>
                 <div style="text-align:center; margin-top:14px;">
                     <a href="https://t.me/CampusEats" target="_blank" id="forgotPassLink"
                         style="color:var(--primary); text-decoration:none; font-size:0.9rem; font-weight:500;">Forgot
@@ -311,20 +319,34 @@
 
             <!-- SIGNUP FORM — always English -->
             <form id="signupForm" class="hidden">
-                <label style="font-weight:500; display:block; margin-bottom:8px;">Full Name</label>
-                <input type="text" id="regName" class="settings-input" placeholder="John Doe">
-                <div id="restFields" class="hidden">
-                    <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Restaurant
-                        Name</label>
-                    <input type="text" id="regRestName" class="settings-input" placeholder="Tasty Burger Place">
+                <label style="font-weight:600; display:block; margin-bottom:8px; font-size: 0.9rem;">Full Name</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="regName" class="settings-input" placeholder="John Doe">
                 </div>
-                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Phone Number</label>
-                <input type="tel" id="regPhone" class="settings-input" placeholder="+1 555 ...">
-                <label style="font-weight:500; display:block; margin-bottom:8px; margin-top:14px;">Create
-                    Password</label>
-                <input type="password" id="regPass" class="settings-input" placeholder="••••••••">
-                <button type="submit" id="signupBtnText" class="btn-checkout" style="margin-top:20px;">Create
-                    Account</button>
+
+                <div id="restFields" class="hidden">
+                    <label style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Restaurant Name</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">🍴</span>
+                        <input type="text" id="regRestName" class="settings-input" placeholder="Tasty Burger Place">
+                    </div>
+                </div>
+
+                <label style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Phone Number</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">📞</span>
+                    <input type="tel" id="regPhone" class="settings-input" placeholder="+1 555 ...">
+                </div>
+
+                <label style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Create Password</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="regPass" class="settings-input" placeholder="••••••••">
+                    <button type="button" class="password-toggle" onclick="togglePassword('regPass')">👁️</button>
+                </div>
+
+                <button type="submit" id="signupBtnText" class="btn-checkout" style="margin-top:28px;">Create Account</button>
             </form>
         </div>
     </div>
