@@ -908,7 +908,7 @@ select:focus {
 }
 
 /* RESPONSIVE */
-@media (max-width: 1000px) {
+@media (max-width: 768px) {
     .app-grid {
         grid-template-columns: 1fr;
     }
@@ -2464,7 +2464,7 @@ select:focus {
 /* ====================================================
    MOBILE OVERRIDES FOR NEW ELEMENTS
    ==================================================== */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
 
     /* Bottom padding for mobile nav */
     #appContent {
@@ -2555,7 +2555,7 @@ select:focus {
     }
 }
 
-@media (min-width: 641px) {
+@media (min-width: 769px) {
 
     /* Desktop: hide mobile-only elements */
     .mobile-top-header {

@@ -548,34 +548,46 @@ async function fetchMenu(restaurantId, isApi = false) {
 }
 
 // --- AUTH HANDLERS ---
-function handleLoginSuccess() {
-  document.getElementById('authPage').classList.add('hidden');
-  const appEl = document.getElementById('appContent');
-  appEl.classList.remove('hidden');
-  appEl.style.display = 'flex';
+updateResponsiveUI();
 
-  const isMobile = window.innerWidth <= 640;
+checkVerification();
+updateUserDisplay();
+renderRestaurants();
+loadLocalOrders();
+updateCartUI();
+applyTranslations();
+}
+
+/**
+ * Persistently updates the UI based on window width.
+ * Swaps between desktop and mobile layouts.
+ */
+function updateResponsiveUI() {
+  const isMobile = window.innerWidth <= 768;
   const navbar = document.getElementById('desktopNav');
   const mobileNav = document.getElementById('mobileBottomNav');
   const mobileHeader = document.getElementById('mobileHeader');
 
-  if (isMobile) {
-    if (navbar) navbar.style.display = 'none';
-    if (mobileNav) mobileNav.style.display = 'flex';
-    if (mobileHeader) mobileHeader.style.display = 'flex';
-  } else {
-    if (navbar) navbar.style.display = 'grid';
-    if (mobileNav) mobileNav.style.display = 'none';
-    if (mobileHeader) mobileHeader.style.display = 'none';
-  }
+  // Only apply if user is logged in (authPage is hidden)
+  const isAuthPageHidden = document.getElementById('authPage').classList.contains('hidden');
 
-  checkVerification();
-  updateUserDisplay();
-  renderRestaurants();
-  loadLocalOrders();
-  updateCartUI();
-  applyTranslations();
+  if (isAuthPageHidden) {
+    if (isMobile) {
+      if (navbar) navbar.style.display = 'none';
+      if (mobileNav) mobileNav.style.display = 'flex';
+      if (mobileHeader) mobileHeader.style.display = 'flex';
+      document.getElementById('appContent').style.paddingBottom = '80px';
+    } else {
+      if (navbar) navbar.style.display = 'grid';
+      if (mobileNav) mobileNav.style.display = 'none';
+      if (mobileHeader) mobileHeader.style.display = 'none';
+      document.getElementById('appContent').style.paddingBottom = '0';
+    }
+  }
 }
+
+// Listen for resize to handle orientation changes or window resizing
+window.addEventListener('resize', updateResponsiveUI);
 
 function doLogout() {
   localStorage.removeItem('campuseats_user');
