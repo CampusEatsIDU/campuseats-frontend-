@@ -2,7 +2,7 @@
    CampusEats SuperAdmin Panel — Full JavaScript
    ═══════════════════════════════════════════════════════════════ */
 
-const API_BASE = "https://campuseats-backend.vercel.app/api";
+const API_BASE = "https://juratbek.alwaysdata.net/api";
 
 // ═══════════════════════════════════════════
 // AUTH & INITIALIZATION

@@ -1,4 +1,4 @@
-const API = "https://campuseats-backend.vercel.app/api";
+const API = "https://juratbek.alwaysdata.net/api";
 
 // ── Auth guard ───────────────────────────────────────────────
 const token = localStorage.getItem("campuseats_token");

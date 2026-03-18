@@ -1840,3 +1840,15 @@ function togglePassword(inputId) {
     btn.textContent = "👁️";
   }
 }
+
+function handleLoginSuccess() {
+  document.getElementById('authPage').classList.add('hidden');
+  document.getElementById('appContent').classList.remove('hidden');
+  updateUserDisplay();
+  updateResponsiveUI();
+  applyTranslations();
+  checkVerification();
+  renderRestaurants();
+  loadLocalOrders();
+  updateCartUI();
+}
