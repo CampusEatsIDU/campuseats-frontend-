@@ -394,23 +394,40 @@ function safePlaceholder(id, text) {
 
 const API_BASE = "https://juratbek.alwaysdata.net/api";
 
+const FOOD_IMAGES = {
+  burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop",
+  cheeseburger: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop",
+  pizza: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop",
+  margherita: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=800&auto=format&fit=crop",
+  chicken: "https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=800&auto=format&fit=crop",
+  sushi: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=800&auto=format&fit=crop",
+  ramen: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
+  asian: "https://images.unsplash.com/photo-1552611052-33e04de081de?q=80&w=800&auto=format&fit=crop",
+  iced_latte: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop",
+  green_tea: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=800&auto=format&fit=crop",
+  drinks: "https://images.unsplash.com/photo-1544145945-f904253db0ad?q=80&w=800&auto=format&fit=crop",
+  uzbek: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
+  dessert: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop",
+  general: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop"
+};
+
 const STATIC_MENU = [
-  { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
-  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: '🧀', desc: 'Double cheese, double joy.' },
-  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 12.00, image: '🍕', desc: 'Spicy pepperoni on crispy crust.' },
-  { id: 104, category: 'pizza', name: 'Margherita', price: 11.00, image: '🍅', desc: 'Simple, fresh basil & mozzarella.' },
-  { id: 105, category: 'asian', name: 'Sushi Set A', price: 15.00, image: '🍱', desc: 'Salmon, Tuna, and Avocado rolls.' },
-  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 13.50, image: '🍜', desc: 'Rich broth with chashu pork.' },
-  { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: '🥤', desc: 'Cold brew with oat milk.' },
-  { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: '🍵', desc: 'Authentic Japanese sencha.' },
+  { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: FOOD_IMAGES.burger, desc: 'Flame-grilled with secret sauce.' },
+  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: FOOD_IMAGES.cheeseburger, desc: 'Double cheese, double joy.' },
+  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 12.00, image: FOOD_IMAGES.pizza, desc: 'Spicy pepperoni on crispy crust.' },
+  { id: 104, category: 'pizza', name: 'Margherita', price: 11.00, image: FOOD_IMAGES.margherita, desc: 'Simple, fresh basil & mozzarella.' },
+  { id: 105, category: 'asian', name: 'Sushi Set A', price: 15.00, image: FOOD_IMAGES.sushi, desc: 'Salmon, Tuna, and Avocado rolls.' },
+  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 13.50, image: FOOD_IMAGES.ramen, desc: 'Rich broth with chashu pork.' },
+  { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: FOOD_IMAGES.iced_latte, desc: 'Cold brew with oat milk.' },
+  { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: FOOD_IMAGES.green_tea, desc: 'Authentic Japanese sencha.' },
 ];
 
 const STATIC_REST = [
-  { id: 1, name: "Burger King", desc: "Fast Food • Burgers", rating: 4.8, time: "15-25 min", image: "🍔", special: true, isOpen: true },
-  { id: 2, name: "Pizza Hut", desc: "Italian • Pizza", rating: 4.5, time: "25-40 min", image: "🍕", special: true, isOpen: true },
-  { id: 3, name: "KFC", desc: "Fast Food • Chicken", rating: 4.6, time: "20-30 min", image: "🍗", special: false, isOpen: true },
-  { id: 4, name: "Sushi Shop", desc: "Asian • Sushi", rating: 4.9, time: "35-50 min", image: "🍣", special: false, isOpen: true },
-  { id: 5, name: "Tashkent Plov", desc: "Uzbek • National", rating: 4.7, time: "30-45 min", image: "🍲", special: false, isOpen: true }
+  { id: 1, name: "Burger King", desc: "Fast Food • Burgers", rating: 4.8, time: "15-25 min", image: FOOD_IMAGES.burger, special: true, isOpen: true },
+  { id: 2, name: "Pizza Hut", desc: "Italian • Pizza", rating: 4.5, time: "25-40 min", image: FOOD_IMAGES.pizza, special: true, isOpen: true },
+  { id: 3, name: "KFC", desc: "Fast Food • Chicken", rating: 4.6, time: "20-30 min", image: FOOD_IMAGES.chicken, special: false, isOpen: true },
+  { id: 4, name: "Sushi Shop", desc: "Asian • Sushi", rating: 4.9, time: "35-50 min", image: FOOD_IMAGES.sushi, special: false, isOpen: true },
+  { id: 5, name: "Tashkent Plov", desc: "Uzbek • National", rating: 4.7, time: "30-45 min", image: FOOD_IMAGES.uzbek, special: false, isOpen: true }
 ];
 
 let MENU_ITEMS = [...STATIC_MENU];
@@ -510,10 +527,35 @@ async function fetchRestaurants() {
   }
 }
 
-function getImgSrc(url) {
-  if (!url) return "🍽️"; // Fallback emoji
+function getImgSrc(url, meta = "") {
+  if (!url) return FOOD_IMAGES.general;
+
+  // If it's a short string (likely an emoji), use it to find a fallback
+  if (url.length < 5) {
+    const e = url;
+    if (e === '🍔') return FOOD_IMAGES.burger;
+    if (e === '🍕') return FOOD_IMAGES.pizza;
+    if (e === '🍗') return FOOD_IMAGES.chicken;
+    if (e === '🍣' || e === '🍱') return FOOD_IMAGES.sushi;
+    if (e === '🍜') return FOOD_IMAGES.asian;
+    if (e === '🍲') return FOOD_IMAGES.uzbek;
+    if (e === '🥤' || e === '🍵') return FOOD_IMAGES.drinks;
+    return FOOD_IMAGES.general;
+  }
+
+  // If it's already a full URL
   if (url.startsWith('data:') || url.startsWith('http')) return url;
-  // If it's a path like /uploads/xxx, append backend domain
+
+  // Keyword check for better fallbacks if the URL looks broken or generic
+  const combined = (url + " " + meta).toLowerCase();
+  if (combined.includes('burger')) return FOOD_IMAGES.burger;
+  if (combined.includes('pizza')) return FOOD_IMAGES.pizza;
+  if (combined.includes('chicken') || combined.includes('kfc')) return FOOD_IMAGES.chicken;
+  if (combined.includes('sushi')) return FOOD_IMAGES.sushi;
+  if (combined.includes('plov') || combined.includes('national')) return FOOD_IMAGES.uzbek;
+  if (combined.includes('drink') || combined.includes('tea') || combined.includes('coffee')) return FOOD_IMAGES.drinks;
+
+  // If it's a relative path like /uploads/xxx
   const base = "https://juratbek.alwaysdata.net";
   return url.startsWith('/') ? base + url : base + '/' + url;
 }
@@ -1076,7 +1118,7 @@ function renderRestaurants() {
     if (finalSrc.length < 5) {
       imgHTML = `<div style="font-size:3rem; text-align:center; margin-bottom:12px;">${finalSrc}</div>`;
     } else {
-      imgHTML = `<div style="margin-bottom:12px; height:80px; width:100%; border-radius:12px; overflow:hidden;"><img src="${finalSrc}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+      imgHTML = `<div style="margin-bottom:12px; height:120px; width:100%; border-radius:12px; overflow:hidden;"><img src="${finalSrc}" alt="${rest.name}" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>`;
     }
 
     const cardHTML = `
@@ -1097,7 +1139,7 @@ function renderRestaurants() {
       const specialCard = `
         <div class="restaurant-card-special fade-in" onclick="openRestaurant(${rest.id})">
           <div style="margin-bottom:8px; height:60px; display:flex; align-items:center; justify-content:center;">
-             ${finalSrc.length < 5 ? finalSrc : `<img src="${finalSrc}" style="height:100%; border-radius:8px;">`}
+             ${finalSrc.length < 5 ? finalSrc : `<img src="${finalSrc}" alt="${rest.name}" style="height:100%; border-radius:8px;" loading="lazy">`}
           </div>
           <h3 style="margin-bottom:4px; font-size:1rem;">${rest.name}</h3>
           <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">${rest.desc}</p>
@@ -1147,12 +1189,12 @@ function renderMenu(category, restName = "") {
     card.className = 'food-card fade-in';
 
     let imgHTML = "";
-    const finalSrc = getImgSrc(item.image);
+    const finalSrc = getImgSrc(item.image, item.name + " " + item.category);
 
     if (finalSrc.length < 5) {
       imgHTML = `<div class="food-img">${finalSrc}</div>`;
     } else {
-      imgHTML = `<div class="food-img" style="overflow:hidden;"><img src="${finalSrc}" style="width:100%; height:100%; object-fit:cover;"></div>`;
+      imgHTML = `<div class="food-img" style="overflow:hidden;"><img src="${finalSrc}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;" loading="lazy"></div>`;
     }
 
     card.innerHTML = `

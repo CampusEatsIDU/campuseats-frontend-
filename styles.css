@@ -383,23 +383,8 @@ html {
     transition: all 0.2s ease;
 }
 
-.btn-qty:hover {
-    background: var(--.input-with-icon {
-            position: relative;
-            margin-bottom: 20px;
-            animation: fadeInScale 0.5s ease backwards;
-        }
-
-        .input-with-icon:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .input-with-icon:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .input-with-icon:nth-child(4) {
-            animation-delay: 0.3s;
+        .btn-qty:hover {
+            background: var(--bg-page);
         }
 
         /* INPUT WITH ICON */
@@ -438,35 +423,39 @@ html {
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(31, 37, 39, 0.5);
+            background: rgba(31, 37, 39, 0.4);
             z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px;
         }
 
         .modal-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 32px;
-            border-radius: 20px;
+            border-radius: 24px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 20px 50px rgba(31, 37, 39, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .map-modal {
             position: fixed;
             inset: 0;
-            background: rgba(31, 37, 39, 0.6);
+            background: rgba(31, 37, 39, 0.4);
             z-index: 3000;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             opacity: 0;
             pointer-events: none;
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .map-modal.open {
@@ -476,14 +465,20 @@ html {
 
         .map-card {
             background: white;
-            width: 90%;
-            max-width: 900px;
-            height: 80vh;
-            border-radius: 20px;
+            width: 95%;
+            max-width: 800px;
+            height: 85vh;
+            border-radius: 24px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 25px 50px rgba(31, 37, 39, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .map-modal.open .map-card {
+            transform: scale(1);
         }
 
         .map-header {
@@ -631,8 +626,8 @@ html {
         }
 
         .food-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
             border-color: var(--primary);
         }
 
@@ -641,12 +636,13 @@ html {
         }
 
         .food-img {
-            height: 160px;
+            height: 180px;
             background: var(--bg-page);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 3rem;
+            position: relative;
         }
 
         .food-info {
@@ -1837,48 +1833,127 @@ html {
             }
 
             .restaurant-card {
-                padding: 14px 12px;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .restaurant-card > div:first-child {
+                margin-bottom: 0 !important;
+                height: 100px !important;
+                border-radius: 0 !important;
+            }
+
+            .restaurant-card > div:first-child img {
+                border-radius: 0 !important;
             }
 
             .restaurant-card h3 {
                 font-size: 0.9rem;
+                padding: 10px 12px 0;
             }
 
             .restaurant-card p {
                 font-size: 0.75rem;
+                padding: 0 12px;
+            }
+
+            .restaurant-card > div:last-child {
+                padding: 8px 12px 12px;
             }
 
             /* special horizontal scroll — keep as is, just tighter */
             .horizontal-scroll {
                 gap: 10px;
+                -webkit-overflow-scrolling: touch;
             }
 
             .restaurant-card-special {
                 min-width: 150px;
+                border-radius: 16px;
             }
 
-            /* --- Food menu grid: 2 cols --- */
+            /* Restaurant header in menu view */
+            .restaurant-header-card {
+                border-radius: 16px;
+                padding: 20px;
+                min-height: 140px;
+                margin-bottom: 16px;
+            }
+
+            .restaurant-header-card h1 {
+                font-size: 1.3rem !important;
+            }
+
+            .restaurant-header-card p {
+                font-size: 0.8rem !important;
+            }
+
+            .restaurant-header-card img {
+                width: 70px !important;
+                height: 70px !important;
+                border-radius: 12px !important;
+            }
+
+            /* Back button on mobile */
+            #backToRestaurantsBtn {
+                margin-bottom: 16px !important;
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                border-radius: 12px;
+            }
+
+            /* --- Food menu grid: single column horizontal cards on mobile --- */
             .food-grid {
-                grid-template-columns: 1fr 1fr !important;
+                grid-template-columns: 1fr !important;
                 gap: 12px;
             }
 
+            .food-card {
+                flex-direction: row !important;
+                border-radius: 16px;
+                min-height: 120px;
+            }
+
             .food-img {
-                height: 80px;
+                width: 120px;
+                min-width: 120px;
+                height: auto !important;
+                min-height: 120px;
                 font-size: 2.4rem;
+                border-radius: 16px 0 0 16px;
+            }
+
+            .food-img img {
+                border-radius: 16px 0 0 16px;
             }
 
             .food-info {
-                padding: 10px 12px 12px;
+                padding: 12px 14px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
 
             .food-name {
-                font-size: 0.85rem;
+                font-size: 0.95rem;
             }
 
             .food-desc {
-                font-size: 0.75rem;
-                margin-bottom: 8px;
+                font-size: 0.78rem;
+                margin-bottom: 10px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .food-action {
+                margin-top: auto;
+            }
+
+            .food-price {
+                font-size: 1.05rem;
             }
 
             /* Section titles */
@@ -1957,6 +2032,15 @@ html {
 
             .food-grid {
                 grid-template-columns: 1fr !important;
+            }
+
+            .food-img {
+                width: 100px !important;
+                min-width: 100px !important;
+            }
+
+            .food-name {
+                font-size: 0.85rem !important;
             }
 
             .stats-grid {
@@ -2209,54 +2293,20 @@ html {
             gap: 20px;
         }
 
-        .orders-back-btn {
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --premium-gradient: linear-gradient(135deg, #FF6B00 0%, #FF8A00 100%);
-            --premium-shadow: 0 10px 30px rgba(255, 107, 0, 0.15);
+                .orders-back-btn {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            transition: all 0.2s;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            border: none;
         }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px); opacity: 0;
-            }
-
-            to {
-                transform: translateY(0); opacity: 1;
-            }
-        }
-
-        @keyframes fadeInScale {
-            from {
-                transform: scale(0.95); opacity: 0;
-            }
-
-            to {
-                transform: scale(1); opacity: 1;
-            }
-        }
-
-        @keyframes headerWave {
-            0%, 100% {
-                border-radius: 0 0 40px 40px;
-            }
-
-            50% {
-                border-radius: 0 0 60px 20px;
-            }
-        }
-
-        color: white;
-        padding: 10px 20px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 600;
-        font-family: var(--font-body);
-        transition: all 0.2s;
-        white-space: nowrap;
-        backdrop-filter: blur(4px);
-    }
 
     .orders-back-btn:hover {
         background: rgba(255, 255, 255, 0.25);
