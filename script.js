@@ -557,7 +557,6 @@ renderRestaurants();
 loadLocalOrders();
 updateCartUI();
 applyTranslations();
-}
 
 /**
  * Persistently updates the UI based on window width.
@@ -1817,4 +1816,14 @@ document.addEventListener('keydown', (e) => {
 });
 
 init();
-function togglePassword(inputId) { const input = document.getElementById(inputId); const btn = input.nextElementSibling; if (input.type === " password\) { input.type = \text\; btn.textContent = \??\; } else { input.type = \password\; btn.textContent = \???\; } }
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  const btn = input.nextElementSibling;
+  if (input.type === "password") {
+    input.type = "text";
+    btn.textContent = "🙈";
+  } else {
+    input.type = "password";
+    btn.textContent = "👁️";
+  }
+}
