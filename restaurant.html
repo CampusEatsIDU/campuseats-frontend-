@@ -732,6 +732,45 @@
             background: var(--border-light);
             border-radius: 3px;
         }
+
+        /* Language buttons */
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .faq-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .faq-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .faq-a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -753,20 +792,22 @@
             </div>
         </div>
         <nav class="sidebar-nav">
-            <button class="nav-item active" data-target="dashboard"><i class="fa-solid fa-gauge-high"
-                    style="width:18px;text-align:center;"></i> Dashboard</button>
-            <button class="nav-item" data-target="menu"><i class="fa-solid fa-burger"
+            <button class="nav-item active" data-target="dashboard" data-i18n="dashboard"><i
+                    class="fa-solid fa-gauge-high" style="width:18px;text-align:center;"></i> Dashboard</button>
+            <button class="nav-item" data-target="menu" data-i18n="menu"><i class="fa-solid fa-burger"
                     style="width:18px;text-align:center;"></i> Menu Management</button>
-            <button class="nav-item" data-target="orders"><i class="fa-solid fa-receipt"
+            <button class="nav-item" data-target="orders" data-i18n="orders"><i class="fa-solid fa-receipt"
                     style="width:18px;text-align:center;"></i> Orders</button>
-            <button class="nav-item" data-target="analytics"><i class="fa-solid fa-chart-column"
+            <button class="nav-item" data-target="analytics" data-i18n="analytics"><i class="fa-solid fa-chart-column"
                     style="width:18px;text-align:center;"></i> Analytics</button>
-            <button class="nav-item" data-target="profile"><i class="fa-solid fa-store"
+            <button class="nav-item" data-target="profile" data-i18n="profile"><i class="fa-solid fa-store"
                     style="width:18px;text-align:center;"></i> Restaurant Profile</button>
-            <button class="nav-item" data-target="security"><i class="fa-solid fa-shield-halved"
+            <button class="nav-item" data-target="security" data-i18n="security"><i class="fa-solid fa-shield-halved"
                     style="width:18px;text-align:center;"></i> Security</button>
+            <button class="nav-item" data-target="help" data-i18n="help"><i class="fa-solid fa-circle-question"
+                    style="width:18px;text-align:center;"></i> Help & Rules</button>
             <div class="nav-div"></div>
-            <button class="nav-item" id="logoutBtn" style="color:var(--danger)"><i
+            <button class="nav-item" id="logoutBtn" style="color:var(--danger)" data-i18n="logout"><i
                     class="fa-solid fa-right-from-bracket" style="width:18px;text-align:center;"></i> Log Out</button>
         </nav>
     </aside>
@@ -782,10 +823,20 @@
                 </button>
                 <h1 class="page-title" id="pageTitle">Dashboard</h1>
             </div>
-            <div class="status-toggle" id="statusToggleWrap" onclick="toggleStatus()">
-                <div class="status-dot closed" id="statusDot"></div>
-                <span class="status-label" id="statusLabel">CLOSED</span>
-                <div class="toggle-track" id="statusTrack"></div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <!-- Language Switcher -->
+                <div
+                    style="display:flex; gap:4px; background:rgba(255,255,255,0.05); padding:3px; border-radius:8px; border:1px solid var(--border);">
+                    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+                    <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">RU</button>
+                    <button class="lang-btn" data-lang="uz" onclick="setLanguage('uz')">UZ</button>
+                </div>
+
+                <div class="status-toggle" id="statusToggleWrap" onclick="toggleStatus()">
+                    <div class="status-dot closed" id="statusDot"></div>
+                    <span class="status-label" id="statusLabel">CLOSED</span>
+                    <div class="toggle-track" id="statusTrack"></div>
+                </div>
             </div>
         </div>
 
@@ -793,55 +844,53 @@
         <section id="view-dashboard" class="view-section active">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-ico g"><i class="fa-solid fa-dollar-sign"></i></div>
+                    <div class="stat-ico g"><i class="fa-solid fa-wallet"></i></div>
                     <div>
-                        <div class="stat-lbl">Today Revenue</div>
-                        <div class="stat-val" id="dashRevToday">$0</div>
+                        <div class="stat-lbl" data-i18n-label="today_rev">Today's Revenue</div>
+                        <div class="stat-val" id="dashRevToday">$0.00</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-ico b"><i class="fa-solid fa-basket-shopping"></i></div>
+                    <div class="stat-ico b"><i class="fa-solid fa-cart-shopping"></i></div>
                     <div>
-                        <div class="stat-lbl">Today Orders</div>
+                        <div class="stat-lbl" data-i18n-label="active_orders">Active Orders</div>
                         <div class="stat-val" id="dashOrdersToday">0</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-ico p"><i class="fa-solid fa-calendar"></i></div>
+                    <div class="stat-ico p"><i class="fa-solid fa-chart-line"></i></div>
                     <div>
-                        <div class="stat-lbl">Monthly Revenue</div>
-                        <div class="stat-val" id="dashRevMonth">$0</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-ico y"><i class="fa-solid fa-star"></i></div>
-                    <div>
-                        <div class="stat-lbl">Rating</div>
-                        <div class="stat-val">4.9 ⭐</div>
+                        <div class="stat-lbl" data-i18n-label="monthly_rev">Monthly Revenue</div>
+                        <div class="stat-val" id="dashRevMonth">$0.00</div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="margin-top:24px;">
                 <div class="card-header">
-                    <span class="card-title">Active Orders Overview</span>
-                    <button class="btn-sm" onclick="loadDashboard()"><i class="fa-solid fa-rotate-right"></i>
-                        Refresh</button>
+                    <span class="card-title" data-i18n-label="order_management">Live Order Management</span>
+                    <button class="btn-sm" onclick="loadOrders(); loadDashboard()"><i
+                            class="fa-solid fa-rotate-right"></i> Refresh</button>
                 </div>
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Status</th>
+                                <th>ID</th>
+                                <th>TIME</th>
+                                <th>CUSTOMER</th>
+                                <th>ITEMS</th>
+                                <th>TOTAL</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody id="dashOrdersBody">
                             <tr>
-                                <td colspan="4" style="text-align:center;color:var(--text-secondary);padding:32px;">
-                                    Loading…</td>
+                                <td colspan="7" style="text-align:center;padding:40px;color:var(--text-secondary);"
+                                    data-i18n-label="no_orders">
+                                    No orders yet.
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -853,9 +902,7 @@
         <section id="view-menu" class="view-section">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Your Menu Items</span>
-                    <button class="btn-primary" onclick="openMenuModal()"><i class="fa-solid fa-plus"></i> Add
-                        Dish</button>
+                    Dish</button>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -969,14 +1016,16 @@
                         <!-- Upload Tips -->
                         <div
                             style="background:var(--bg-primary); border-radius:8px; padding:12px; margin-bottom:20px; border:1px dashed var(--border);">
-                            <div
-                                style="color:var(--accent); font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">
-                                <i class="fa-solid fa-circle-info"></i> Upload Guidelines</div>
+                            <div style="color:var(--accent); font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:6px;"
+                                data-i18n-label="upload_guidelines">
+                                <i class="fa-solid fa-circle-info"></i> Upload Guidelines
+                            </div>
                             <ul
                                 style="color:var(--text-secondary); font-size:11px; padding-left:14px; line-height:1.5;">
-                                <li><b>Formats:</b> JPG, PNG, WEBP.</li>
-                                <li><b>Max Size:</b> 2MB per file (optimized for fast loading).</li>
-                                <li><b>Dimensions:</b> Logo (Square, e.g. 300x300), Banner (Wide, e.g. 1200x400).</li>
+                                <li data-i18n-label="upload_tip1">Formats: JPG, PNG, WEBP.</li>
+                                <li data-i18n-label="upload_tip2">Max Size: 2MB per file (optimized for fast loading).
+                                </li>
+                                <li data-i18n-label="upload_tip3">Dimensions: Logo (Square), Banner (Wide).</li>
                             </ul>
                         </div>
 
@@ -1087,7 +1136,45 @@
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <!-- HELP & FAQ Section -->
+    <section id="view-help" class="view-section">
+        <div class="card">
+            <h2 data-i18n-label="faq_title" style="margin-bottom:20px;">Partner Rules & FAQ</h2>
+
+            <div class="faq-card">
+                <div class="faq-q" data-i18n-label="q1">How to accept orders?</div>
+                <div class="faq-a" data-i18n-label="a1">Go to 'Orders' section. Click 'Accept' to start preparation.
+                </div>
+            </div>
+
+            <div class="faq-card">
+                <div class="faq-q" data-i18n-label="q2">When do I get paid?</div>
+                <div class="faq-a" data-i18n-label="a2">Payments are processed weekly every Monday.</div>
+            </div>
+
+            <div class="faq-card">
+                <div class="faq-q" data-i18n-label="q3">Service Commission</div>
+                <div class="faq-a" data-i18n-label="a3">CampusEats takes 15% commission on each order.</div>
+            </div>
+
+            <div style="margin-top:40px;">
+                <h2 data-i18n-label="rules_title" style="margin-bottom:20px;">Partner Policy</h2>
+                <div
+                    style="background:rgba(255,255,255,0.03); padding:24px; border-radius:12px; border:1px solid var(--border);">
+                    <ul style="color:var(--text-secondary); line-height:2.2;">
+                        <li data-i18n-label="rule1">Maintain accurate prices and availability.</li>
+                        <li data-i18n-label="rule2">Prepare orders within the specified time.</li>
+                        <li data-i18n-label="rule3">Maintain hygiene and food quality standards.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Changes saved</div>
 
     <script src="restaurant.js"></script>
 </body>
