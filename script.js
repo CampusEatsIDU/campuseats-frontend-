@@ -569,7 +569,6 @@ function updateResponsiveUI() {
   const mobileNav = document.getElementById('mobileBottomNav');
   const mobileHeader = document.getElementById('mobileHeader');
 
-  // Only apply if user is logged in (authPage is hidden)
   const isAuthPageHidden = document.getElementById('authPage').classList.contains('hidden');
 
   if (isAuthPageHidden) {
@@ -584,6 +583,11 @@ function updateResponsiveUI() {
       if (mobileHeader) mobileHeader.style.display = 'none';
       document.getElementById('appContent').style.paddingBottom = '0';
     }
+  } else {
+    if (navbar) navbar.style.display = 'none';
+    if (mobileNav) mobileNav.style.display = 'none';
+    if (mobileHeader) mobileHeader.style.display = 'none';
+    document.getElementById('appContent').style.paddingBottom = '0';
   }
 }
 
@@ -1458,22 +1462,7 @@ document.getElementById('settingsForm').addEventListener('submit', (e) => {
 });
 
 // Handle window resize — switch between mobile and desktop nav
-window.addEventListener('resize', () => {
-  if (!currentUser) return;
-  const isMobile = window.innerWidth <= 640;
-  const navbar = document.getElementById('desktopNav');
-  const mobileNav = document.getElementById('mobileBottomNav');
-  const mobileHeader = document.getElementById('mobileHeader');
-  if (isMobile) {
-    if (navbar) navbar.style.display = 'none';
-    if (mobileNav) mobileNav.style.display = 'flex';
-    if (mobileHeader) mobileHeader.style.display = 'flex';
-  } else {
-    if (navbar) navbar.style.display = 'grid';
-    if (mobileNav) mobileNav.style.display = 'none';
-    if (mobileHeader) mobileHeader.style.display = 'none';
-  }
-});
+// Removed redundant resize listener
 
 
 

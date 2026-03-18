@@ -1656,6 +1656,7 @@ select:focus {
     }
 
     .auth-form-wrapper {
+        position: relative;
         flex: 1;
         padding: 32px 24px 48px;
         border-radius: 32px 32px 0 0;
@@ -2642,11 +2643,6 @@ select:focus {
     /* Hide#mobileSettingsLang on desktop (it's visible in settings modal) */
     #mobileSettingsLang {
         display: block;
-    }
-
-    /* Mobile header shows instead of desktop */
-    .mobile-top-header {
-        display: flex !important;
     }
 
     .navbar {
