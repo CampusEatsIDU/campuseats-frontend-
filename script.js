@@ -683,6 +683,13 @@ loginForm.addEventListener('submit', async (e) => {
     return;
   }
 
+  // Basic validation to match backend flexibility
+  const cleaned = phone.replace(/\s+/g, "");
+  if (!/^\+?\d{9,12}$/.test(cleaned) && !/^[a-zA-Z0-9_]{4,}$/.test(cleaned)) {
+    alert("Invalid phone or username format. Use +998XXXXXXXXX or 9 digits.");
+    return;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
@@ -719,7 +726,7 @@ loginForm.addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error("Login error:", err);
-    alert("Server connection failed");
+    alert("Server connection failed: " + err.message);
   }
 });
 
@@ -733,6 +740,12 @@ signupForm.addEventListener('submit', async (e) => {
 
   if (!phone || !password || !fullName) {
     alert("Phone, password, and name required");
+    return;
+  }
+
+  const cleaned = phone.replace(/\s+/g, "");
+  if (!/^\+?\d{9,12}$/.test(cleaned)) {
+    alert("Invalid phone format. Please use 9 or 12 digits (e.g. 901234567).");
     return;
   }
 
@@ -766,7 +779,7 @@ signupForm.addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error("Signup error:", err);
-    alert("Server connection failed");
+    alert("Server connection failed: " + err.message);
   }
 });
 
