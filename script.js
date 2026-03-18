@@ -417,6 +417,7 @@ let MENU_ITEMS = [...STATIC_MENU];
 let RESTAURANTS = [...STATIC_REST];
 
 let currentUser = null;
+let currentRestaurantId = null;
 let currentCart = [];
 let mapInstance = null;
 let currentMarker = null;
@@ -1117,6 +1118,7 @@ window.openRestaurant = function (id) {
     `;
   }
 
+  currentRestaurantId = id; // Store for checkout
   fetchMenu(id, !!rest.isApi);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -1221,32 +1223,34 @@ async function handleCheckout() {
 
   const payload = {
     user_id: currentUser.id,
-    total_amount: total,
-    payment_method: 'card',
-    delivery_lat: selectedLocation.lat,
-    delivery_lng: selectedLocation.lng,
-    delivery_address: selectedLocation.address || selectedLocation.name
+    restaurant_id: currentRestaurantId,
+    total_price: total,
+    latitude: selectedLocation.lat,
+    longitude: selectedLocation.lng,
+    delivery_address: selectedLocation.address || selectedLocation.name,
+    items: currentCart.map(i => ({ name: i.name, qty: i.qty, price: i.price }))
   };
 
   try {
-    try {
-      await fetch(`${API_BASE}/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } catch (e) { }
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('campuseats_token')}`
+      },
+      body: JSON.stringify(payload)
+    });
 
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toISOString(),
-      items: [...currentCart],
-      ...payload,
-      status: 'pending'
-    };
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || "Checkout failed");
+    }
 
-    let orders = getLocalOrders();
-    orders.push(newOrder);
+    const savedOrder = await res.json();
+
+    // Add to local history for instant UI update
+    const orders = getLocalOrders();
+    orders.push(savedOrder);
     localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
 
     currentCart = [];
@@ -1277,14 +1281,17 @@ function renderDatabaseStats() {
 
   // Stats
   let totalSpent = 0;
-  orders.forEach(o => totalSpent += o.total_amount);
+  orders.forEach(o => {
+    if (o && typeof o.total_price === 'number') totalSpent += o.total_price;
+    else if (o && typeof o.total_price === 'string') totalSpent += parseFloat(o.total_price) || 0;
+  });
 
   const statSpent = document.getElementById('statTotalSpent');
   const statOrders = document.getElementById('statTotalOrders');
   const statLast = document.getElementById('statLastOrder');
   const dbCount = document.getElementById('dbOrderCount');
 
-  if (statSpent) statSpent.textContent = '$' + totalSpent.toFixed(2);
+  if (statSpent) statSpent.textContent = '$' + (totalSpent || 0).toFixed(2);
   if (statOrders) statOrders.textContent = orders.length;
   if (statLast) statLast.textContent = orders.length > 0
     ? new Date(orders[orders.length - 1].date).toLocaleDateString() : '—';
@@ -1308,23 +1315,29 @@ function renderDatabaseStats() {
   const EMOJIS = ['🍔', '🍕', '🍣', '🍜', '🥗', '🌮', '🍗', '🥤'];
 
   [...orders].reverse().forEach((order, idx) => {
+    if (!order) return;
     const dateStr = new Date(order.date || Date.now()).toLocaleString();
     const itemsStr = order.items ? order.items.map(i => `${i.qty}× ${i.name}`).join(', ') : '—';
     const statusClass = order.status === 'pending' ? 'pending'
       : order.status === 'delivering' ? 'delivering' : '';
     const emoji = EMOJIS[idx % EMOJIS.length];
+
+    // Safety check for ID and price
+    const orderId = order.id ? order.id.toString().slice(-8) : '00000000';
+    const price = typeof order.total_price === 'number' ? order.total_price : parseFloat(order.total_price) || 0;
+
     const card = document.createElement('div');
     card.className = 'order-card fade-in';
     card.innerHTML = `
       <div class="oc-icon">${emoji}</div>
       <div class="oc-info">
-        <div class="oc-id">#${order.id.toString().slice(-8)}</div>
+        <div class="oc-id">#${orderId}</div>
         <div class="oc-items">${itemsStr}</div>
         <div class="oc-date">${dateStr}</div>
       </div>
       <div class="oc-right">
-        <div class="oc-amount">$${order.total_amount.toFixed(2)}</div>
-        <div class="oc-status ${statusClass}">${order.status}</div>
+        <div class="oc-amount">$${price.toFixed(2)}</div>
+        <div class="oc-status ${statusClass}">${order.status || 'pending'}</div>
       </div>`;
     listContainer.appendChild(card);
   });

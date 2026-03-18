@@ -1,7 +1,3 @@
-/* ========================================
-   CampusEats Restaurant Partner Panel JS
-   ======================================== */
-
 const API = "https://campuseats-backend.vercel.app/api";
 
 // ── Auth guard ───────────────────────────────────────────────
@@ -39,6 +35,121 @@ function imgSrc(url) {
     return API.replace("/api", "") + url;
 }
 
+// ── Multi-language ───────────────────────────────────────────
+const TRANSLATIONS = {
+    en: {
+        dashboard: "Dashboard", menu: "Menu Management", orders: "Orders", analytics: "Analytics",
+        profile: "Restaurant Profile", security: "Security", help: "Help & Rules",
+        today_rev: "Today's Revenue", active_orders: "Active Orders", monthly_rev: "Monthly Revenue",
+        order_management: "Live Order Management", no_orders: "No orders yet.",
+        add_dish: "Add Dish", photo: "Photo", name: "Name", category: "Category", price: "Price", status: "Status", actions: "Actions",
+        save: "Save Changes", logout: "Log Out",
+        msg_saved: "Changes saved successfully", msg_error: "An error occurred",
+        upload_guidelines: "Upload Guidelines",
+        upload_tip1: "Formats: JPG, PNG, WEBP.",
+        upload_tip2: "Max Size: 2MB per file (optimized for fast loading).",
+        upload_tip3: "Dimensions: Logo (Square), Banner (Wide).",
+        faq_title: "Partner Rules & FAQ",
+        q1: "How to accept orders?", a1: "Go to 'Orders' section. Click 'Accept' to start preparation.",
+        q2: "When do I get paid?", a2: "Payments are processed weekly every Monday.",
+        q3: "Service Commission", a3: "CampusEats takes 15% commission on each order.",
+        rules_title: "Partner Policy",
+        rule1: "Maintain accurate prices and availability.",
+        rule2: "Prepare orders within the specified time.",
+        rule3: "Maintain hygiene and food quality standards."
+    },
+    ru: {
+        dashboard: "Главная", menu: "Управление меню", orders: "Заказы", analytics: "Аналитика",
+        profile: "Профиль ресторана", security: "Безопасность", help: "Помощь и правила",
+        today_rev: "Выручка сегодня", active_orders: "Активные заказы", monthly_rev: "Выручка за месяц",
+        order_management: "Управление заказами", no_orders: "Заказов пока нет.",
+        add_dish: "Добавить блюдо", photo: "Фото", name: "Название", category: "Категория", price: "Цена", status: "Статус", actions: "Действия",
+        save: "Сохранить", logout: "Выйти",
+        msg_saved: "Изменения сохранены", msg_error: "Произошла ошибка",
+        upload_guidelines: "Правила загрузки",
+        upload_tip1: "Форматы: JPG, PNG, WEBP.",
+        upload_tip2: "Макс. размер: 2МБ (для быстрой загрузки).",
+        upload_tip3: "Размеры: Логотип (Квадрат), Баннер (Широкий).",
+        faq_title: "Правила для партнеров и FAQ",
+        q1: "Как принимать заказы?", a1: "Перейдите в раздел 'Заказы'. Нажмите 'Принять' для начала.",
+        q2: "Когда я получу оплату?", a2: "Выплаты производятся еженедельно по понедельникам.",
+        q3: "Комиссия сервиса", a3: "CampusEats берет 15% комиссии с каждого заказа.",
+        rules_title: "Политика партнерства",
+        rule1: "Следите за актуальностью цен и наличия блюд.",
+        rule2: "Готовьте заказы в указанное время.",
+        rule3: "Соблюдайте стандарты гигиены и качества еды."
+    },
+    uz: {
+        dashboard: "Boshqaruv", menu: "Menyu boshqaruvi", orders: "Buyurtmalar", analytics: "Analitika",
+        profile: "Restoran profili", security: "Xavfsizlik", help: "Yordam va qoidalar",
+        today_rev: "Bugungi tushum", active_orders: "Faol buyurtmalar", monthly_rev: "Oylik tushum",
+        order_management: "Buyurtmalarni boshqarish", no_orders: "Hozircha buyurtmalar yo'q.",
+        add_dish: "Taom qo'shish", photo: "Rasm", name: "Nomi", category: "Kategoriya", price: "Narxi", status: "Status", actions: "Amallar",
+        save: "Saqlash", logout: "Chiqish",
+        msg_saved: "O'zgarishlar saqlandi", msg_error: "Xatolik yuz berdi",
+        upload_guidelines: "Yuklash qoidalari",
+        upload_tip1: "Formatlar: JPG, PNG, WEBP.",
+        upload_tip2: "Maks. hajmi: 2MB (tez yuklanishi uchun).",
+        upload_tip3: "O'lchamlari: Logotip (Kvadrat), Banner (Keng).",
+        faq_title: "Hamkorlar qoidalari va FAQ",
+        q1: "Buyurtmalarni qanday qabul qilish kerak?", a1: "'Buyurtmalar' bo'limiga o'ting. Qabul qilish uchun 'Qabul qilish' tugmasini bosing.",
+        q2: "To'lovni qachon olaman?", a2: "To'lovlar har dushanba kuni haftalik amalga oshiriladi.",
+        q3: "Xizmat komissiyasi", a3: "CampusEats har bir buyurtmadan 15% komissiya oladi.",
+        rules_title: "Hamkorlik qoidalari",
+        rule1: "Narxlar va mavjudlikni to'g'ri ko'rsating.",
+        rule2: "Buyurtmalarni belgilangan vaqtda tayyorlang.",
+        rule3: "Gigiyena va taom sifati standartlariga rioya qiling."
+    }
+};
+
+let currentLang = localStorage.getItem("campuseats_lang") || "en";
+
+function applyTranslations() {
+    const t = TRANSLATIONS[currentLang];
+
+    // Sidebar & Navigation
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key]) {
+            // If it has children (like icons), only update the text node
+            const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) textNode.textContent = " " + t[key];
+            else el.textContent = t[key];
+        }
+    });
+
+    // Page titles and specific labels
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+        const key = el.dataset.i18nLabel;
+        if (t[key]) el.textContent = t[key];
+    });
+
+    // Update active nav text to match translation
+    const activeNav = document.querySelector('.nav-item.active');
+    if (activeNav) document.getElementById("pageTitle").textContent = activeNav.textContent.trim();
+
+    // Update language buttons active state
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+}
+
+window.setLanguage = function (lang) {
+    currentLang = lang;
+    localStorage.setItem("campuseats_lang", lang);
+    applyTranslations();
+};
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'campuseats_lang') {
+        currentLang = e.newValue || 'en';
+        applyTranslations();
+    }
+});
+
+// Initial apply
+setTimeout(applyTranslations, 100);
+
 // Image resize/compress before upload
 function resizeImg(file, maxW = 800) {
     return new Promise(resolve => {
@@ -66,7 +177,8 @@ const sectionLoaders = {
     orders: loadOrders,
     analytics: loadAnalytics,
     profile: loadProfile,
-    security: () => { } // No loader needed for security
+    security: () => { },
+    help: () => { }
 };
 
 document.querySelectorAll(".nav-item[data-target]").forEach(btn => {

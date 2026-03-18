@@ -7,7 +7,99 @@ const API_BASE = "https://campuseats-backend.vercel.app/api";
 // ═══════════════════════════════════════════
 // AUTH & INITIALIZATION
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// MULTI-LANGUAGE SUPPORT
+// ═══════════════════════════════════════════
+const TRANSLATIONS = {
+    en: {
+        dashboard: "Dashboard", users: "Users", restaurants: "Restaurants", couriers: "Couriers", verifications: "Verifications",
+        orders: "Orders", logs: "Audit Logs", system: "System", logout: "Log Out",
+        welcome: "Welcome Back", overview: "Platform Overview",
+        total_users: "Total Users", pending_identities: "Pending Verifications",
+        active_partners: "Active Partners", platform_revenue: "Platform Revenue",
+        recent_activity: "Recent Activity", search: "Search...",
+        refresh: "Refresh",
+        pending_verifications: "Pending Verifications",
+        actions: "Actions", admin: "Admin", time: "Time",
+        user: "User", submitted: "Submitted", action: "Action",
+        user_mgmt: "User Management", manage_users: "Manage platform users",
+        search_users: "Search by phone or name...", all_roles: "All Roles",
+        all_status: "All Status", active: "Active", blocked: "Blocked",
+        id: "ID", role: "Role", status: "Status", verified: "Verified", registered: "Registered",
+        msg_auth_failed: "Auth verify failed", msg_forbidden: "Forbidden: You are not a superadmin."
+    },
+    ru: {
+        dashboard: "Главная", users: "Пользователи", restaurants: "Рестораны", couriers: "Курьеры", verifications: "Верификации",
+        orders: "Заказы", logs: "Логи аудита", system: "Система", logout: "Выйти",
+        welcome: "С возвращением", overview: "Обзор платформы",
+        total_users: "Всего пользователей", pending_identities: "Ожидают проверки",
+        active_partners: "Активные партнеры", platform_revenue: "Доход платформы",
+        recent_activity: "Последние действия", search: "Поиск...",
+        refresh: "Обновить",
+        pending_verifications: "Ожидают проверки",
+        actions: "Действия", admin: "Админ", time: "Время",
+        user: "Пользователь", submitted: "Отправлено", action: "Действие",
+        user_mgmt: "Управление пользователями", manage_users: "Управление всеми пользователями",
+        search_users: "Поиск по телефону или имени...", all_roles: "Все роли",
+        all_status: "Все статусы", active: "Активен", blocked: "Заблокирован",
+        id: "ID", role: "Роль", status: "Статус", verified: "Верификация", registered: "Регистрация",
+        msg_auth_failed: "Ошибка авторизации", msg_forbidden: "Доступ запрещен: Вы не суперадмин."
+    },
+    uz: {
+        dashboard: "Boshqaruv", users: "Foydalanuvchilar", restaurants: "Restoranlar", couriers: "Kuryerlar", verifications: "Verifikatsiya",
+        orders: "Buyurtmalar", logs: "Audit loglari", system: "Tizim", logout: "Chiqish",
+        welcome: "Xush kelibsiz", overview: "Platforma sharhi",
+        total_users: "Jami foydalanuvchilar", pending_identities: "Kutilayotgan tasdiqlar",
+        active_partners: "Faol hamkorlar", platform_revenue: "Platforma tushumi",
+        recent_activity: "Oxirgi harakatlar", search: "Qidirish...",
+        refresh: "Yangilash",
+        pending_verifications: "Tasdiq kutilmoqda",
+        actions: "Harakatlar", admin: "Admin", time: "Vaqt",
+        user: "Foydalanuvchi", submitted: "Yuborilgan", action: "Harakat",
+        user_mgmt: "Foydalanuvchilar boshqaruvi", manage_users: "Tizim foydalanuvchilarini boshqarish",
+        search_users: "Telefon yoki ism bo'yicha...", all_roles: "Barcha rollar",
+        all_status: "Barcha holatlar", active: "Faol", blocked: "Bloklangan",
+        id: "ID", role: "Rol", status: "Holat", verified: "Tasdiqlangan", registered: "Ro'yxatdan o'tgan",
+        msg_auth_failed: "Avtorizatsiya xatosi", msg_forbidden: "Taqiqlangan: Siz superadmin emassiz."
+    }
+};
+
+let currentLang = localStorage.getItem("campuseats_lang") || "en";
+
+function applyTranslations() {
+    const t = TRANSLATIONS[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+        const key = el.dataset.i18nLabel;
+        if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.dataset.i18nPh;
+        if (t[key]) el.placeholder = t[key];
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+}
+
+window.setLanguage = function (lang) {
+    currentLang = lang;
+    localStorage.setItem("campuseats_lang", lang);
+    applyTranslations();
+};
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'campuseats_lang') {
+        currentLang = e.newValue || 'en';
+        applyTranslations();
+    }
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
+    applyTranslations();
     const token = localStorage.getItem("campuseats_token");
     if (!token) {
         window.location.href = "index.html";
@@ -46,6 +138,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadDashboard();
         loadUsers();
         loadRestaurants();
+        loadCouriers();
+        loadCourierDashboard();
         loadVerifications();
         loadOrders();
         loadAuditLogs();
@@ -171,6 +265,10 @@ function getActionTag(action) {
         RESTAURANT_CREATED: { cls: "create", icon: "fa-plus" },
         PASSWORD_RESET: { cls: "reset", icon: "fa-key" },
         ROLE_CHANGED: { cls: "role", icon: "fa-exchange-alt" },
+        COURIER_CREATED: { cls: "create", icon: "fa-motorcycle" },
+        COURIER_BLOCKED: { cls: "block", icon: "fa-ban" },
+        COURIER_UNBLOCKED: { cls: "unblock", icon: "fa-check-circle" },
+        COURIER_PASSWORD_RESET: { cls: "reset", icon: "fa-key" },
         // legacy mappings
         approve_verification: { cls: "approve", icon: "fa-check" },
         reject_verification: { cls: "reject", icon: "fa-times" },
@@ -641,6 +739,309 @@ async function createRestaurant() {
         resultBox.className = "result-box error";
         resultBox.textContent = "Creation failed: " + err.message;
     }
+}
+
+// ═══════════════════════════════════════════
+// COURIERS
+// ═══════════════════════════════════════════
+let couriersPage = 1;
+const COURIERS_LIMIT = 50;
+
+async function loadCouriers(page = 1) {
+    couriersPage = page;
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers?limit=${COURIERS_LIMIT}&page=${page}`, { headers: getAuthHeaders() });
+        const data = await res.json();
+
+        const tbody = document.getElementById("couriersTableBody");
+
+        if (!data.couriers || data.couriers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-motorcycle"></i><p>No couriers yet</p></div></td></tr>`;
+            document.getElementById("couriersPagination").innerHTML = "";
+            return;
+        }
+
+        tbody.innerHTML = data.couriers.map((c) => {
+            const statusBadge = `<span class="badge ${c.status || 'active'}">${(c.status || 'active').toUpperCase()}</span>`;
+            const ratingStr = c.rating ? Number(c.rating).toFixed(1) : "5.0";
+
+            return `
+                <tr>
+                    <td style="color:var(--text-muted); font-weight:600;">#${c.id}</td>
+                    <td style="font-weight:600;">${escapeHtml(c.full_name || "—")}</td>
+                    <td style="color:var(--text-secondary);">${escapeHtml(c.phone)}</td>
+                    <td>${statusBadge} ${c.is_online ? '<i class="fas fa-circle" style="color:var(--success); font-size:10px;" title="Online"></i>' : '<i class="fas fa-circle" style="color:var(--danger); font-size:10px;" title="Offline"></i>'}</td>
+                    <td><i class="fas fa-star" style="color:var(--warning); font-size:12px;"></i> ${ratingStr}</td>
+                    <td>${c.completed_orders || 0}</td>
+                    <td style="font-weight:600;">${Number(c.cash_on_hand || 0).toLocaleString()} UZS</td>
+                    <td>
+                        <div class="btn-group">
+                            ${(c.status === 'active')
+                    ? `<button class="btn btn-sm btn-danger" onclick="courierAction(${c.id}, 'block')" title="Block"><i class="fas fa-ban"></i></button>`
+                    : `<button class="btn btn-sm btn-success" onclick="courierAction(${c.id}, 'unblock')" title="Activate"><i class="fas fa-check"></i></button>`}
+                            <button class="btn btn-sm btn-warning" onclick="resetCourierPassword(${c.id})" title="Reset Password"><i class="fas fa-key"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        renderPagination("couriersPagination", data.total, data.page, data.limit, loadCouriers);
+    } catch (err) {
+        console.error("Load couriers error:", err);
+    }
+}
+
+async function createCourier() {
+    const phone = document.getElementById("courierPhone").value.trim();
+    const full_name = document.getElementById("courierName").value.trim();
+    const resultBox = document.getElementById("courierResult");
+
+    if (!phone || !full_name) {
+        resultBox.className = "result-box error";
+        resultBox.textContent = "Full Name and Phone number are required.";
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ phone, full_name }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            resultBox.className = "result-box error";
+            resultBox.textContent = "Error: " + data.message;
+            return;
+        }
+
+        resultBox.className = "result-box success";
+        resultBox.innerHTML = `
+            <strong><i class="fas fa-check-circle"></i> ${escapeHtml(data.message)}</strong><br><br>
+            <strong>Phone:</strong> ${escapeHtml(data.courier.phone)}<br>
+            <strong>Temp Password:</strong> <span class="password-display" style="font-size: 16px;">${escapeHtml(data.courier.temporary_password)}</span>
+            <br><small style="margin-top:8px; display:block;">Send this to the courier so they can login to the bot.</small>
+        `;
+
+        document.getElementById("courierPhone").value = "";
+        document.getElementById("courierName").value = "";
+
+        showToast("Courier created!", "success");
+        loadCouriers(couriersPage);
+        loadAuditLogs();
+
+    } catch (err) {
+        resultBox.className = "result-box error";
+        resultBox.textContent = "Creation failed: " + err.message;
+    }
+}
+
+async function courierAction(id, action) {
+    const confirmMsg = action === "block" ? "Block this courier?" : "Unblock this courier?";
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers/${id}/${action}`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message);
+        }
+        showToast(`Courier ${action}ed successfully`, "success");
+        loadCouriers(couriersPage);
+        loadAuditLogs();
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function resetCourierPassword(id) {
+    if (!confirm("Reset this courier's password? A new temporary password will be generated and they will be logged out.")) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/couriers/${id}/reset-password`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+
+        openModal("Courier Password Reset", `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-key" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">New password for courier <strong style="color: var(--text-primary);">${escapeHtml(data.courier.phone)}</strong></p>
+                <div class="password-display">${escapeHtml(data.courier.temporary_password)}</div>
+                <p style="margin-top: 16px; font-size: 12px; color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle"></i> Save this password — it will NOT be shown again!
+                </p>
+            </div>
+        `);
+
+        showToast("Password reset successfully", "success");
+        loadAuditLogs();
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+// ═══════════════════════════════════════════
+// COURIERS EXTENDED (Stats, Cash, Incidents)
+// ═══════════════════════════════════════════
+async function loadCourierDashboard() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-dashboard`, { headers: getAuthHeaders() });
+        const d = await res.json();
+
+        document.getElementById("courierStatsGrid").innerHTML = `
+            <div class="stat-card blue">
+                <div class="stat-header">
+                    <span class="stat-label">Online Couriers</span>
+                    <div class="stat-icon"><i class="fas fa-motorcycle"></i></div>
+                </div>
+                <div class="stat-value">${d.onlineCouriers || 0}</div>
+                <div class="stat-change">Out of ${d.totalCouriers || 0} total</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <span class="stat-label">Active Deliveries</span>
+                    <div class="stat-icon"><i class="fas fa-box-open"></i></div>
+                </div>
+                <div class="stat-value">${d.activeDeliveries || 0}</div>
+                <div class="stat-change">Currently en route</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-header">
+                    <span class="stat-label">Total Cash On Hand</span>
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                </div>
+                <div class="stat-value">${Number(d.totalCashOnHand || 0).toLocaleString()}</div>
+                <div class="stat-change">Sum of all couriers</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-header">
+                    <span class="stat-label">Critical Issues</span>
+                    <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                </div>
+                <div class="stat-value">${(d.slaBreaches || 0) + (d.openIncidents || 0)}</div>
+                <div class="stat-change">${d.openIncidents} SOS / ${d.slaBreaches} Late</div>
+            </div>
+        `;
+
+        loadCashSubmissions();
+        loadCourierIncidents();
+        loadSlaBreaches();
+    } catch (err) {
+        console.error("Courier dashboard error:", err);
+    }
+}
+
+async function loadCashSubmissions() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/cash-submissions?status=pending`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("cashSubmissionsTableBody");
+
+        if (!data.submissions || data.submissions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-check-circle" style="color:var(--success)"></i><p>No pending cash submissions</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.submissions.map(sub => `
+            <tr>
+                <td>
+                    <div style="font-weight:600;">${escapeHtml(sub.courier_name || "—")}</div>
+                    <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(sub.courier_phone)}</div>
+                </td>
+                <td style="font-weight:600; color:var(--success);">${Number(sub.amount).toLocaleString()} UZS</td>
+                <td style="color:var(--text-muted); font-size:12px;">${timeAgo(sub.created_at)}</td>
+                <td>
+                    <button class="btn btn-sm btn-success" onclick="confirmCash(${sub.id})" title="Confirm"><i class="fas fa-check"></i> Accept</button>
+                </td>
+            </tr>
+        `).join("");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function confirmCash(id) {
+    if (!confirm("Are you sure you have received this cash? This will reset the courier's cash balance.")) return;
+    try {
+        const res = await fetch(`${API_BASE}/admin/cash-submissions/${id}/confirm`, {
+            method: "POST", headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error("Failed to confirm");
+        showToast("Cash submission confirmed", "success");
+        loadCourierDashboard();
+        loadCouriers(couriersPage);
+    } catch (err) { showToast(err.message, "error"); }
+}
+
+async function loadCourierIncidents() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-incidents?status=open&limit=10`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("courierIncidentsTableBody");
+
+        if (!data.incidents || data.incidents.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-shield-alt" style="color:var(--success)"></i><p>All clear (No SOS)</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.incidents.map(inc => `
+            <tr style="background: rgba(239, 68, 68, 0.05);">
+                <td>
+                    <div style="font-weight:600;">${escapeHtml(inc.courier_name || "—")}</div>
+                    <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(inc.courier_phone)}</div>
+                </td>
+                <td><a href="#" onclick="viewOrderDetail(${inc.order_id})" style="color:var(--accent);">#${inc.order_id}</a></td>
+                <td style="font-size:12px; color:var(--text-secondary);">${escapeHtml(inc.issue_note || "SOS")}</td>
+                <td>
+                    <button class="btn btn-sm btn-default" onclick="resolveIncident(${inc.id})" title="Resolve"><i class="fas fa-check"></i> Resolve</button>
+                </td>
+            </tr>
+        `).join("");
+    } catch (err) { console.error(err); }
+}
+
+async function resolveIncident(id) {
+    if (!confirm("Mark this incident as resolved?")) return;
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-incidents/${id}/resolve`, {
+            method: "POST", headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error("Failed");
+        showToast("Incident resolved", "success");
+        loadCourierDashboard();
+    } catch (err) { showToast(err.message, "error"); }
+}
+
+async function loadSlaBreaches() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/courier-sla-breaches?limit=10`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("slaBreachesTableBody");
+
+        if (!data.breaches || data.breaches.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-clock" style="color:var(--success)"></i><p>No late orders</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.breaches.map(b => `
+            <tr>
+                <td><a href="#" onclick="viewOrderDetail(${b.id})" style="color:var(--accent);">#${b.id}</a></td>
+                 <td>
+                    <div style="font-weight:600;">${escapeHtml(b.courier_name || "Unassigned")}</div>
+                </td>
+                <td style="color:var(--danger); font-size:12px;">${timeAgo(b.sla_delivery_deadline)}</td>
+                <td><span class="badge ${b.delivery_status}">${b.delivery_status.toUpperCase()}</span></td>
+            </tr>
+        `).join("");
+    } catch (err) { console.error(err); }
 }
 
 // ═══════════════════════════════════════════
