@@ -392,7 +392,7 @@ function safePlaceholder(id, text) {
 
 // --- APP LOGIC ---
 
-const API_BASE = "https://campuseats-backend.vercel.app/api";
+const API_BASE = "https://juratbek.alwaysdata.net/api";
 
 const STATIC_MENU = [
   { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: '🍔', desc: 'Flame-grilled with secret sauce.' },
@@ -513,7 +513,7 @@ function getImgSrc(url) {
   if (!url) return "🍽️"; // Fallback emoji
   if (url.startsWith('data:') || url.startsWith('http')) return url;
   // If it's a path like /uploads/xxx, append backend domain
-  const base = "https://campuseats-backend.vercel.app";
+  const base = "https://juratbek.alwaysdata.net";
   return url.startsWith('/') ? base + url : base + '/' + url;
 }
 
