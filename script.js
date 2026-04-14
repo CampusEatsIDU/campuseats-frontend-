@@ -724,6 +724,25 @@ window.switchAuthMode = function (mode) {
 };
 
 // ===============================
+// PHONE NORMALIZATION (matches backend)
+// ===============================
+function normalizePhoneInput(phone) {
+  if (!phone) return null;
+  const cleaned = phone.replace(/[\s\-\(\)]/g, "");
+
+  // Full format: +998XXXXXXXXX (13 chars)
+  if (/^\+998\d{9}$/.test(cleaned)) return cleaned;
+  // Without +: 998XXXXXXXXX (12 chars)
+  if (/^998\d{9}$/.test(cleaned)) return `+${cleaned}`;
+  // Just 9 digits: XXXXXXXXX
+  if (/^\d{9}$/.test(cleaned)) return `+998${cleaned}`;
+  // Alphanumeric username (for restaurant/admin)
+  if (/^[a-zA-Z0-9_]{4,}$/.test(cleaned)) return cleaned;
+
+  return null;
+}
+
+// ===============================
 // AUTH SYSTEM (PRODUCTION READY)
 // ===============================
 
@@ -738,10 +757,10 @@ loginForm.addEventListener('submit', async (e) => {
     return;
   }
 
-  // Basic validation to match backend flexibility
-  const cleaned = phone.replace(/\s+/g, "");
-  if (!/^\+?\d{9,12}$/.test(cleaned) && !/^[a-zA-Z0-9_]{4,}$/.test(cleaned)) {
-    showToast("Invalid phone or username format. Use +998XXXXXXXXX or 9 digits.", "error");
+  // Normalize phone to match backend format
+  const normalizedPhone = normalizePhoneInput(phone);
+  if (!normalizedPhone) {
+    showToast("Invalid phone format. Use +998XXXXXXXXX or 9 digits (e.g. 901234567)", "error");
     return;
   }
 
@@ -751,13 +770,19 @@ loginForm.addEventListener('submit', async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ phone, password })
+      body: JSON.stringify({ phone: normalizedPhone, password })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      showToast(data.message || "Login failed", "error");
+      if (res.status === 401) {
+        showToast("Wrong phone number or password. Check and try again.", "error");
+      } else if (res.status === 403) {
+        showToast(data.message || "Account blocked", "error");
+      } else {
+        showToast(data.message || "Login failed", "error");
+      }
       return;
     }
 
@@ -798,9 +823,15 @@ signupForm.addEventListener('submit', async (e) => {
     return;
   }
 
-  const cleaned = phone.replace(/\s+/g, "");
-  if (!/^\+?\d{9,12}$/.test(cleaned)) {
-    showToast("Invalid phone format. Please use 9 or 12 digits (e.g. 901234567).", "error");
+  // Normalize phone to match backend format
+  const normalizedPhone = normalizePhoneInput(phone);
+  if (!normalizedPhone) {
+    showToast("Invalid phone format. Use +998XXXXXXXXX or 9 digits (e.g. 901234567)", "error");
+    return;
+  }
+
+  if (password.length < 8) {
+    showToast("Password must be at least 8 characters", "error");
     return;
   }
 
@@ -810,13 +841,17 @@ signupForm.addEventListener('submit', async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ phone, password, fullName })
+      body: JSON.stringify({ phone: normalizedPhone, password, fullName })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      showToast(data.message || "Signup failed", "error");
+      if (data.message === "User already exists") {
+        showToast("This phone is already registered. Try logging in instead.", "error");
+      } else {
+        showToast(data.message || "Signup failed", "error");
+      }
       return;
     }
 
