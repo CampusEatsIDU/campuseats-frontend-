@@ -24,7 +24,7 @@ function showToast(msg, isErr = false) {
     setTimeout(() => t.classList.remove("show"), 3500);
 }
 
-function fmt(num) { return "$" + Number(num || 0).toFixed(2); }
+function fmt(num) { return Number(num || 0).toLocaleString('en-US') + " UZS"; }
 function fmtDate(d) {
     const dt = new Date(d);
     return dt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -492,7 +492,7 @@ async function loadAnalytics() {
             type: "line",
             data: {
                 labels: (d.weeklyRev || []).map(x => fmtDate(x.week).split(",")[0]),
-                datasets: [{ label: "Revenue ($)", data: (d.weeklyRev || []).map(x => Number(x.revenue)), borderColor: "#22c55e", backgroundColor: "rgba(34,197,94,.1)", borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 4 }]
+                datasets: [{ label: "Revenue (UZS)", data: (d.weeklyRev || []).map(x => Number(x.revenue)), borderColor: "#22c55e", backgroundColor: "rgba(34,197,94,.1)", borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 4 }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: "#2a2d3a" } }, x: { grid: { display: false } } } }
         });

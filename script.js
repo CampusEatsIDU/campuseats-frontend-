@@ -1,3 +1,9 @@
+// --- CURRENCY FORMATTING ---
+function fmtPrice(amount) {
+  const n = Number(amount) || 0;
+  return n.toLocaleString('en-US') + ' UZS';
+}
+
 // --- TOAST NOTIFICATION SYSTEM ---
 function showToast(msg, type = 'info') {
   const toast = document.createElement('div');
@@ -425,14 +431,14 @@ const FOOD_IMAGES = {
 };
 
 const STATIC_MENU = [
-  { id: 101, category: 'burgers', name: 'Original Burger', price: 8.99, image: FOOD_IMAGES.burger, desc: 'Flame-grilled with secret sauce.' },
-  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 10.50, image: FOOD_IMAGES.cheeseburger, desc: 'Double cheese, double joy.' },
-  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 12.00, image: FOOD_IMAGES.pizza, desc: 'Spicy pepperoni on crispy crust.' },
-  { id: 104, category: 'pizza', name: 'Margherita', price: 11.00, image: FOOD_IMAGES.margherita, desc: 'Simple, fresh basil & mozzarella.' },
-  { id: 105, category: 'asian', name: 'Sushi Set A', price: 15.00, image: FOOD_IMAGES.sushi, desc: 'Salmon, Tuna, and Avocado rolls.' },
-  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 13.50, image: FOOD_IMAGES.ramen, desc: 'Rich broth with chashu pork.' },
-  { id: 107, category: 'drinks', name: 'Iced Latte', price: 4.50, image: FOOD_IMAGES.iced_latte, desc: 'Cold brew with oat milk.' },
-  { id: 108, category: 'drinks', name: 'Green Tea', price: 3.00, image: FOOD_IMAGES.green_tea, desc: 'Authentic Japanese sencha.' },
+  { id: 101, category: 'burgers', name: 'Original Burger', price: 35000, image: FOOD_IMAGES.burger, desc: 'Flame-grilled with secret sauce.' },
+  { id: 102, category: 'burgers', name: 'Cheese Explosion', price: 42000, image: FOOD_IMAGES.cheeseburger, desc: 'Double cheese, double joy.' },
+  { id: 103, category: 'pizza', name: 'Pepperoni Classic', price: 55000, image: FOOD_IMAGES.pizza, desc: 'Spicy pepperoni on crispy crust.' },
+  { id: 104, category: 'pizza', name: 'Margherita', price: 48000, image: FOOD_IMAGES.margherita, desc: 'Simple, fresh basil & mozzarella.' },
+  { id: 105, category: 'asian', name: 'Sushi Set A', price: 65000, image: FOOD_IMAGES.sushi, desc: 'Salmon, Tuna, and Avocado rolls.' },
+  { id: 106, category: 'asian', name: 'Ramen Bowl', price: 52000, image: FOOD_IMAGES.ramen, desc: 'Rich broth with chashu pork.' },
+  { id: 107, category: 'drinks', name: 'Iced Latte', price: 18000, image: FOOD_IMAGES.iced_latte, desc: 'Cold brew with oat milk.' },
+  { id: 108, category: 'drinks', name: 'Green Tea', price: 12000, image: FOOD_IMAGES.green_tea, desc: 'Authentic Japanese sencha.' },
 ];
 
 const STATIC_REST = [
@@ -1065,19 +1071,19 @@ function confirmLocation() {
 function updateUserDisplay() {
   if (!currentUser) return;
   const bal = parseFloat(currentUser.balance) || 0;
-  const balStr = '$' + bal.toFixed(2);
+  const balStr = fmtPrice(bal);
   const locName = selectedLocation.address || selectedLocation.name || 'Select location';
   const locShort = locName.length > 22 ? locName.substring(0, 22) + '…' : locName;
 
   // Desktop navbar
   const navBal = document.getElementById('navBalance');
-  if (navBal) navBal.textContent = bal.toFixed(2);
+  if (navBal) navBal.textContent = fmtPrice(bal);
   const navLoc = document.getElementById('navLocationText');
   if (navLoc) navLoc.textContent = locShort;
 
   // Mobile header
   const mthBal = document.getElementById('mthBalance');
-  if (mthBal) mthBal.textContent = bal.toFixed(2);
+  if (mthBal) mthBal.textContent = fmtPrice(bal);
   const mthLoc = document.getElementById('mthLocationText');
   if (mthLoc) mthLoc.textContent = locShort;
 
@@ -1251,7 +1257,7 @@ function renderMenu(category, restName = "") {
               <div class="food-name">${item.name}</div>
               <div class="food-desc">${item.desc}</div>
               <div class="food-action">
-                  <span class="food-price">$${item.price.toFixed(2)}</span>
+                  <span class="food-price">${fmtPrice(item.price)}</span>
                   <button class="btn-add" onclick="addToCart(${item.id})">+</button>
               </div>
           </div>`;
@@ -1306,7 +1312,7 @@ function updateCartUI() {
 
     if (discountLine) {
       if (activePromoCode && activePromoDiscount > 0) {
-        discountLine.textContent = `Promo "${activePromoCode}": -$${activePromoDiscount.toFixed(2)}`;
+        discountLine.textContent = `Promo "${activePromoCode}": -${fmtPrice(activePromoDiscount)}`;
         discountLine.style.display = 'block';
         total = Math.max(0, total - activePromoDiscount);
       } else {
@@ -1322,7 +1328,7 @@ function updateCartUI() {
     }
 
     checkoutBtn.disabled = false;
-    checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
+    checkoutBtn.textContent = `${t.checkout} (${fmtPrice(total)})`;
   }
   // Update cart badge on mobile bottom nav
   const mbnBadge = document.getElementById('mbnCartCount');
@@ -1335,7 +1341,7 @@ function updateCartUI() {
       mbnBadge.classList.add('hidden');
     }
   }
-  cartTotalDisplay.textContent = total.toFixed(2);
+  cartTotalDisplay.textContent = Number(total).toLocaleString('en-US');
 }
 
 // --- CHECKOUT & DB ---
@@ -1360,7 +1366,7 @@ async function applyPromoCode(code) {
     if (data.valid) {
       activePromoCode = code.toUpperCase();
       activePromoDiscount = data.discount_amount;
-      showToast(`Promo applied! -$${data.discount_amount.toFixed(2)}`, "success");
+      showToast(`Promo applied! -${fmtPrice(data.discount_amount)}`, "success");
       updateCartUI();
     } else {
       showToast(data.reason || "Invalid promo code", "error");
@@ -1410,7 +1416,7 @@ async function handleCheckout() {
 
     // Show cashback earned
     if (savedOrder.cashback_amount && parseFloat(savedOrder.cashback_amount) > 0) {
-      showToast(`Order placed! You earned $${parseFloat(savedOrder.cashback_amount).toFixed(2)} cashback`, "success");
+      showToast(`Order placed! You earned ${fmtPrice(savedOrder.cashback_amount)} cashback`, "success");
     } else {
       showToast(t.checkout + " Success!", "success");
     }
@@ -1496,7 +1502,7 @@ function renderDatabaseStats(orders) {
   const statLast = document.getElementById('statLastOrder');
   const dbCount = document.getElementById('dbOrderCount');
 
-  if (statSpent) statSpent.textContent = '$' + (totalSpent || 0).toFixed(2);
+  if (statSpent) statSpent.textContent = fmtPrice(totalSpent);
   if (statOrders) statOrders.textContent = orders.length;
   if (statLast) statLast.textContent = orders.length > 0
     ? new Date(orders[orders.length - 1].created_at || orders[orders.length - 1].date || Date.now()).toLocaleDateString() : '—';
@@ -1541,7 +1547,7 @@ function renderDatabaseStats(orders) {
         <div class="oc-date">${dateStr}</div>
       </div>
       <div class="oc-right">
-        <div class="oc-amount">$${price.toFixed(2)}</div>
+        <div class="oc-amount">${fmtPrice(price)}</div>
         <div class="oc-status ${statusClass}">${order.status || 'pending'}</div>
       </div>`;
     listContainer.appendChild(card);
