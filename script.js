@@ -1,8 +1,21 @@
+// --- TOAST NOTIFICATION SYSTEM ---
+function showToast(msg, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 // --- LOCALIZATION DATA ---
 const TRANSLATIONS = {
   en: {
-    welcome_hero: "Back to Campus Sale!",
-    welcome_sub: "Get 20% cashback on all orders this week.",
+    welcome_hero: "Student Benefits Active!",
+    welcome_sub: "Verified students earn cashback on every order.",
     login_btn: "Log In", signup_btn: "Sign Up", create_acc: "Create Account",
     role_user: "Student / User", role_rest: "Restaurant Partner",
     ph_phone: "Phone Number", ph_pass: "Password",
@@ -439,13 +452,13 @@ let currentCart = [];
 let mapInstance = null;
 let currentMarker = null;
 let selectedLocation = {
-  lat: 40.7128,
-  lng: -74.0060,
+  lat: 41.2995,
+  lng: 69.2401,
   name: "Main Campus",
   address: "",
   street: "",
   houseNumber: "",
-  city: ""
+  city: "Tashkent"
 };
 
 // --- DOM References ---
@@ -515,7 +528,7 @@ async function fetchRestaurants() {
       rating: 4.5, // Default for now
       time: "20-40 min", // Default for now
       image: r.logo_url || "🍔",
-      special: Math.random() > 0.5, // Randomized for demo, could be a flag later
+      special: parseFloat(r.cashback_rate) > 0, // Restaurants with cashback get special tag
       isOpen: r.is_open
     }));
 
@@ -721,14 +734,14 @@ loginForm.addEventListener('submit', async (e) => {
   const password = document.getElementById('loginPass').value.trim();
 
   if (!phone || !password) {
-    alert("Phone and password required");
+    showToast("Phone and password required", "error");
     return;
   }
 
   // Basic validation to match backend flexibility
   const cleaned = phone.replace(/\s+/g, "");
   if (!/^\+?\d{9,12}$/.test(cleaned) && !/^[a-zA-Z0-9_]{4,}$/.test(cleaned)) {
-    alert("Invalid phone or username format. Use +998XXXXXXXXX or 9 digits.");
+    showToast("Invalid phone or username format. Use +998XXXXXXXXX or 9 digits.", "error");
     return;
   }
 
@@ -744,7 +757,7 @@ loginForm.addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message || "Login failed");
+      showToast(data.message || "Login failed", "error");
       return;
     }
 
@@ -768,7 +781,7 @@ loginForm.addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error("Login error:", err);
-    alert("Server connection failed: " + err.message);
+    showToast("Server connection failed: " + err.message, "error");
   }
 });
 
@@ -781,13 +794,13 @@ signupForm.addEventListener('submit', async (e) => {
   const fullName = document.getElementById('regName').value.trim();
 
   if (!phone || !password || !fullName) {
-    alert("Phone, password, and name required");
+    showToast("Phone, password, and name required", "error");
     return;
   }
 
   const cleaned = phone.replace(/\s+/g, "");
   if (!/^\+?\d{9,12}$/.test(cleaned)) {
-    alert("Invalid phone format. Please use 9 or 12 digits (e.g. 901234567).");
+    showToast("Invalid phone format. Please use 9 or 12 digits (e.g. 901234567).", "error");
     return;
   }
 
@@ -803,7 +816,7 @@ signupForm.addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message || "Signup failed");
+      showToast(data.message || "Signup failed", "error");
       return;
     }
 
@@ -821,7 +834,7 @@ signupForm.addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error("Signup error:", err);
-    alert("Server connection failed: " + err.message);
+    showToast("Server connection failed: " + err.message, "error");
   }
 });
 
@@ -845,7 +858,7 @@ document.getElementById('submitVerificationBtn').addEventListener('click', async
   const backFile = document.getElementById('fileInputBack').files[0];
 
   if (!frontFile || !backFile) {
-    alert("Please upload both FRONT and BACK photos of your ID.");
+    showToast("Please upload both FRONT and BACK photos of your ID.", "error");
     return;
   }
 
@@ -913,7 +926,7 @@ document.getElementById('submitVerificationBtn').addEventListener('click', async
 });
 
 function checkVerification() {
-  if (currentUser && (currentUser.verified || currentUser.is_student_verified)) {
+  if (currentUser && (currentUser.is_student_verified || currentUser.is_student_verified)) {
     const statusDiv = document.getElementById('uploadStatus');
     if (statusDiv) {
       statusDiv.classList.remove('hidden');
@@ -1060,8 +1073,8 @@ function updateUserDisplay() {
   const t = TRANSLATIONS[currentLang];
   const profVerified = document.getElementById('profVerifiedBadge');
   if (profVerified) {
-    profVerified.textContent = currentUser.verified ? (t.prof_verified || 'Verified') : (t.prof_not_verified || 'Not Verified');
-    profVerified.className = 'prof-verified-badge ' + (currentUser.verified ? 'verified' : 'unverified');
+    profVerified.textContent = currentUser.is_student_verified ? (t.prof_verified || 'Verified') : (t.prof_not_verified || 'Not Verified');
+    profVerified.className = 'prof-verified-badge ' + (currentUser.is_student_verified ? 'verified' : 'unverified');
   }
   // Update location in location section
   const locAddrDisplay = document.getElementById('locCurrentAddress');
@@ -1252,6 +1265,27 @@ function updateCartUI() {
               </div>`;
       cartItemsContainer.appendChild(row);
     });
+    // Show discount info
+    const discountLine = document.getElementById('cartDiscountLine');
+    const cashbackInfo = document.getElementById('cartCashbackInfo');
+
+    if (discountLine) {
+      if (activePromoCode && activePromoDiscount > 0) {
+        discountLine.textContent = `Promo "${activePromoCode}": -$${activePromoDiscount.toFixed(2)}`;
+        discountLine.style.display = 'block';
+        total = Math.max(0, total - activePromoDiscount);
+      } else {
+        discountLine.style.display = 'none';
+      }
+    }
+
+    if (cashbackInfo && currentUser && currentUser.is_student_verified) {
+      cashbackInfo.textContent = `You'll earn cashback on this order`;
+      cashbackInfo.style.display = 'block';
+    } else if (cashbackInfo) {
+      cashbackInfo.style.display = 'none';
+    }
+
     checkoutBtn.disabled = false;
     checkoutBtn.textContent = `${t.checkout} ($${total.toFixed(2)})`;
   }
@@ -1272,10 +1306,42 @@ function updateCartUI() {
 // --- CHECKOUT & DB ---
 checkoutBtn.addEventListener('click', handleCheckout);
 
+let activePromoCode = null;
+let activePromoDiscount = 0;
+
+async function applyPromoCode(code) {
+  if (!code) return;
+  const total = currentCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  try {
+    const res = await fetch(`${API_BASE}/orders/validate-promo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('campuseats_token')}`
+      },
+      body: JSON.stringify({ code, order_total: total })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      activePromoCode = code.toUpperCase();
+      activePromoDiscount = data.discount_amount;
+      showToast(`Promo applied! -$${data.discount_amount.toFixed(2)}`, "success");
+      updateCartUI();
+    } else {
+      showToast(data.reason || "Invalid promo code", "error");
+      activePromoCode = null;
+      activePromoDiscount = 0;
+    }
+  } catch (err) {
+    showToast("Failed to validate promo", "error");
+  }
+}
+
 async function handleCheckout() {
   if (!currentUser || currentCart.length === 0) return;
   const t = TRANSLATIONS[currentLang];
-  const total = parseFloat(cartTotalDisplay.textContent);
+  const subtotal = currentCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  const total = Math.max(0, subtotal - activePromoDiscount);
   checkoutBtn.disabled = true;
   checkoutBtn.innerHTML = t.processing;
 
@@ -1286,7 +1352,8 @@ async function handleCheckout() {
     latitude: selectedLocation.lat,
     longitude: selectedLocation.lng,
     delivery_address: selectedLocation.address || selectedLocation.name,
-    items: currentCart.map(i => ({ name: i.name, qty: i.qty, price: i.price }))
+    items: currentCart.map(i => ({ name: i.name, qty: i.qty, price: i.price, menu_item_id: i.menu_item_id })),
+    promo_code: activePromoCode
   };
 
   try {
@@ -1306,21 +1373,48 @@ async function handleCheckout() {
 
     const savedOrder = await res.json();
 
+    // Show cashback earned
+    if (savedOrder.cashback_amount && parseFloat(savedOrder.cashback_amount) > 0) {
+      showToast(`Order placed! You earned $${parseFloat(savedOrder.cashback_amount).toFixed(2)} cashback`, "success");
+    } else {
+      showToast(t.checkout + " Success!", "success");
+    }
+
     // Add to local history for instant UI update
     const orders = getLocalOrders();
     orders.push(savedOrder);
     localStorage.setItem(`campuseats_orders_${currentUser.id}`, JSON.stringify(orders));
 
     currentCart = [];
+    activePromoCode = null;
+    activePromoDiscount = 0;
     updateCartUI();
-    loadLocalOrders();
-    alert(t.checkout + " Success!");
+    loadOrders();
 
-  } catch (err) { console.error(err); }
-  finally {
+    // Refresh user balance
+    refreshUserBalance();
+
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || "Checkout failed", "error");
+  } finally {
     checkoutBtn.disabled = false;
     checkoutBtn.textContent = t.checkout;
   }
+}
+
+async function refreshUserBalance() {
+  try {
+    const res = await fetch(`${API_BASE}/wallet/balance`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('campuseats_token')}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      currentUser.balance = data.balance;
+      localStorage.setItem('campuseats_user', JSON.stringify(currentUser));
+      updateUserDisplay();
+    }
+  } catch (e) { }
 }
 
 function getLocalOrders() {
@@ -1330,11 +1424,29 @@ function getLocalOrders() {
 }
 
 function loadLocalOrders() {
-  renderDatabaseStats();
+  loadOrders();
 }
 
-function renderDatabaseStats() {
-  const orders = getLocalOrders();
+async function loadOrders() {
+  const token = localStorage.getItem('campuseats_token');
+  if (!token || !currentUser) {
+    renderDatabaseStats(getLocalOrders());
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/orders/my`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    renderDatabaseStats(data.orders || []);
+  } catch (e) {
+    renderDatabaseStats(getLocalOrders());
+  }
+}
+
+function renderDatabaseStats(orders) {
+  if (!orders) orders = getLocalOrders();
   const t = TRANSLATIONS[currentLang];
 
   // Stats
@@ -1352,7 +1464,7 @@ function renderDatabaseStats() {
   if (statSpent) statSpent.textContent = '$' + (totalSpent || 0).toFixed(2);
   if (statOrders) statOrders.textContent = orders.length;
   if (statLast) statLast.textContent = orders.length > 0
-    ? new Date(orders[orders.length - 1].date).toLocaleDateString() : '—';
+    ? new Date(orders[orders.length - 1].created_at || orders[orders.length - 1].date || Date.now()).toLocaleDateString() : '—';
   if (dbCount) dbCount.textContent = orders.length + ' ' + (t.orders_count || 'orders');
 
   // Order cards
@@ -1374,7 +1486,7 @@ function renderDatabaseStats() {
 
   [...orders].reverse().forEach((order, idx) => {
     if (!order) return;
-    const dateStr = new Date(order.date || Date.now()).toLocaleString();
+    const dateStr = new Date(order.created_at || order.date || Date.now()).toLocaleString();
     const itemsStr = order.items ? order.items.map(i => `${i.qty}× ${i.name}`).join(', ') : '—';
     const statusClass = order.status === 'pending' ? 'pending'
       : order.status === 'delivering' ? 'delivering' : '';
@@ -1512,7 +1624,7 @@ document.getElementById('closeSettingsBtn').addEventListener('click', () => sett
 document.getElementById('settingsForm').addEventListener('submit', (e) => {
   e.preventDefault();
   settingsModal.classList.add('hidden');
-  alert("Settings Saved!");
+  showToast("Settings Saved!", "success");
 });
 
 // Handle window resize — switch between mobile and desktop nav

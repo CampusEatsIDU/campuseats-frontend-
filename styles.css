@@ -3045,3 +3045,77 @@ html {
         margin: 0;
         padding: 16px;
     }
+}
+
+/* === TOAST NOTIFICATIONS === */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.toast-success {
+    background: #10b981;
+    color: white;
+}
+.toast-error {
+    background: #ef4444;
+    color: white;
+}
+.toast-info {
+    background: #1f2527;
+    color: white;
+}
+
+/* === PROMO CODE INPUT IN CART === */
+.promo-input-row {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 0 4px;
+}
+.promo-input-row input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+.promo-input-row button {
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.cart-cashback-info {
+    font-size: 12px;
+    color: #10b981;
+    padding: 4px 8px;
+    text-align: center;
+}
+.cart-discount-line {
+    font-size: 12px;
+    color: var(--primary);
+    padding: 2px 8px;
+    text-align: center;
+}

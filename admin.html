@@ -1344,6 +1344,10 @@
                 <i class="fas fa-shopping-bag"></i> <span data-i18n="orders">Orders</span>
             </a>
 
+            <a class="nav-item" onclick="switchTab('promotions', this)" id="nav-promotions">
+                <i class="fas fa-tags"></i> <span data-i18n="promotions">Promotions</span>
+            </a>
+
             <div class="nav-section-label">System</div>
             <a class="nav-item" onclick="switchTab('logs', this)" id="nav-logs">
                 <i class="fas fa-history"></i> <span data-i18n="logs">Audit Logs</span>
@@ -1807,6 +1811,62 @@
                     <tbody id="notificationsTableBody"></tbody>
                 </table>
                 <div class="pagination" id="notifPagination"></div>
+            </div>
+        </section>
+
+        <section id="promotions" class="tab-section">
+            <div class="page-header">
+                <div>
+                    <h1><i class="fas fa-tags"></i> Promotions</h1>
+                    <p class="page-subtitle">Manage promo codes and discounts</p>
+                </div>
+                <button class="btn btn-primary" onclick="showCreatePromoModal()">
+                    <i class="fas fa-plus"></i> Create Promo
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                            <th>Min Order</th>
+                            <th>Uses</th>
+                            <th>Students Only</th>
+                            <th>Status</th>
+                            <th>Expires</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="promotionsTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Create Promo Modal -->
+            <div class="modal-overlay" id="promoModalOverlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+                <div class="modal" style="max-width:500px;">
+                    <div class="modal-header">
+                        <h2>Create Promotion</h2>
+                        <button onclick="document.getElementById('promoModalOverlay').style.display='none'" class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group"><label>Promo Code</label><input type="text" id="promoFormCode" placeholder="e.g. STUDENT20" style="text-transform:uppercase;"></div>
+                        <div class="form-group"><label>Description</label><input type="text" id="promoFormDesc" placeholder="20% off for students"></div>
+                        <div class="form-group"><label>Discount Type</label>
+                            <select id="promoFormType"><option value="percentage">Percentage (%)</option><option value="fixed">Fixed Amount ($)</option></select>
+                        </div>
+                        <div class="form-group"><label>Discount Value</label><input type="number" id="promoFormValue" step="0.01" placeholder="20"></div>
+                        <div class="form-group"><label>Min Order Amount</label><input type="number" id="promoFormMinOrder" step="0.01" placeholder="0" value="0"></div>
+                        <div class="form-group"><label>Max Uses (empty = unlimited)</label><input type="number" id="promoFormMaxUses" placeholder=""></div>
+                        <div class="form-group"><label>Expiry Date</label><input type="datetime-local" id="promoFormExpires"></div>
+                        <div class="form-group"><label><input type="checkbox" id="promoFormStudentsOnly"> Students Only</label></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="submitCreatePromo()">Create Promotion</button>
+                    </div>
+                </div>
             </div>
         </section>
 

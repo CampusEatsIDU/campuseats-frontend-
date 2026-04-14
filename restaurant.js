@@ -513,6 +513,8 @@ async function loadProfile() {
         document.getElementById("profHours").value = p.working_hours || "";
         document.getElementById("profMin").value = Number(p.min_order || 0).toFixed(2);
         document.getElementById("profFee").value = Number(p.delivery_fee || 0).toFixed(2);
+        const cbField = document.getElementById("profCashback");
+        if (cbField) cbField.value = Number(p.cashback_rate || 0).toFixed(1);
         const lp = document.getElementById("profLogoPreview");
         if (p.logo_url) { lp.src = imgSrc(p.logo_url); lp.style.display = "block"; }
         const bp = document.getElementById("profBannerPreview");
@@ -532,6 +534,8 @@ document.getElementById("profileForm").addEventListener("submit", async e => {
     fd.append("working_hours", document.getElementById("profHours").value);
     fd.append("min_order", document.getElementById("profMin").value);
     fd.append("delivery_fee", document.getElementById("profFee").value);
+    const cbField = document.getElementById("profCashback");
+    if (cbField) fd.append("cashback_rate", cbField.value);
     const logoFile = document.getElementById("profLogo").files[0];
     if (logoFile) fd.append("logo", await resizeImg(logoFile, 300));
     const bannerFile = document.getElementById("profBanner").files[0];
@@ -585,4 +589,22 @@ document.getElementById("passwordForm").addEventListener("submit", async e => {
 window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => document.getElementById("loader").style.display = "none", 400);
     loadDashboard();
+
+    // Auto-refresh orders every 30 seconds
+    setInterval(async () => {
+        try {
+            const res = await fetch(`${API}/restaurant/orders`, { headers: AUTH });
+            if (!res.ok) return;
+            const data = await res.json();
+            const pendingCount = (data.orders || data || []).filter(o => o.status === 'pending').length;
+            const badge = document.getElementById("ordersBadge");
+            if (badge) {
+                badge.textContent = pendingCount;
+                badge.style.display = pendingCount > 0 ? "inline" : "none";
+            }
+            if (pendingCount > 0 && document.visibilityState === "visible") {
+                loadOrders();
+            }
+        } catch (e) { /* silent */ }
+    }, 30000);
 });

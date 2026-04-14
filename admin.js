@@ -138,8 +138,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadDashboard();
         loadUsers();
         loadRestaurants();
-        loadCouriers();
-        loadCourierDashboard();
+        // loadCouriers();
+        // loadCourierDashboard();
         loadVerifications();
         loadOrders();
         loadAuditLogs();
@@ -355,6 +355,22 @@ async function loadDashboard() {
                 </div>
                 <div class="stat-value">${d.totalLogs || 0}</div>
                 <div class="stat-change">Total entries</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <span class="stat-label">Cashback Given</span>
+                    <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                </div>
+                <div class="stat-value">${Number(d.totalCashbackCredited || 0).toLocaleString()}</div>
+                <div class="stat-change">UZS total</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-header">
+                    <span class="stat-label">Active Promos</span>
+                    <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                </div>
+                <div class="stat-value">${d.activePromotions || 0}</div>
+                <div class="stat-change">Running now</div>
             </div>
         `;
 
@@ -1326,3 +1342,110 @@ function renderPagination(containerId, total, currentPage, limit, loadFn) {
         </div>
     `;
 }
+
+// ═══════════════════════════════════════════
+// PROMOTIONS MANAGEMENT
+// ═══════════════════════════════════════════
+
+async function loadPromotions() {
+    try {
+        const res = await fetch(`${API_BASE}/admin/promotions`, { headers: getAuthHeaders() });
+        const data = await res.json();
+        const tbody = document.getElementById("promotionsTableBody");
+        if (!tbody) return;
+
+        if (!data.promotions || data.promotions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:40px; color:var(--text-secondary);">No promotions yet. Create one!</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.promotions.map(p => `
+            <tr>
+                <td><strong style="font-family:monospace; font-size:14px;">${escapeHtml(p.code)}</strong></td>
+                <td>${p.discount_type === 'percentage' ? 'Percentage' : 'Fixed'}</td>
+                <td>${p.discount_type === 'percentage' ? p.discount_value + '%' : '$' + p.discount_value}</td>
+                <td>${p.min_order || 0}</td>
+                <td>${p.current_uses || 0}${p.max_uses ? ' / ' + p.max_uses : ' / ∞'}</td>
+                <td>${p.students_only ? '<span style="color:var(--success);">Yes</span>' : 'No'}</td>
+                <td>${p.is_active ?
+                    '<span class="badge" style="background:var(--success-light); color:var(--success);">Active</span>' :
+                    '<span class="badge" style="background:var(--danger-light); color:var(--danger);">Inactive</span>'}</td>
+                <td>${p.expires_at ? formatDate(p.expires_at) : 'Never'}</td>
+                <td>
+                    <button class="btn-action ${p.is_active ? 'danger' : 'success'}" onclick="togglePromo(${p.id}, ${!p.is_active})" title="${p.is_active ? 'Deactivate' : 'Activate'}">
+                        <i class="fas ${p.is_active ? 'fa-pause' : 'fa-play'}"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        console.error("Load promotions error:", err);
+        showToast("Failed to load promotions", "error");
+    }
+}
+
+function showCreatePromoModal() {
+    document.getElementById("promoModalOverlay").style.display = "flex";
+    document.getElementById("promoFormCode").value = "";
+    document.getElementById("promoFormDesc").value = "";
+    document.getElementById("promoFormValue").value = "";
+    document.getElementById("promoFormMinOrder").value = "0";
+    document.getElementById("promoFormMaxUses").value = "";
+    document.getElementById("promoFormExpires").value = "";
+    document.getElementById("promoFormStudentsOnly").checked = false;
+}
+
+async function submitCreatePromo() {
+    const code = document.getElementById("promoFormCode").value.trim();
+    const description = document.getElementById("promoFormDesc").value.trim();
+    const discount_type = document.getElementById("promoFormType").value;
+    const discount_value = parseFloat(document.getElementById("promoFormValue").value);
+    const min_order = parseFloat(document.getElementById("promoFormMinOrder").value) || 0;
+    const max_uses_val = document.getElementById("promoFormMaxUses").value;
+    const max_uses = max_uses_val ? parseInt(max_uses_val) : null;
+    const expires_at = document.getElementById("promoFormExpires").value || null;
+    const students_only = document.getElementById("promoFormStudentsOnly").checked;
+
+    if (!code || !discount_value) {
+        showToast("Code and discount value are required", "error");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/admin/promotions`, {
+            method: "POST",
+            headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+            body: JSON.stringify({ code, description, discount_type, discount_value, min_order, max_uses, students_only, expires_at })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to create");
+
+        showToast(`Promo "${code.toUpperCase()}" created!`, "success");
+        document.getElementById("promoModalOverlay").style.display = "none";
+        loadPromotions();
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function togglePromo(id, newState) {
+    try {
+        const res = await fetch(`${API_BASE}/admin/promotions/${id}`, {
+            method: "PUT",
+            headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+            body: JSON.stringify({ is_active: newState })
+        });
+        if (!res.ok) throw new Error("Failed");
+        showToast(`Promotion ${newState ? 'activated' : 'deactivated'}`, "success");
+        loadPromotions();
+    } catch (err) {
+        showToast("Failed to update promotion", "error");
+    }
+}
+
+// Auto-load promotions when tab is shown
+const origSwitchTab = switchTab;
+switchTab = function(tabId, navEl) {
+    origSwitchTab(tabId, navEl);
+    if (tabId === 'promotions') loadPromotions();
+};

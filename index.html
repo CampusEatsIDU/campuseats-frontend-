@@ -280,7 +280,7 @@
 
                 <button type="submit" id="loginBtnText" class="btn-checkout" style="margin-top:28px;">Log In</button>
                 <div style="text-align:center; margin-top:14px;">
-                    <a href="https://t.me/CampusEats" target="_blank" id="forgotPassLink"
+                    <a href="#" onclick="showToast('Contact @CampusEats admin on Telegram to reset your password', 'info'); return false;" id="forgotPassLink"
                         style="color:var(--primary); text-decoration:none; font-size:0.9rem; font-weight:500;">Forgot
                         Password?</a>
                 </div>
@@ -378,6 +378,12 @@
                         </div>
                     </div>
                     <div class="cart-footer-sticky">
+                        <div class="promo-input-row">
+                            <input type="text" id="promoCodeInput" placeholder="Promo code" maxlength="20">
+                            <button onclick="applyPromoCode(document.getElementById('promoCodeInput').value)">Apply</button>
+                        </div>
+                        <div id="cartDiscountLine" class="cart-discount-line" style="display:none;"></div>
+                        <div id="cartCashbackInfo" class="cart-cashback-info" style="display:none;"></div>
                         <div class="cart-total"
                             style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; padding:12px 0; border-top:1px solid #eee;">
                             <span id="cartTotalLabel">Total</span>
@@ -543,10 +549,10 @@
                     <span class="prof-menu-label" id="profMenuAddress">My Addresses</span>
                     <span class="prof-menu-chevron">›</span>
                 </button>
-                <button class="prof-menu-item"
-                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
+                <button class="prof-menu-item" style="opacity:0.5; cursor:default;"
+                    onclick="showToast('Cash on delivery only. Online payments coming soon!', 'info')">
                     <span class="prof-menu-icon">💳</span>
-                    <span class="prof-menu-label" id="profMenuPayment">Payment Methods</span>
+                    <span class="prof-menu-label" id="profMenuPayment">Payment: Cash Only</span>
                     <span class="prof-menu-chevron">›</span>
                 </button>
                 <button class="prof-menu-item"
