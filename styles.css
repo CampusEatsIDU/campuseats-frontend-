@@ -3197,13 +3197,14 @@ html {
 }
 
 .auth-hero-mascot {
-    width: 320px;
-    max-width: 80%;
+    width: 420px;
+    max-width: 90%;
     height: auto;
-    margin: 0 auto 24px;
+    margin: 0 auto 28px;
     display: block;
+    background: transparent;
     animation: floatMascot 4s ease-in-out infinite;
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.35));
 }
 
 @keyframes floatMascot {
@@ -3271,9 +3272,15 @@ html {
 }
 
 .auth-form-card .brand-row img {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
+    background: transparent;
+}
+
+.auth-form-card .brand-row {
+    justify-content: center;
+    margin-bottom: 28px;
 }
 
 .auth-form-card .brand-row .brand-name {
@@ -3476,10 +3483,18 @@ html {
 }
 
 .navbar .logo img,
-.navbar .navbar-logo img {
-    width: 40px;
-    height: 40px;
+.navbar .navbar-logo img,
+.navbar .ce-logo-img {
+    width: 60px !important;
+    height: 60px !important;
     object-fit: contain;
+    background: transparent;
+}
+
+.navbar .logo,
+.navbar .navbar-logo {
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
 }
 
 .nav-balance-pill {
@@ -3561,10 +3576,11 @@ html {
 }
 
 .hero-banner-illust img {
-    max-width: 280px;
+    max-width: 360px;
     width: 100%;
     height: auto;
-    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));
+    background: transparent;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25));
 }
 
 /* ---- RESTAURANT CARDS REDESIGN ---- */
