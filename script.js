@@ -897,6 +897,7 @@ document.getElementById('fileInputBack').addEventListener('change', (e) => {
 document.getElementById('submitVerificationBtn').addEventListener('click', async () => {
   const frontFile = document.getElementById('fileInputFront').files[0];
   const backFile = document.getElementById('fileInputBack').files[0];
+  const btn = document.getElementById('submitVerificationBtn');
 
   if (!frontFile || !backFile) {
     showToast("Please upload both FRONT and BACK photos of your ID.", "error");
@@ -931,17 +932,19 @@ document.getElementById('submitVerificationBtn').addEventListener('click', async
   const statusDiv = document.getElementById('uploadStatus');
   statusDiv.classList.remove('hidden');
   statusDiv.textContent = "Compressing images...";
-
-  const compressedFront = await resizeImage(frontFile, 800);
-  const compressedBack = await resizeImage(backFile, 800);
-
-  const formData = new FormData();
-  formData.append("front_image", compressedFront);
-  formData.append("back_image", compressedBack);
-
-  statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_pending;
+  statusDiv.className = "upload-status status-pending";
+  if (btn) { btn.disabled = true; btn.textContent = "Uploading..."; }
 
   try {
+    const compressedFront = await resizeImage(frontFile, 800);
+    const compressedBack = await resizeImage(backFile, 800);
+
+    const formData = new FormData();
+    formData.append("front_image", compressedFront);
+    formData.append("back_image", compressedBack);
+
+    statusDiv.textContent = "Uploading to server...";
+
     const res = await fetch(`${API_BASE}/verification/submit`, {
       method: "POST",
       headers: {
@@ -951,30 +954,84 @@ document.getElementById('submitVerificationBtn').addEventListener('click', async
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+    if (!res.ok) throw new Error(data.message || "Upload failed");
 
-    statusDiv.textContent = "✅ Verification submitted! Admin review pending.";
-    statusDiv.className = "upload-status status-verified"; // or a pending style
+    statusDiv.textContent = "⏳ Submitted! Waiting for admin review.";
+    statusDiv.className = "upload-status status-pending";
+    showToast("Verification submitted successfully!", "success");
 
-    currentUser.is_student_verified = false; // Still pending technically
-    saveUser();
+    // Reset file inputs
+    document.getElementById('fileInputFront').value = '';
+    document.getElementById('fileInputBack').value = '';
+
+    // Refresh verification state from server
+    await refreshVerificationStatus();
 
   } catch (err) {
-    statusDiv.textContent = "❌ Upload failed: " + err.message;
-    statusDiv.className = "upload-status status-pending";
+    statusDiv.textContent = "❌ " + (err.message || "Upload failed");
+    statusDiv.className = "upload-status status-error";
+    showToast(err.message || "Verification upload failed", "error");
     console.error(err);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Submit Verification"; }
   }
 });
 
-function checkVerification() {
-  if (currentUser && (currentUser.is_student_verified || currentUser.is_student_verified)) {
-    const statusDiv = document.getElementById('uploadStatus');
-    if (statusDiv) {
-      statusDiv.classList.remove('hidden');
-      statusDiv.textContent = TRANSLATIONS[currentLang].upload_status_verified;
-      statusDiv.className = "upload-status status-verified";
+// Fetch latest verification status from backend and reflect in UI
+async function refreshVerificationStatus() {
+  const token = localStorage.getItem('campuseats_token');
+  if (!token || !currentUser) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/verification/status`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+
+    // Update cached user verified status
+    const wasVerified = !!currentUser.is_student_verified;
+    currentUser.is_student_verified = !!data.is_student_verified;
+    if (typeof data.balance === 'number') currentUser.balance = data.balance;
+    saveUser();
+
+    // If user just got verified (admin approved), celebrate
+    if (!wasVerified && data.is_student_verified) {
+      showToast("🎉 You are now verified! Cashback unlocked.", "success");
     }
+
+    updateUserDisplay();
+
+    const statusDiv = document.getElementById('uploadStatus');
+    if (!statusDiv) return;
+
+    if (data.is_student_verified) {
+      statusDiv.classList.remove('hidden');
+      statusDiv.textContent = "✅ Verified! Student Bonuses Active.";
+      statusDiv.className = "upload-status status-verified";
+      // Hide upload buttons for verified users
+      const uploadGrid = document.querySelector('.upload-grid, .upload-cards-row');
+      const submitBtn = document.getElementById('submitVerificationBtn');
+      if (submitBtn) submitBtn.style.display = 'none';
+    } else if (data.has_submission && data.status === 'pending') {
+      statusDiv.classList.remove('hidden');
+      statusDiv.textContent = "⏳ Admin is reviewing your ID. You'll see a green badge when approved.";
+      statusDiv.className = "upload-status status-pending";
+    } else if (data.has_submission && data.status === 'rejected') {
+      statusDiv.classList.remove('hidden');
+      statusDiv.textContent = "❌ Rejected: " + (data.rejection_reason || "Please resubmit clearer photos.");
+      statusDiv.className = "upload-status status-error";
+    } else {
+      statusDiv.classList.add('hidden');
+    }
+  } catch (err) {
+    console.error("refreshVerificationStatus error:", err);
   }
+}
+
+function checkVerification() {
+  // Kick off a backend refresh
+  refreshVerificationStatus();
 }
 
 // --- GPS & MAP WITH REVERSE GEOCODING ---
@@ -1576,6 +1633,9 @@ window.showSection = function (section) {
     if (profile) profile.classList.remove('hidden');
     updateUserDisplay();
     applyTranslations();
+    // Fetch latest verification + balance from server so user sees current state
+    refreshVerificationStatus();
+    refreshUserBalance();
   } else {
     if (dash) dash.classList.remove('hidden');
   }

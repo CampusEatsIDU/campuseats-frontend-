@@ -227,6 +227,12 @@ html {
     display: block;
 }
 
+.status-error {
+    background: #fee2e2;
+    color: #991b1b;
+    display: block;
+}
+
 /* UTILITIES */
 .hidden {
     display: none !important;
@@ -4133,5 +4139,221 @@ html {
     }
     .hero-banner h2 {
         font-size: 1.8rem;
+    }
+}
+
+/* ============================================
+   MOBILE INTERACTIVITY ENHANCEMENTS
+   ============================================ */
+@media (max-width: 900px) {
+    /* Smoother mobile header */
+    .mth-header {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Mobile bottom nav — bouncy active state */
+    .mobile-bottom-nav {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    .mbn-btn {
+        position: relative;
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mbn-btn:active {
+        transform: scale(0.88);
+    }
+
+    .mbn-btn.active {
+        background: var(--primary-ultralight) !important;
+    }
+
+    .mbn-btn.active .mbn-icon {
+        animation: bouncePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes bouncePop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.25); }
+        100% { transform: scale(1.08); }
+    }
+
+    .mbn-btn.active .mbn-label {
+        color: var(--accent) !important;
+        font-weight: 700;
+    }
+
+    #mbnCartCount {
+        position: absolute;
+        top: 0;
+        right: 8px;
+        background: var(--accent);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: cartPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes cartPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,140,0,0.5); }
+        50% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(255,140,0,0); }
+    }
+
+    /* Cart panel — smoother slide */
+    .cart-panel {
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
+    }
+
+    /* Tappable cards — visible press state */
+    .restaurant-card:active,
+    .food-card:active,
+    .prof-menu-tile:active,
+    .orders-stat-card:active {
+        transform: scale(0.97);
+        transition: transform 0.1s ease;
+    }
+
+    /* Make food/restaurant cards ripple feeling */
+    .btn-add {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 1.6rem !important;
+        box-shadow: 0 4px 12px rgba(255, 140, 0, 0.35);
+    }
+
+    .btn-add:active {
+        transform: scale(0.85);
+        box-shadow: 0 2px 6px rgba(255, 140, 0, 0.5);
+    }
+
+    /* Restaurant card touch-friendly */
+    .restaurant-card {
+        padding-bottom: 12px;
+    }
+
+    /* Mobile hero-banner orientation */
+    .hero-banner {
+        grid-template-columns: 1fr !important;
+        text-align: center;
+        padding: 28px 20px !important;
+    }
+
+    .hero-banner h2 {
+        font-size: 1.5rem !important;
+    }
+
+    .hero-banner .btn-hero {
+        margin: 0 auto;
+    }
+
+    .hero-banner-illust img {
+        max-width: 220px !important;
+    }
+
+    /* Mobile navbar centered logo */
+    .mth-center {
+        gap: 6px !important;
+    }
+
+    .mth-center img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .mth-center span {
+        font-size: 0.95rem !important;
+    }
+
+    /* Mobile balance display */
+    .mth-balance {
+        padding: 6px 12px;
+        background: var(--primary-ultralight);
+        border-radius: 999px;
+        transition: transform 0.15s ease;
+    }
+
+    .mth-balance:active {
+        transform: scale(0.93);
+    }
+
+    /* Pull-to-refresh visual feedback for lists */
+    .orders-list,
+    #restaurantGrid {
+        scroll-behavior: smooth;
+    }
+
+    /* Sticky cart footer on menu pages */
+    .cart-footer-sticky {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding-top: 12px;
+    }
+
+    /* Mobile auth hero — compact */
+    .auth-hero-mascot {
+        width: 180px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .auth-hero .floating-emoji {
+        font-size: 1.4rem !important;
+    }
+
+    /* Orders hero compact on mobile */
+    .orders-hero {
+        padding: 28px 20px !important;
+        border-radius: 20px !important;
+    }
+
+    /* Profile tile touchable */
+    .prof-menu-tile {
+        padding: 16px !important;
+    }
+
+    .prof-menu-tile .tile-icon {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 18px !important;
+    }
+
+    /* Prevent text selection on interactive areas for more app-like feel */
+    .mbn-btn, .btn-add, .btn-qty, .btn-checkout,
+    .role-toggle button, .auth-tabs button,
+    .prof-menu-tile, .orders-stat-card, .restaurant-card {
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+    }
+}
+
+/* Even smaller phones */
+@media (max-width: 480px) {
+    .orders-stat-card {
+        padding: 20px 16px !important;
+    }
+    .orders-stat-card .stat-value {
+        font-size: 1.4rem !important;
+    }
+    .profile-hero {
+        padding: 20px !important;
+    }
+    .profile-hero-avatar {
+        width: 88px !important;
+        height: 88px !important;
+    }
+    .hero-banner h2 {
+        font-size: 1.3rem !important;
     }
 }
