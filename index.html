@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="styles.css?v=1.6">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <link rel="icon" type="image/png" href="img/Campus eats logo-01.png">
+    <link rel="icon" type="image/png" href="img/campus-logo.png">
     <!-- Logo image helper -->
     <style>
         .ce-logo-img {
@@ -170,7 +170,7 @@
             </div>
         </div>
         <a href="#" onclick="showSection('home')" class="logo" id="navLogo">
-            <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
+            <img src="img/campus-logo.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
             CampusEats
         </a>
         <div class="nav-right">
@@ -213,7 +213,7 @@
             </div>
         </div>
         <div class="mth-center">
-            <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:32px; height:32px;">
+            <img src="img/campus-logo.png" alt="CampusEats" class="ce-logo-img" style="width:32px; height:32px;">
             <span
                 style="font-family:var(--font-heading); font-weight:800; font-size:1rem; color:var(--text-main); letter-spacing:-0.3px;">CampusEats</span>
         </div>
@@ -229,101 +229,106 @@
         </div>
     </header>
 
-    <!-- AUTH PAGE — Always in English (point 4) -->
+    <!-- AUTH PAGE — Redesigned split layout -->
     <div id="authPage" class="auth-container fade-in">
-        <!-- Visual Left -->
-        <div class="auth-visual">
-            <div id="heroTextWrapper"
-                style="transition:opacity 0.3s ease; text-align:center; display:flex; flex-direction:column; align-items:center;">
-                <h1 id="heroTitle" style="text-align:center;">Welcome to CampusEats</h1>
-                <p id="heroSub" style="text-align:center; margin:0 auto;">Order food easily. Get cashback as a verified
-                    student.</p>
-                <img src="img/Campus eats logo-01.png" alt="CampusEats Logo" style="margin-top:40px; width:200px; height:200px; object-fit:contain;">
+        <!-- LEFT HERO (purple) -->
+        <div class="auth-hero">
+            <span class="floating-emoji">🍕</span>
+            <span class="floating-emoji">🍔</span>
+            <span class="floating-emoji">🥤</span>
+            <span class="floating-emoji">🍟</span>
+            <span class="floating-emoji">🌮</span>
+            <span class="floating-emoji">🍩</span>
+            <div class="auth-hero-content">
+                <img src="img/campus-mascot.png" alt="CampusEats mascot" class="auth-hero-mascot">
+                <h1 id="heroTitle">Welcome to CampusEats</h1>
+                <p id="heroSub">Order food easily. Get cashback as a verified student.</p>
             </div>
         </div>
 
-        <!-- Form Right -->
+        <!-- RIGHT FORM -->
         <div class="auth-form-wrapper">
-            <div class="logo" style="margin-bottom:28px;">
-                <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:40px; height:40px;">
-                <span style="color:var(--text-main);">CampusEats</span>
-            </div>
-
-            <!-- Role Switcher — always English -->
-            <div class="role-selector">
-                <div class="role-pill active" id="roleUser" onclick="switchRole('user')">Student / User</div>
-                <div class="role-pill" id="roleRest" onclick="switchRole('restaurant')">Restaurant Partner</div>
-            </div>
-
-            <!-- Login/Signup Toggle — always English -->
-            <div class="auth-toggle">
-                <div class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">Log In</div>
-                <div class="auth-tab" id="tabSignup" onclick="switchAuthMode('signup')">Sign Up</div>
-            </div>
-
-            <!-- LOGIN FORM — always English -->
-            <form id="loginForm">
-                <label id="lblLoginPhone"
-                    style="font-weight:600; display:block; margin-bottom:8px; font-size: 0.9rem;">Phone Number</label>
-                <div class="input-with-icon">
-                    <span class="input-icon">📞</span>
-                    <input type="text" id="loginPhone" class="settings-input" placeholder="+998 90 000 00 00" required>
+            <div class="auth-form-card">
+                <div class="brand-row">
+                    <img src="img/campus-logo.png" alt="CampusEats">
+                    <span class="brand-name">CampusEats</span>
                 </div>
 
-                <label
-                    style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Password</label>
-                <div class="input-with-icon">
-                    <span class="input-icon">🔒</span>
-                    <input type="password" id="loginPass" class="settings-input" placeholder="••••••••" required>
-                    <button type="button" class="password-toggle" onclick="togglePassword('loginPass')">👁️</button>
+                <!-- Role Switcher -->
+                <div class="role-toggle" id="roleToggle">
+                    <button type="button" class="active" id="roleUser" onclick="switchRole('user')">Student / User</button>
+                    <button type="button" id="roleRest" onclick="switchRole('restaurant')">Restaurant Partner</button>
                 </div>
 
-                <button type="submit" id="loginBtnText" class="btn-checkout" style="margin-top:28px;">Log In</button>
-                <div style="text-align:center; margin-top:14px;">
-                    <a href="#" onclick="showToast('Contact @CampusEats admin on Telegram to reset your password', 'info'); return false;" id="forgotPassLink"
-                        style="color:var(--primary); text-decoration:none; font-size:0.9rem; font-weight:500;">Forgot
-                        Password?</a>
-                </div>
-            </form>
-
-            <!-- SIGNUP FORM — always English -->
-            <form id="signupForm" class="hidden">
-                <label style="font-weight:600; display:block; margin-bottom:8px; font-size: 0.9rem;">Full Name</label>
-                <div class="input-with-icon">
-                    <span class="input-icon">👤</span>
-                    <input type="text" id="regName" class="settings-input" placeholder="John Doe">
+                <!-- Login/Signup Tabs -->
+                <div class="auth-tabs">
+                    <button type="button" class="active" id="tabLogin" onclick="switchAuthMode('login')">Log In</button>
+                    <button type="button" id="tabSignup" onclick="switchAuthMode('signup')">Sign Up</button>
                 </div>
 
-                <div id="restFields" class="hidden">
-                    <label
-                        style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Restaurant
-                        Name</label>
-                    <div class="input-with-icon">
-                        <span class="input-icon">🍴</span>
-                        <input type="text" id="regRestName" class="settings-input" placeholder="Tasty Burger Place">
+                <!-- LOGIN FORM -->
+                <form id="loginForm">
+                    <div class="auth-input-group">
+                        <label for="loginPhone">Phone Number</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">📞</span>
+                            <input type="text" id="loginPhone" placeholder="+998 90 000 00 00" required>
+                        </div>
                     </div>
-                </div>
 
-                <label
-                    style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Phone
-                    Number</label>
-                <div class="input-with-icon">
-                    <span class="input-icon">📞</span>
-                    <input type="tel" id="regPhone" class="settings-input" placeholder="+998 90 123 4567">
-                </div>
+                    <div class="auth-input-group">
+                        <label for="loginPass">Password</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="loginPass" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('loginPass')">👁️</button>
+                        </div>
+                    </div>
 
-                <label
-                    style="font-weight:600; display:block; margin-bottom:8px; margin-top:16px; font-size: 0.9rem;">Create
-                    Password</label>
-                <div class="input-with-icon">
-                    <span class="input-icon">🔒</span>
-                    <input type="password" id="regPass" class="settings-input" placeholder="Min 8 characters" minlength="8">
-                    <button type="button" class="password-toggle" onclick="togglePassword('regPass')">👁️</button>
-                </div>
+                    <button type="submit" id="loginBtnText" class="btn-auth-submit">Log In</button>
+                    <a href="#" onclick="showToast('Contact @CampusEats admin on Telegram to reset your password', 'info'); return false;" id="forgotPassLink" class="forgot-link">Forgot Password?</a>
+                </form>
 
-                <button type="submit" id="signupBtnText" class="btn-checkout" style="margin-top:28px;">Create
-                    Account</button>
-            </form>
+                <!-- SIGNUP FORM -->
+                <form id="signupForm" class="hidden">
+                    <div class="auth-input-group">
+                        <label for="regName">Full Name</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="regName" placeholder="John Doe">
+                        </div>
+                    </div>
+
+                    <div id="restFields" class="hidden">
+                        <div class="auth-input-group">
+                            <label for="regRestName">Restaurant Name</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">🍴</span>
+                                <input type="text" id="regRestName" placeholder="Tasty Burger Place">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="auth-input-group">
+                        <label for="regPhone">Phone Number</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">📞</span>
+                            <input type="tel" id="regPhone" placeholder="+998 90 123 4567">
+                        </div>
+                    </div>
+
+                    <div class="auth-input-group">
+                        <label for="regPass">Create Password</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="regPass" placeholder="Min 8 characters" minlength="8">
+                            <button type="button" class="password-toggle" onclick="togglePassword('regPass')">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="signupBtnText" class="btn-auth-submit">Create Account</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -334,8 +339,12 @@
         <section id="dashboardSection" class="fade-in app-container">
             <div class="hero-banner">
                 <div class="hero-content">
-                    <h1 id="homeHeroTitle">Back to Campus Sale!</h1>
-                    <p id="homeHeroSub">Get 20% cashback on all orders this week.</p>
+                    <h1 id="homeHeroTitle">Student Benefits Active!</h1>
+                    <p id="homeHeroSub">Verified students earn cashback on every order.</p>
+                    <button class="btn-hero" onclick="document.getElementById('restaurantGrid').scrollIntoView({behavior:'smooth'})">Order Now</button>
+                </div>
+                <div class="hero-banner-illust">
+                    <img src="img/campus-mascot.png" alt="CampusEats mascot">
                 </div>
             </div>
 
@@ -395,54 +404,44 @@
             </div>
         </section>
 
-        <!-- MY ORDERS SECTION (Premium Redesign) -->
-        <section id="statsSection" class="hidden fade-in">
+        <!-- MY ORDERS SECTION (Redesigned) -->
+        <section id="statsSection" class="hidden fade-in app-container">
             <div class="orders-hero">
-                <div class="orders-hero-content">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
-                        <span style="font-size:2rem;">📋</span>
-                        <h1 style="margin:0; font-size:1.8rem; font-weight:900; color:white;" id="dbTitle">My Orders
-                        </h1>
-                    </div>
-                    <p style="margin:0; opacity:0.8; font-size:0.9rem;" id="dbSubtitle">Your complete order history</p>
-                </div>
-                <button class="orders-back-btn" onclick="showSection('home')" id="backToMenuBtn">← Back</button>
+                <a href="#" class="back-link" onclick="showSection('home'); return false;" id="backToMenuBtn">← Back</a>
+                <h1 id="dbTitle">My Orders</h1>
+                <p id="dbSubtitle">Track your orders, manage spending, and reorder your favorites</p>
             </div>
 
-            <div class="orders-body app-container">
-                <div class="orders-stats-row">
-                    <div class="order-stat-card">
-                        <div class="osc-icon">💸</div>
-                        <div class="osc-value" id="statTotalSpent">$0.00</div>
-                        <div class="osc-label" id="lblTotalSpent">Total Spent</div>
-                    </div>
-                    <div class="order-stat-card">
-                        <div class="osc-icon">🛍</div>
-                        <div class="osc-value" id="statTotalOrders">0</div>
-                        <div class="osc-label" id="lblTotalOrders">Total Orders</div>
-                    </div>
-                    <div class="order-stat-card">
-                        <div class="osc-icon">⏰</div>
-                        <div class="osc-value" id="statLastOrder">—</div>
-                        <div class="osc-label" id="lblLastAct">Last Order</div>
-                    </div>
+            <div class="orders-stats-row">
+                <div class="orders-stat-card stat-green">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-value" id="statTotalSpent">0 UZS</div>
+                    <div class="stat-label" id="lblTotalSpent">Total Spent</div>
                 </div>
+                <div class="orders-stat-card stat-purple">
+                    <div class="stat-icon">🛍</div>
+                    <div class="stat-value" id="statTotalOrders">0</div>
+                    <div class="stat-label" id="lblTotalOrders">Total Orders</div>
+                </div>
+                <div class="orders-stat-card stat-orange">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-value" id="statLastOrder">—</div>
+                    <div class="stat-label" id="lblLastAct">Last Order</div>
+                </div>
+            </div>
 
-                <div class="orders-table-card">
-                    <div class="otc-header">
-                        <span class="section-title" style="margin:0; font-size:1.1rem;" id="dbRecordsTitle">Order
-                            History</span>
-                        <span class="otc-count" id="dbOrderCount">0 orders</span>
-                    </div>
-                    <div id="ordersEmptyState" class="orders-empty">
-                        <div style="font-size:3.5rem; margin-bottom:16px;">📭</div>
-                        <div style="font-weight:700; font-size:1.1rem; margin-bottom:8px;" id="ordersEmptyTitle">No
-                            orders yet</div>
-                        <div style="color:var(--text-muted); font-size:0.9rem;" id="ordersEmptyDesc">Your orders will
-                            appear here after your first purchase.</div>
-                    </div>
-                    <div id="ordersListContainer" class="orders-list hidden"></div>
+            <div class="order-history-card">
+                <div class="history-header">
+                    <h3 id="dbRecordsTitle">Order History</h3>
+                    <span class="count-badge" id="dbOrderCount">0 orders</span>
                 </div>
+                <div id="ordersEmptyState" class="orders-empty">
+                    <img src="img/campus-mascot.png" alt="No orders">
+                    <h4 id="ordersEmptyTitle">No orders yet</h4>
+                    <p id="ordersEmptyDesc">Your order history will appear here after your first purchase.</p>
+                    <button class="btn-start-ordering" onclick="showSection('home')">Start ordering</button>
+                </div>
+                <div id="ordersListContainer" class="orders-list hidden"></div>
             </div>
         </section>
 
@@ -507,89 +506,104 @@
         </section>
 
         <!-- PROFILE SECTION (Point 2) -->
-        <section id="profileSection" class="hidden fade-in">
-            <!-- Profile Hero Header -->
-            <div class="prof-hero">
-                <div class="prof-avatar-wrap">
-                    <div class="prof-avatar-circle" id="profAvatarLetter">U</div>
-                    <span class="prof-verified-badge unverified" id="profVerifiedBadge">Not Verified</span>
-                </div>
-                <div class="prof-hero-info">
-                    <div class="prof-name" id="profName">User</div>
-                    <div class="prof-phone" id="profPhone">—</div>
-                    <div class="prof-balance-row">
-                        <span class="prof-balance-amount" id="profBalance">0 UZS</span>
-                        <span class="prof-balance-label" id="profBalanceLabel">wallet balance</span>
+        <section id="profileSection" class="hidden fade-in app-container">
+            <!-- Profile Hero Card -->
+            <div class="profile-hero">
+                <div class="profile-hero-info">
+                    <div class="profile-hero-avatar">
+                        <img src="img/campus-mascot.png" alt="avatar" id="profAvatarImg">
+                        <span id="profAvatarLetter" style="display:none;">U</span>
+                    </div>
+                    <div class="profile-hero-text">
+                        <h1><span id="profName">User</span> <span>👋</span></h1>
+                        <p class="prof-subtitle">Manage your account and preferences</p>
+                        <p class="prof-phone" id="profPhone">—</p>
+                        <span class="prof-verified unverified" id="profVerifiedBadge">Not Verified</span>
                     </div>
                 </div>
-                <h1 class="prof-title-hidden" id="profTitle" style="display:none;">My Profile</h1>
-            </div>
-
-            <!-- Profile Menu List (like the photo) -->
-            <div class="prof-menu-list">
-                <button class="prof-menu-item" onclick="showSection('stats')">
-                    <span class="prof-menu-icon">📋</span>
-                    <span class="prof-menu-label" id="profMenuOrders">My Orders</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-                <button class="prof-menu-item" id="profMenuAdmin" style="display:none;"
-                    onclick="window.location.href='admin.html'">
-                    <span class="prof-menu-icon">🛡️</span>
-                    <span class="prof-menu-label" style="color: #fe5000; font-weight: bold;">Admin Panel</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-                <button class="prof-menu-item"
-                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
-                    <span class="prof-menu-icon">👤</span>
-                    <span class="prof-menu-label" id="profMenuPersonal">Personal Data</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-                <button class="prof-menu-item" onclick="showSection('location')">
-                    <span class="prof-menu-icon">📍</span>
-                    <span class="prof-menu-label" id="profMenuAddress">My Addresses</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-                <button class="prof-menu-item" style="opacity:0.5; cursor:default;"
-                    onclick="showToast('Cash on delivery only. Online payments coming soon!', 'info')">
-                    <span class="prof-menu-icon">💳</span>
-                    <span class="prof-menu-label" id="profMenuPayment">Payment: Cash Only</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-                <button class="prof-menu-item"
-                    onclick="document.getElementById('settingsModal').classList.remove('hidden')">
-                    <span class="prof-menu-icon">⚙️</span>
-                    <span class="prof-menu-label" id="profMenuLanguage">Language</span>
-                    <span class="prof-menu-chevron">› <span
-                            style="font-size:0.75rem; color:var(--primary); font-weight:700;"
-                            id="profLangBadge">EN</span></span>
-                </button>
-                <button class="prof-menu-item" onclick="showSection('info')">
-                    <span class="prof-menu-icon">ℹ️</span>
-                    <span class="prof-menu-label" id="profMenuInfo">Info &amp; Help</span>
-                    <span class="prof-menu-chevron">›</span>
-                </button>
-            </div>
-
-            <!-- Language quick-select in profile -->
-            <div class="prof-lang-section">
-                <div style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:10px;">Language /
-                    Язык / Til</div>
-                <div style="display:flex; gap:8px;">
-                    <button class="lang-pill" id="profLpEN" onclick="setLanguage('en'); updateProfLang()">🇬🇧
-                        EN</button>
-                    <button class="lang-pill" id="profLpRU" onclick="setLanguage('ru'); updateProfLang()">🇷🇺
-                        RU</button>
-                    <button class="lang-pill" id="profLpUZ" onclick="setLanguage('uz'); updateProfLang()">🇺🇿
-                        UZ</button>
+                <div class="profile-balance-card">
+                    <div class="balance-label">Account Balance</div>
+                    <div class="balance-value" id="profBalance">0 UZS</div>
+                    <div class="balance-sub">Earn cashback with every order!</div>
                 </div>
+            </div>
+
+            <!-- 6-Card Menu Grid -->
+            <div class="prof-menu-grid">
+                <button class="prof-menu-tile" onclick="showSection('stats')">
+                    <div class="tile-icon">🚚</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuOrders">My Orders</h4>
+                        <p>Track and view your past orders.</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
+
+                <button class="prof-menu-tile" onclick="document.getElementById('settingsModal').classList.remove('hidden')">
+                    <div class="tile-icon">👤</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuPersonal">Personal Info</h4>
+                        <p>Update your profile details.</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
+
+                <button class="prof-menu-tile" onclick="showSection('location')">
+                    <div class="tile-icon">📍</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuAddress">Addresses</h4>
+                        <p>Manage drop-off locations.</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
+
+                <button class="prof-menu-tile" style="opacity:0.75;"
+                    onclick="showToast('Cash on delivery only. Online payments coming soon!', 'info')">
+                    <div class="tile-icon">💳</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuPayment">Payment Methods</h4>
+                        <p>Cash on delivery (more coming).</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
+
+                <div class="prof-menu-tile" style="cursor:default;">
+                    <div class="tile-icon">🌐</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuLanguage">Language</h4>
+                        <p>Choose your app language.</p>
+                        <div class="lang-mini">
+                            <button class="lang-btn" id="profLpEN" onclick="setLanguage('en'); updateProfLang()">EN</button>
+                            <button class="lang-btn" id="profLpRU" onclick="setLanguage('ru'); updateProfLang()">RU</button>
+                            <button class="lang-btn" id="profLpUZ" onclick="setLanguage('uz'); updateProfLang()">UZ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="prof-menu-tile" onclick="showSection('info')">
+                    <div class="tile-icon">💬</div>
+                    <div class="tile-text">
+                        <h4 id="profMenuInfo">Help &amp; Support</h4>
+                        <p>Get help with your orders.</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
+
+                <button class="prof-menu-tile" id="profMenuAdmin" style="display:none;"
+                    onclick="window.location.href='admin.html'">
+                    <div class="tile-icon" style="background:#FFE5D1; color:var(--accent);">🛡️</div>
+                    <div class="tile-text">
+                        <h4 style="color: var(--accent);">Admin Panel</h4>
+                        <p>SuperAdmin access.</p>
+                    </div>
+                    <span class="tile-chevron">›</span>
+                </button>
             </div>
 
             <!-- Logout -->
-            <div style="padding:0 16px 120px;">
-                <button class="btn-logout-settings prof-logout-btn" onclick="doLogout()">
-                    🚪 <span id="profMenuLogout">Log Out</span>
-                </button>
-            </div>
+            <button class="prof-logout-btn" onclick="doLogout()">
+                ⎋ <span id="profMenuLogout">Log Out</span>
+            </button>
         </section>
 
         <!-- INFO PAGES SECTION -->
@@ -641,7 +655,7 @@
             <div class="footer-grid">
                 <div class="footer-col footer-col--brand">
                     <div class="logo" style="color:white; margin-bottom:16px; font-size:1.5rem;">
-                        <img src="img/Campus eats logo-01.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
+                        <img src="img/campus-logo.png" alt="CampusEats" class="ce-logo-img" style="width:36px; height:36px;">
                         CampusEats
                     </div>
                     <div id="footerTagline" style="color:#888; font-size:0.9rem; line-height:1.8;">Modern food delivery

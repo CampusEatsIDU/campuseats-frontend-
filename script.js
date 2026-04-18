@@ -1114,8 +1114,8 @@ function updateUserDisplay() {
   const t = TRANSLATIONS[currentLang];
   const profVerified = document.getElementById('profVerifiedBadge');
   if (profVerified) {
-    profVerified.textContent = currentUser.is_student_verified ? (t.prof_verified || 'Verified') : (t.prof_not_verified || 'Not Verified');
-    profVerified.className = 'prof-verified-badge ' + (currentUser.is_student_verified ? 'verified' : 'unverified');
+    profVerified.textContent = currentUser.is_student_verified ? (t.prof_verified || '✓ Verified') : (t.prof_not_verified || 'Not Verified');
+    profVerified.className = 'prof-verified ' + (currentUser.is_student_verified ? 'verified' : 'unverified');
   }
   // Update location in location section
   const locAddrDisplay = document.getElementById('locCurrentAddress');
